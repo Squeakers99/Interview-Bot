@@ -10,6 +10,7 @@ export default function App() {
     postureGoodPct: 0,
     eyeGoodPct: 0,
   });
+  const [analysisResult, setAnalysisResult] = useState(null);
 
    if (!started) {
     return <WelcomePage onStart={() => setStarted(true)} />;
@@ -27,6 +28,7 @@ export default function App() {
         autoStartCamera={false}
         drawLandmarks={true}
         onUpdate={setVision}
+        onAnalysisResult={setAnalysisResult}
       />
 
       <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
@@ -48,6 +50,13 @@ export default function App() {
         <div style={{ minWidth: 360, flex: 1, padding: 14, border: "1px solid #ddd", borderRadius: 12 }}>
           <h3 style={{ marginTop: 0 }}>Metrics object</h3>
           <pre style={{ whiteSpace: "pre-wrap" }}>{JSON.stringify(vision, null, 2)}</pre>
+        </div>
+
+        <div style={{ minWidth: 360, flex: 1, padding: 14, border: "1px solid #ddd", borderRadius: 12 }}>
+          <h3 style={{ marginTop: 0 }}>Analyze response</h3>
+          <pre style={{ whiteSpace: "pre-wrap" }}>
+            {analysisResult ? JSON.stringify(analysisResult, null, 2) : "No analysis yet. Stop camera to upload audio."}
+          </pre>
         </div>
       </div>
     </div>
