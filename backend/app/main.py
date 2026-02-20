@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+from app.routers import health, prompts, analyze
 
-# Allow frontend to connect
+app = FastAPI(title="Interview Coach API")
+
+# CORS (simple hardcoded version)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -17,12 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Root route
-@app.get("/")
-def root():
-    return {"message": "Backend is running 🚀"}
-
-# Health check
-@app.get("/health")
-def health():
-    return {"status": "healthy"}
+# Routers
+app.include_router(health.router)
+app.include_router(prompts.router, prefix="/prompt", tags=["prompts"])
+app.include_router(analyze.router, tags=["analyze"])
