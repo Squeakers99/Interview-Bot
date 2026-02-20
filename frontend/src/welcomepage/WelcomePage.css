@@ -4,6 +4,17 @@
     box-sizing: border-box;
 }
 
+.welcome-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 24px;
+    background: linear-gradient(to right, #4e73df, #1cc88a);
+}
+
 .landing-page {
     height: 100vh;
     background: linear-gradient(to bottom, #007BFF, #0056b3);
@@ -14,6 +25,13 @@
     text-align: center;
     padding: 20px;
     font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+.welcome-title, .welcome-subtitle {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    animation: fadeIn 2s ease-in-out;
     color: white;
 }
 

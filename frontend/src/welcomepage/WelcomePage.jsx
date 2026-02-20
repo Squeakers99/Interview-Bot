@@ -1,7 +1,6 @@
 import "./WelcomePage.css";
 
-
-export default function welcomepage({ onStart}){
+export default function WelcomePage({ onStart }) {
 
     return (
         <div className="welcome-container">
@@ -19,8 +18,7 @@ export default function welcomepage({ onStart}){
 
             <button className="start-button" onClick={onStart}>
                 Start Interview
-                </button>       
-       
+            </button>
         </div>
     );
 }
