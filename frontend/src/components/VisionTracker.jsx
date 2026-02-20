@@ -33,13 +33,18 @@ export default function VisionTracker({
   autoStartCamera = false, // optional convenience
   drawLandmarks = true,    // disable if too slow
   onUpdate,                // receives metrics object each frame
+  onAnalysisResult,        // receives backend analyze response after stop
 }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const streamRef = useRef(null);
 
   const poseRef = useRef(null);
   const faceRef = useRef(null);
   const drawingRef = useRef(null);
+  const recorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const latestMetricsRef = useRef({});
 
   const rafRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
@@ -130,14 +135,16 @@ export default function VisionTracker({
       setStatus("Requesting camera...");
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: VIDEO_W, height: VIDEO_H },
-        audio: false,
+        audio: true,
       });
 
+      streamRef.current = stream;
       videoRef.current.srcObject = stream;
       await videoRef.current.play();
 
       const ctx = canvasRef.current.getContext("2d");
       drawingRef.current = new DrawingUtils(ctx);
+      startAudioRecording(stream);
 
       resetAggregates();
 
@@ -149,8 +156,9 @@ export default function VisionTracker({
   }
 
   function stopCamera() {
-    const stream = videoRef.current?.srcObject;
+    const stream = streamRef.current || videoRef.current?.srcObject;
     stream?.getTracks?.().forEach((t) => t.stop());
+    streamRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
 
     setCameraOn(false);
@@ -171,6 +179,83 @@ export default function VisionTracker({
   function stopLoop() {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
+  }
+
+  function startAudioRecording(stream) {
+    if (!window.MediaRecorder) {
+      setStatus("MediaRecorder not supported in this browser.");
+      return;
+    }
+
+    try {
+      audioChunksRef.current = [];
+
+      let options;
+      if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+        options = { mimeType: "audio/webm;codecs=opus" };
+      }
+
+      const recorder = options ? new MediaRecorder(stream, options) : new MediaRecorder(stream);
+      recorderRef.current = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+      recorder.start(250);
+    } catch (e) {
+      setStatus(`Audio record error: ${String(e)}`);
+    }
+  }
+
+  async function stopAudioRecording(uploadAfterStop) {
+    const recorder = recorderRef.current;
+    if (!recorder) return;
+
+    if (recorder.state !== "inactive") {
+      await new Promise((resolve, reject) => {
+        const onStop = () => resolve();
+        const onError = (event) => reject(event?.error || new Error("Recorder error"));
+        recorder.addEventListener("stop", onStop, { once: true });
+        recorder.addEventListener("error", onError, { once: true });
+        recorder.stop();
+      });
+    }
+
+    const type = recorder.mimeType || "audio/webm";
+    const blob = new Blob(audioChunksRef.current, { type });
+    recorderRef.current = null;
+    audioChunksRef.current = [];
+
+    if (uploadAfterStop && blob.size > 0) {
+      await uploadAudio(blob);
+    }
+  }
+
+  async function uploadAudio(audioBlob) {
+    setStatus("Uploading audio for analysis...");
+
+    const formData = new FormData();
+    const ext = audioBlob.type.includes("ogg") ? "ogg" : "webm";
+    const file = new File([audioBlob], `interview-${Date.now()}.${ext}`, { type: audioBlob.type || "audio/webm" });
+    formData.append("audio", file);
+    formData.append("prompt_id", "");
+    formData.append("prompt_text", "");
+    formData.append("vision_metrics", JSON.stringify(latestMetricsRef.current || {}));
+
+    const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+    const response = await fetch(`${apiBase}/analyze`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Analyze failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    onAnalysisResult?.(data);
+    setStatus(`Uploaded ${file.name} (${audioBlob.size} bytes).`);
   }
 
   function loop(t) {
@@ -236,6 +321,14 @@ export default function VisionTracker({
       postureMetrics: posture?.metrics ?? null,
       eyeMetrics: eye?.metrics ?? null,
     });
+    latestMetricsRef.current = {
+      postureScore: posture?.score ?? null,
+      eyeScore: eye?.score ?? null,
+      postureGoodPct,
+      eyeGoodPct,
+      postureMetrics: posture?.metrics ?? null,
+      eyeMetrics: eye?.metrics ?? null,
+    };
 
     // Optional landmark drawing
     if (drawLandmarks && drawingRef.current) {
@@ -255,10 +348,16 @@ export default function VisionTracker({
           </button>
         ) : (
           <button
-            onClick={() => {
+            onClick={async () => {
               stopLoop();
-              stopCamera();
-              setStatus("Camera stopped.");
+              try {
+                await stopAudioRecording(true);
+                setStatus("Camera stopped and audio uploaded.");
+              } catch (e) {
+                setStatus(`Stop/upload error: ${String(e)}`);
+              } finally {
+                stopCamera();
+              }
             }}
             style={btnDanger}
           >
