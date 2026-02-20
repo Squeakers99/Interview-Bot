@@ -1,0 +1,9 @@
+* {
+    margin: 5;
+    padding: 100;
+}
+
+.landing-page {
+    background: linear-gradient(to bottom, #007BFF, #0056b3);
+    font-family: 'Times New Roman', Times, serif;
+}
