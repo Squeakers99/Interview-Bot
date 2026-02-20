@@ -21,6 +21,18 @@ import { ema } from "../utils/math";
 import { computePostureScore } from "../utils/scoringPosture";
 import { computeEyeContactScore } from "../utils/scoringEye";
 
+const INTERVIEW_TIMINGS = {
+  thinkingSeconds: 30,
+  responseSeconds: 90,
+};
+
+function secondsToMMSS(totalSeconds) {
+  const safeSeconds = Math.max(0, totalSeconds || 0);
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
 /**
  * VisionTracker:
  * - loads MediaPipe models once
@@ -58,6 +70,8 @@ export default function VisionTracker({
   const [modelsReady, setModelsReady] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
   const [status, setStatus] = useState("Loading models...");
+  const [phase, setPhase] = useState("idle");
+  const [timeLeft, setTimeLeft] = useState(INTERVIEW_TIMINGS.thinkingSeconds);
 
   const [postureScoreUI, setPostureScoreUI] = useState(null);
   const [eyeScoreUI, setEyeScoreUI] = useState(null);
@@ -119,16 +133,53 @@ export default function VisionTracker({
   // Start/stop loop based on enabled
   useEffect(() => {
     if (!modelsReady || !cameraOn) return;
+    const trackingEnabled = enabled && phase === "response";
 
-    if (enabled) {
+    if (trackingEnabled) {
       setStatus("Camera on. Tracking enabled.");
       startLoop();
     } else {
-      setStatus("Camera on. Tracking paused.");
+      if (phase === "thinking") {
+        setStatus("Thinking time running. Tracking paused.");
+      } else {
+        setStatus("Camera on. Tracking paused.");
+      }
       stopLoop();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, modelsReady, cameraOn]);
+  }, [enabled, modelsReady, cameraOn, phase]);
+
+  useEffect(() => {
+    if (!cameraOn) return;
+    if (phase !== "thinking" && phase !== "response") return;
+    if (timeLeft <= 0) return;
+
+    const timer = setTimeout(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [cameraOn, phase, timeLeft]);
+
+  useEffect(() => {
+    if (!cameraOn) return;
+    if (timeLeft > 0) return;
+
+    if (phase === "thinking") {
+      setPhase("response");
+      setTimeLeft(INTERVIEW_TIMINGS.responseSeconds);
+      setStatus("Response time started.");
+      if (streamRef.current) {
+        startAudioRecording(streamRef.current);
+      }
+      return;
+    }
+
+    if (phase === "response") {
+      endInterviewAndUpload();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cameraOn, phase, timeLeft]);
 
   async function startCamera() {
     try {
@@ -144,12 +195,13 @@ export default function VisionTracker({
 
       const ctx = canvasRef.current.getContext("2d");
       drawingRef.current = new DrawingUtils(ctx);
-      startAudioRecording(stream);
 
       resetAggregates();
+      setPhase("thinking");
+      setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
 
       setCameraOn(true);
-      setStatus(enabled ? "Camera on. Tracking enabled." : "Camera on. Tracking paused.");
+      setStatus("Thinking time started.");
     } catch (e) {
       setStatus(`Camera error: ${String(e)}`);
     }
@@ -162,6 +214,21 @@ export default function VisionTracker({
     if (videoRef.current) videoRef.current.srcObject = null;
 
     setCameraOn(false);
+  }
+
+  async function endInterviewAndUpload() {
+    setPhase("finishing");
+    stopLoop();
+    try {
+      await stopAudioRecording(true);
+      setStatus("Response time ended. Audio uploaded.");
+    } catch (e) {
+      setStatus(`Auto-stop error: ${String(e)}`);
+    } finally {
+      stopCamera();
+      setPhase("done");
+      setTimeLeft(0);
+    }
   }
 
   function resetAggregates() {
@@ -361,12 +428,18 @@ export default function VisionTracker({
             onClick={async () => {
               stopLoop();
               try {
-                await stopAudioRecording(true);
-                setStatus("Camera stopped and audio uploaded.");
+                if (recorderRef.current) {
+                  await stopAudioRecording(true);
+                  setStatus("Camera stopped and audio uploaded.");
+                } else {
+                  setStatus("Camera stopped.");
+                }
               } catch (e) {
                 setStatus(`Stop/upload error: ${String(e)}`);
               } finally {
                 stopCamera();
+                setPhase("idle");
+                setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
               }
             }}
             style={btnDanger}
@@ -390,10 +463,14 @@ export default function VisionTracker({
           height={VIDEO_H}
           style={{ border: "1px solid #ddd", borderRadius: 12 }}
         />
+        <div style={timerOverlayStyle}>
+          <div style={timerBadgeStyle}>{secondsToMMSS(timeLeft)}</div>
+        </div>
       </div>
 
       <div style={{ marginTop: 8, fontSize: 12, color: "#666" }}>
-        Tracking is <b>{enabled ? "ON" : "PAUSED"}</b>. FPS target: {TARGET_FPS}.
+        Phase: <b>{phase.toUpperCase()}</b> · Time left: <b>{secondsToMMSS(timeLeft)}</b> · Tracking is{" "}
+        <b>{enabled && phase === "response" ? "ON" : "PAUSED"}</b>. FPS target: {TARGET_FPS}.
       </div>
     </div>
   );
@@ -407,5 +484,33 @@ const btnBase = {
   fontWeight: 700,
 };
 
-const btnPrimary = { ...btnBase, background: "#111", color: "white", borderColor: "#111" };
-const btnDanger = { ...btnBase, background: "#fff", borderColor: "#e0a0a0", color: "#9a1b1b" };
+const btnPrimary = {
+  ...btnBase,
+  background: "#111",
+  color: "white",
+  borderColor: "#111",
+};
+
+const btnDanger = {
+  ...btnBase,
+  background: "#fff",
+  borderColor: "#e0a0a0",
+  color: "#9a1b1b",
+};
+
+const timerOverlayStyle = {
+  position: "absolute",
+  top: 10,
+  left: 10,
+  pointerEvents: "none",
+};
+
+const timerBadgeStyle = {
+  padding: "6px 10px",
+  borderRadius: 8,
+  fontWeight: 800,
+  fontSize: 16,
+  color: "#fff",
+  background: "rgba(0, 0, 0, 0.65)",
+  border: "1px solid rgba(255, 255, 255, 0.3)",
+};

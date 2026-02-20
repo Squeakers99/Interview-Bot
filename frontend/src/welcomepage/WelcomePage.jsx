@@ -1,4 +1,4 @@
-import "./welcomepage.css";
+import "./WelcomePage.css";
 
 
 export default function welcomepage({ onStart}){
