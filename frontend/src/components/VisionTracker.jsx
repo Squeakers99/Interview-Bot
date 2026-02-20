@@ -246,7 +246,7 @@ export default function VisionTracker({
 
     const formData = new FormData();
     const ext = audioBlob.type.includes("ogg") ? "ogg" : "webm";
-    const filename = `interview-${Date.now()}.${ext}`;
+    const filename = `interview-audio.${ext}`;
     formData.append("audio", audioBlob, filename);
     formData.append("prompt_id", "");
     formData.append("prompt_text", "");

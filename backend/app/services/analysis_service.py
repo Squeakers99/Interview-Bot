@@ -1,8 +1,6 @@
 import json
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Tuple
-from uuid import uuid4
 
 def parse_vision_metrics(raw: str) -> Dict[str, Any]:
     if not raw:
@@ -23,14 +21,13 @@ async def read_upload_bytes(upload_file) -> Tuple[int, str, str, bytes]:
 def save_upload_bytes(raw_bytes: bytes, original_filename: str) -> str:
     """
     Persists uploaded audio bytes to backend/uploads and returns absolute path.
+    File name is always Interview-Audio.<ext>.
     """
     backend_root = Path(__file__).resolve().parents[2]
     upload_dir = backend_root / "uploads"
     upload_dir.mkdir(parents=True, exist_ok=True)
 
-    safe_name = Path(original_filename or "audio.webm").name
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    unique = uuid4().hex[:8]
-    output_path = upload_dir / f"{timestamp}_{unique}_{safe_name}"
+    suffix = Path(original_filename or "").suffix.lower() or ".webm"
+    output_path = upload_dir / f"Interview-Audio{suffix}"
     output_path.write_bytes(raw_bytes)
     return str(output_path)
