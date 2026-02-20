@@ -1,0 +1,24 @@
+NOTE: FOR ALL OPERATIONS, YOU HAVE TO BE IN THE CORRECT FOLDER IN TERMINAL
+
+---- BACKEND ----
+
+To run:
+- Activate the virtual environment using 'venv\Scripts\activate.bat' (WINDOWS)
+- Run the backend using 'python -m uvicorn app.main:app --reload --port 8000'
+
+To update dependencies:
+- Run 'pip freeze > requirements.txt'
+
+To install dependencies:
+- Run 'pip install -r requirements.txt'
+
+---- FRONTEND ----
+
+To install dependencies:
+- Run 'npm install'
+
+To update dependencies:
+- Run 'npm update'
+
+To run:
+- Run 'npm run dev'
