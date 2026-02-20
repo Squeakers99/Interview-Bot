@@ -1,6 +1,7 @@
 import { useState } from "react";
 import VisionTracker from "./components/VisionTracker";
 import ScoreCard from "./components/ScoreCard";
+import welcomepage from "./welcomepage";
 
 export default function App() {
   const [vision, setVision] = useState({
@@ -10,6 +11,10 @@ export default function App() {
     eyeGoodPct: 0,
   });
   const [analysisResult, setAnalysisResult] = useState(null);
+
+   if (!started) {
+    return <WelcomePage onStart={() => setStarted(true)} />;
+  }
 
   return (
     <div style={{ maxWidth: 1100, margin: "24px auto", fontFamily: "system-ui" }}>
