@@ -1,5 +1,5 @@
 import { useState } from "react";
-import VisionTracker from "./components/visionTracker";
+import VisionTracker from "./components/VisionTracker";
 import ScoreCard from "./components/ScoreCard";
 
 export default function App() {
