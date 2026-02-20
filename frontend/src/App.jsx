@@ -1,7 +1,7 @@
 import { useState } from "react";
 import VisionTracker from "./components/VisionTracker";
 import ScoreCard from "./components/ScoreCard";
-import welcomepage from "./welcomepage";
+import WelcomePage from "./WelcomePage";
 
 export default function App() {
   const [vision, setVision] = useState({
