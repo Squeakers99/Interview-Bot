@@ -189,13 +189,19 @@ export default function VisionTracker({
 
     try {
       audioChunksRef.current = [];
+      const audioTracks = stream.getAudioTracks();
+      if (!audioTracks.length) {
+        setStatus("No microphone track found.");
+        return;
+      }
+      const audioOnlyStream = new MediaStream(audioTracks);
 
       let options;
       if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
         options = { mimeType: "audio/webm;codecs=opus" };
       }
 
-      const recorder = options ? new MediaRecorder(stream, options) : new MediaRecorder(stream);
+      const recorder = options ? new MediaRecorder(audioOnlyStream, options) : new MediaRecorder(audioOnlyStream);
       recorderRef.current = recorder;
       recorder.ondataavailable = (event) => {
         if (event.data && event.data.size > 0) {
@@ -210,7 +216,10 @@ export default function VisionTracker({
 
   async function stopAudioRecording(uploadAfterStop) {
     const recorder = recorderRef.current;
-    if (!recorder) return;
+    if (!recorder) {
+      setStatus("No active audio recorder.");
+      return;
+    }
 
     if (recorder.state !== "inactive") {
       await new Promise((resolve, reject) => {
@@ -227,7 +236,7 @@ export default function VisionTracker({
     recorderRef.current = null;
     audioChunksRef.current = [];
 
-    if (uploadAfterStop && blob.size > 0) {
+    if (uploadAfterStop) {
       await uploadAudio(blob);
     }
   }
@@ -237,13 +246,14 @@ export default function VisionTracker({
 
     const formData = new FormData();
     const ext = audioBlob.type.includes("ogg") ? "ogg" : "webm";
-    const file = new File([audioBlob], `interview-${Date.now()}.${ext}`, { type: audioBlob.type || "audio/webm" });
-    formData.append("audio", file);
+    const filename = `interview-${Date.now()}.${ext}`;
+    formData.append("audio", audioBlob, filename);
     formData.append("prompt_id", "");
     formData.append("prompt_text", "");
     formData.append("vision_metrics", JSON.stringify(latestMetricsRef.current || {}));
 
     const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+    console.log("[uploadAudio] POST", `${apiBase}/analyze`, "bytes=", audioBlob.size);
     const response = await fetch(`${apiBase}/analyze`, {
       method: "POST",
       body: formData,
@@ -255,7 +265,7 @@ export default function VisionTracker({
 
     const data = await response.json();
     onAnalysisResult?.(data);
-    setStatus(`Uploaded ${file.name} (${audioBlob.size} bytes).`);
+    setStatus(`Uploaded ${filename} (${audioBlob.size} bytes).`);
   }
 
   function loop(t) {
