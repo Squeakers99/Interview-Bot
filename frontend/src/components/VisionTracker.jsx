@@ -529,9 +529,6 @@ export default function VisionTracker({
         <div className="vision-tracker__phase-overlay">
           <div className="vision-tracker__phase-badge">Phase: {phase.toUpperCase()}</div>
         </div>
-
-        {/* Optional debug: show status */}
-        {/* <div style={{ position: "absolute", bottom: 10, left: 10, fontSize: 12, opacity: 0.8 }}>{status}</div> */}
       </div>
     </div>
   );

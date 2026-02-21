@@ -40,6 +40,7 @@ def normalize_prompt_type(prompt_type: Optional[str]) -> str:
         "situational": "situational",
         "technical": "technical",
         "tech": "technical",
+        "background": "general",
         "general": "general",
         "other": "general",
     }

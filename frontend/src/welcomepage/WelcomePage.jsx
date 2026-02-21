@@ -45,11 +45,11 @@ export default function WelcomePage() {
                     value={selectedCategory}
                     onChange={(event) => setSelectedCategory(event.target.value)}
                 >
-                    <option value="all">All</option>
-                    <option value="behaviour">Behaviour</option>
-                    <option value="situation">Situation</option>
+                    <option value="all">Any Type</option>
+                    <option value="behaviour">Behavioural</option>
+                    <option value="situation">Situational</option>
                     <option value="technical">Technical</option>
-                    <option value="general">Other / General</option>
+                    <option value="general">General</option>
                 </select>
 
                 <label className="welcome-filter-label" htmlFor="question-difficulty">
@@ -61,17 +61,19 @@ export default function WelcomePage() {
                     value={selectedDifficulty}
                     onChange={(event) => setSelectedDifficulty(event.target.value)}
                 >
-                    <option value="all">Default Difficulty Level</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
+                    <option value="any">Any Difficulty</option>
+                    <option value="1">Easy</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Hard</option>
+                    <option value="4">Expert</option>
+                    <option value="5">Master</option>
                 </select>
             </div>
 
             <button className="start-button" onClick={() => setStarted(true)}>
                 Start Interview
             </button>
-            
+
         </div>
     );
 }
