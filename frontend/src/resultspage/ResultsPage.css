@@ -1,53 +1,76 @@
-.results-container{
-    max-width: 800px;
-    margin: auto auto;
-    padding: 24px;
-    font-family: "Times New Roman", Times, serif;
+.results-container {
+  display: grid;
+  grid-template-columns: minmax(0, 680px) minmax(260px, 1fr);
+  column-gap: 24px;
+  align-items: start;
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  padding: 24px;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.results-header {
+  grid-column: 1 / -1;
+  text-align: center;
 }
 
 .results-title {
-    font-size: 34px;
-    margin: 0 0 10px 0;
-    text-align: center;
-    
+  font-size: 34px;
+  margin: 0 0 10px;
 }
+
 .results-subtitle {
-    text-align: center;
-    color: #554848;
-    line-height: 1.6;
-    margin: 0 auto 24px auto;
-    max-width: 800px;
+  color: #554848;
+  line-height: 1.6;
+  margin: 0 auto 24px;
+  max-width: 800px;
 }
 
-.results-container {
-    display:grid;
+.results-charts {
+  grid-column: 1;
+  display: grid;
+  gap: 16px;
 }
 
-.New-Interview {
-    display: block;
-    position: relative;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4e73df;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.New-Interview:hover {
-    background-color: #2e59d9;
-    transform: scale(1.05);
+.graph-card {
+  width: 100%;
 }
 
-.Eye-timeline {
-    text-align: center;
-    padding: 2px;
-    font-family: 'Times New Roman', Times, serif;
+.graph-title {
+  margin: 0 0 8px;
+  text-align: center;
 }
 
-.Posture-timeline {
-    text-align: center;
-    padding: 2px;
-    font-family: 'Times New Roman', Times, serif;
+.graph-wrap {
+  width: 100%;
+  min-height: 300px;
+}
+
+.results-button {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4e73df;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.results-button:hover {
+  background-color: #2e59d9;
+  transform: scale(1.05);
+}
+
+@media (max-width: 980px) {
+  .results-container {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+  }
+
+  .results-charts {
+    grid-column: 1;
+  }
 }
