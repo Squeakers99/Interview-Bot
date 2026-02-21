@@ -1,10 +1,14 @@
 .vision-tracker {
-  margin-bottom: 16px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
 }
 
 .vision-tracker__frame {
   position: relative;
-  display: inline-block;
+  width: min(58vw, 680px);
 }
 
 .vision-tracker__video-hidden {
@@ -15,6 +19,8 @@
   border: 1px solid #ddd;
   border-radius: 12px;
   display: block;
+  width: 100%;
+  height: auto;
 }
 
 .vision-tracker__timer-overlay {

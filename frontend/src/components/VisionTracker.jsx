@@ -43,6 +43,7 @@ export default function VisionTracker({
   enabled = true,
   autoStartCamera = true,
   drawLandmarks = true,
+  initialStream = null,
   onUpdate,
   onAnalysisResult,
   onEnd, // ✅ NEW: lets parent return to entry page
@@ -73,7 +74,7 @@ export default function VisionTracker({
   const [modelsReady, setModelsReady] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
   const [status, setStatus] = useState("Loading models...");
-  const [phase, setPhase] = useState("idle");
+  const [phase, setPhase] = useState(autoStartCamera ? "thinking" : "idle");
   const [timeLeft, setTimeLeft] = useState(INTERVIEW_TIMINGS.thinkingSeconds);
 
   // These are used in uploadAudio summary; must exist (not just setters)
@@ -137,9 +138,14 @@ export default function VisionTracker({
     if (!enabled) return;
     if (!modelsReady) return;
     if (!autoStartCamera) return;
-    if (!cameraOn) startCamera();
+    if (cameraOn) return;
+    if (initialStream) {
+      startCamera(initialStream);
+      return;
+    }
+    startCamera();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, modelsReady, autoStartCamera]);
+  }, [enabled, modelsReady, autoStartCamera, cameraOn, initialStream]);
 
   // ------------------ Preview Loop Control ------------------
   useEffect(() => {
@@ -199,13 +205,20 @@ export default function VisionTracker({
   }, [enabled, cameraOn, phase, timeLeft]);
 
   // ------------------ Camera ------------------
-  async function startCamera() {
+  async function startCamera(preloadedStream = null) {
     try {
-      setStatus("Requesting camera...");
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: VIDEO_W, height: VIDEO_H },
-        audio: true,
-      });
+      setPhase("thinking");
+      setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
+      let stream = preloadedStream;
+      if (!stream) {
+        setStatus("Requesting camera...");
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: VIDEO_W, height: VIDEO_H },
+          audio: true,
+        });
+      } else {
+        setStatus("Starting camera...");
+      }
 
       streamRef.current = stream;
       if (videoRef.current) videoRef.current.srcObject = stream;
