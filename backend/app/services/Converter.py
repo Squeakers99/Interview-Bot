@@ -2,10 +2,73 @@ import os
 import json
 import uuid
 import logging
+import librosa
+import numpy as np
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 from dotenv import load_dotenv
+
+def analyze_voice_tone(file_path: str) -> dict:
+    try:
+        # Load audio file
+        y, sr = librosa.load(file_path, sr=None)
+
+        #1 pitch (F0 - fundamental frequency)
+        f0, voiced_flag, _ = librosa.pyin(y, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'))
+        voiced_f0 = f0[voiced_flag]
+
+        avg_pitch = float(np.mean(voiced_f0)) if len(voiced_f0) > 0 else 0.0
+        pitch_variability = float(np.std(voiced_f0)) if len(voiced_f0) > 0 else 0.0
+
+        duration = lirbosa.get_duration(y=y, sr=sr)
+        zcr = librosa.feature.zero_crossing_rate(y)
+        avg_zcr = float(np.mean(zcr))
+
+        speaking_rate = avg_zcr * sr / 2 
+
+        rms = librosa.feature.rms(y=y)
+        avg_energy = float(np.mean(rms))
+        energy_variation = float(np.std(rms))
+
+        if avg_pitch < 100:
+            pitch_feedback = "Very low pitch - may sound flat or monotone."
+        elif avg_pitch < 165:
+            pitch_feedback = "Low-normal pitch - can sound calm but may lack energy."
+        elif avg_pitch < 255:
+            pitch_feedback = "Normal pitch - generally good for professional settings."
+        else:
+            pitch_feedback = "High pitch - may sound nervous or overly excited."
+
+        #Monotone feedback
+        if pitch_variability < 20:
+            monotone_feedback = "Monotone delivery - consider varying your pitch more to sound more engaging."
+        elif pitch_variability < 50:
+            monotone_feedback = "Some pitch variation - good, but adding more could enhance engagement."
+        else:
+            monotone_feedback = "Good pitch variability - your voice likely sounds dynamic and engaging."
+
+        # speaking rate 
+        if speaking_rate < 2.5:
+            rate_feedback = "Speaking rate is slow - may come across as hesitant or lacking confidence."
+        elif speaking_rate > 5.5:
+            rate_feedback = "Speaking rate is fast - slow down so the interviewer can better understand your responses."
+        else:
+            rate_feedback = "Speaking rate is moderate - easy to follow and understand."
+
+        return {
+            "avg_pitch_hz": round(avg_pitch, 2),
+            "pitch_variation": round(pitch_variation, 2),
+            "speaking_rate": round(speaking_rate, 2),
+            "avg_energy": round(avg_energy, 4),
+            "energy_variation": round(energy_variation, 4),
+            "pitch_feedback": pitch_feedback,
+            "tone_feedback": monotone_feedback,
+            "rate_feedback": rate_feedback,
+        }
+        except Exception as e:
+            logger.error(f"Error analyzing voice tone: {e}")
+            return {"error": str(e)}  
 
 print("DEBUG: Analysis started...", flush=True)
 
@@ -45,7 +108,13 @@ async def analyze_interview(
                 promtpt="Transcribe this interview audio clearly and accurately. Focus on capturing the candidate's words verbatim, including filler words and hesitations, as these are important for analysis."
             )
         transcript = stt_result.text
-        print(transcript, flush=True)  # Debug: Print transcript to console
+
+        voice_analysis = analyze_voice_tone(file_path)
+        print("\n===== VOICE TONE ANALYSIS =====", flush=True)
+        print(f"Avg Pitch: {voice_analysis.get('avg_pitch_hz')} Hz — {voice_analysis.get('pitch_feedback')}", flush=True)
+        print(f"Tone: {voice_analysis.get('tone_feedback')}", flush=True)
+        print(f"Speaking Rate: {voice_analysis.get('speaking_rate')} — {voice_analysis.get('rate_feedback')}", flush=True)
+        print("================================\n", flush=True)
 
         # C. Process Vision Metrics
         metrics = json.loads(vision_metrics)
@@ -59,6 +128,11 @@ async def analyze_interview(
         Transcript: {transcript}
         Posture Score: {metrics['postureGoodPct']}%
         Eye Contact Score: {metrics['eyeGoodPct']}%
+
+        --- VOICE TONE DATA ---
+        Average Pitch: {voice_analysis.get('avg_pitch_hz')} Hz — {voice_analysis.get('pitch_feedback')}
+        Tone Variation: {voice_analysis.get('tone_feedback')}
+        Speaking Rate: {voice_analysis.get('speaking_rate')} — {voice_analysis.get('rate_feedback')}
 
         --- SCORING RUBRIC (100 points total) ---
         Score each category honestly. A 7/10 overall is a GOOD interview. Reserve 9-10 for exceptional candidates.
@@ -82,10 +156,11 @@ async def analyze_interview(
         - Posture above 80% = full marks for posture
         - Eye contact above 80% = full marks for eye contact
 
-        5. ENGAGEMENT & ENERGY (15 pts)
-        - Does the candidate seem enthusiastic and engaged?
-        - Do they ask thoughtful questions?
-        - Is there a natural conversational flow?
+        5. VOCAL DELIVERY (15 pts)
+        - Pitch: {voice_analysis.get('avg_pitch_hz')} Hz — {voice_analysis.get('pitch_feedback')}
+        - Tone variation: {voice_analysis.get('tone_feedback')}
+        - Speaking rate: {voice_analysis.get('rate_feedback')}
+        - Is the voice confident, varied, and appropriately paced?
 
         --- RESPONSE FORMAT (follow this exactly) ---
 
@@ -127,6 +202,7 @@ async def analyze_interview(
         return {
             "transcript": transcript,
             "vision_summary": metrics,
+            "voice_analysis": voice_analysis,
             "llm_review": review,
             
         }
