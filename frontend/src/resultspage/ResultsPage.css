@@ -1,1 +1,13 @@
+.results-wrapper{
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 24px;
+    font-family: "Times New Roman"
+}
+
+.results-title {
+    font-size: 34px;
+
+
+}
 
