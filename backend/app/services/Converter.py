@@ -4,8 +4,8 @@ import uuid
 import logging
 import librosa
 import numpy as np
-from fastapi import FastAPI, UploadFile, File, Form
-from fastapi.middleware.cors import CORSMiddleware
+from pydub import AudioSegment
+from fastapi import FastAPI
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -14,55 +14,80 @@ logger = logging.getLogger("uvicorn.error")
 load_dotenv() # Load your Groq or OpenAI API key from .env
 
 def analyze_voice_tone(file_path: str) -> dict:
+    wav_path = file_path.replace(".webm", ".wav")
     try:
-        # Load audio file
-        y, sr = librosa.load(file_path, sr=None)
+        # Convert .webm to .wav first for much better librosa accuracy
+        audio = AudioSegment.from_file(file_path, format="webm")
+        audio = audio.set_channels(1).set_frame_rate(16000)  # mono, 16kHz is ideal for voice
+        audio.export(wav_path, format="wav")
 
-        #1 pitch (F0 - fundamental frequency)
-        f0, voiced_flag, _ = librosa.pyin(y, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'))
-        voiced_f0 = f0[voiced_flag]
+        # Now load the clean wav
+        y, sr = librosa.load(wav_path, sr=16000)
+
+        # Remove silence before analysis — silence skews pitch readings
+        intervals = librosa.effects.split(y, top_db=30)
+        y_voiced = np.concatenate([y[start:end] for start, end in intervals])
+
+        if len(y_voiced) < sr * 0.5:  # Less than 0.5 seconds of speech
+            return {"error": "Not enough speech detected"}
+
+        # 1. Pitch Analysis — use y_voiced only (no silence)
+        f0, voiced_flag, _ = librosa.pyin(
+            y_voiced,
+            fmin=librosa.note_to_hz('C2'),
+            fmax=librosa.note_to_hz('C7'),
+            frame_length=2048,
+        )
+        voiced_f0 = f0[voiced_flag & ~np.isnan(f0)]
 
         avg_pitch = float(np.mean(voiced_f0)) if len(voiced_f0) > 0 else 0.0
         pitch_variability = float(np.std(voiced_f0)) if len(voiced_f0) > 0 else 0.0
 
-        duration = librosa.get_duration(y=y, sr=sr)
-        zcr = librosa.feature.zero_crossing_rate(y)
-        avg_zcr = float(np.mean(zcr))
+        # Normalize pitch variability as % of mean for fairer comparison
+        pitch_variability_pct = (pitch_variability / avg_pitch * 100) if avg_pitch > 0 else 0
 
-        speaking_rate = avg_zcr * sr / 2 
+        # 2. Speaking Rate — use onset detection (much more accurate than ZCR)
+        onset_frames = librosa.onset.onset_detect(y=y_voiced, sr=sr, units='time')
+        duration_voiced = len(y_voiced) / sr
+        speaking_rate = len(onset_frames) / duration_voiced if duration_voiced > 0 else 0
 
-        rms = librosa.feature.rms(y=y)
+        # 3. Energy
+        rms = librosa.feature.rms(y=y_voiced)
         avg_energy = float(np.mean(rms))
         energy_variation = float(np.std(rms))
 
-        if avg_pitch < 100:
-            pitch_feedback = "Very low pitch - may sound flat or monotone."
-        elif avg_pitch < 165:
-            pitch_feedback = "Low-normal pitch - can sound calm but may lack energy."
-        elif avg_pitch < 255:
-            pitch_feedback = "Normal pitch - generally good for professional settings."
+        # 4. Pitch feedback — use gender-neutral ranges
+        if avg_pitch < 85:
+            pitch_feedback = "Very low pitch — may sound flat or disengaged."
+        elif avg_pitch < 180:
+            pitch_feedback = "Low-normal pitch — sounds calm and authoritative."
+        elif avg_pitch < 300:
+            pitch_feedback = "Normal pitch range — good for conversation."
         else:
-            pitch_feedback = "High pitch - may sound nervous or overly excited."
+            pitch_feedback = "High pitch — may sound nervous or anxious."
 
-        #Monotone feedback
-        if pitch_variability < 20:
-            monotone_feedback = "Monotone delivery - consider varying your pitch more to sound more engaging."
-        elif pitch_variability < 50:
-            monotone_feedback = "Some pitch variation - good, but adding more could enhance engagement."
+        # 5. Monotone feedback — use % variability for accuracy
+        if pitch_variability_pct < 10:
+            monotone_feedback = "Very monotone — your pitch barely changes, which can disengage interviewers. Practice varying your tone when emphasizing key points."
+        elif pitch_variability_pct < 25:
+            monotone_feedback = "Slightly monotone — some variation present but adding more expressiveness would help keep the interviewer engaged."
+        elif pitch_variability_pct < 60:
+            monotone_feedback = "Good pitch variation — your voice sounds natural and engaging."
         else:
-            monotone_feedback = "Good pitch variability - your voice likely sounds dynamic and engaging."
+            monotone_feedback = "High pitch variation — make sure your tone stays controlled and professional."
 
-        # speaking rate 
-        if speaking_rate < 2.5:
-            rate_feedback = "Speaking rate is slow - may come across as hesitant or lacking confidence."
-        elif speaking_rate > 5.5:
-            rate_feedback = "Speaking rate is fast - slow down so the interviewer can better understand your responses."
+        # 6. Speaking rate feedback — onsets per second
+        if speaking_rate < 2.0:
+            rate_feedback = "Speaking too slowly — try to pick up the pace to sound more confident."
+        elif speaking_rate > 6.0:
+            rate_feedback = "Speaking too fast — slow down so the interviewer can follow you."
         else:
-            rate_feedback = "Speaking rate is moderate - easy to follow and understand."
+            rate_feedback = "Good speaking rate — easy to follow."
 
         return {
             "avg_pitch_hz": round(avg_pitch, 2),
             "pitch_variation": round(pitch_variability, 2),
+            "pitch_variation_pct": round(pitch_variability_pct, 2),
             "speaking_rate": round(speaking_rate, 2),
             "avg_energy": round(avg_energy, 4),
             "energy_variation": round(energy_variation, 4),
@@ -72,13 +97,13 @@ def analyze_voice_tone(file_path: str) -> dict:
         }
     except Exception as e:
         logger.error(f"Error analyzing voice tone: {e}")
-        return {"error": str(e)}  
+        return {"error": str(e)}
+    finally:
+        if os.path.exists(wav_path):
+            os.remove(wav_path)  
 
 print("DEBUG: Analysis started...", flush=True)
 
-
-
-app = FastAPI()
 
 # 2. Setup AI Models
 # LLM (API via Groq)
@@ -216,8 +241,4 @@ async def analyze_interview(
         # E. Cleanup: Always delete even if code fails
         if os.path.exists(file_path):
             os.remove(file_path)
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000)
     
