@@ -7,8 +7,6 @@ from app.services.analysis_service import (
     save_json_payload,
     save_upload_bytes,
 )
-from app.services.Converter import analyze_interview
-
 router = APIRouter()
 
 @router.post("/analyze")
@@ -41,8 +39,16 @@ async def analyze(
     print(f"audio_preview_hex={audio_bytes[:24].hex()}", flush=True)
     print(f"interview_summary={summary}", flush=True)
 
-    # Call the analyze_interview function from Converter.py
-    interview_analysis = await analyze_interview(audio_bytes, vision_metrics)
+    interview_analysis = None
+    try:
+        # Lazy import so missing optional deps (e.g. openai) do not break router startup.
+        from app.services.Converter import analyze_interview
+        interview_analysis = await analyze_interview(audio_bytes, vision_metrics)
+    except Exception as exc:
+        interview_analysis = {
+            "error": "analysis_unavailable",
+            "detail": str(exc),
+        }
 
     return {
         "ok": True,
