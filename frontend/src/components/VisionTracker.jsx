@@ -294,6 +294,15 @@ export default function VisionTracker({
     }
   }
 
+  function skipThinkingPhase() {
+    if (phase !== "thinking") return;
+    setPhase("response");
+    setTimeLeft(INTERVIEW_TIMINGS.responseSeconds);
+    setStatus("Response time started.");
+    timelineStartMsRef.current = performance.now();
+    if (streamRef.current) startAudioRecording(streamRef.current);
+  }
+
   function resetAggregates() {
     aggRef.current = { frames: 0, postureGoodFrames: 0, eyeGoodFrames: 0 };
     setPostureScoreUI(null);
@@ -318,6 +327,9 @@ export default function VisionTracker({
   function startAudioRecording(stream) {
     if (!window.MediaRecorder) {
       setStatus("MediaRecorder not supported in this browser.");
+      return;
+    }
+    if (recorderRef.current && recorderRef.current.state !== "inactive") {
       return;
     }
     try {
@@ -510,13 +522,23 @@ export default function VisionTracker({
         <canvas ref={canvasRef} width={VIDEO_W} height={VIDEO_H} className="vision-tracker__canvas" />
 
         <div className="vision-tracker__center-overlay">
-          <button
-            onClick={endInterviewByUser}
-            className="vision-btn vision-btn--danger vision-btn--end"
-            disabled={!cameraOn || phase !== "response"}
-          >
-            End Interview
-          </button>
+          {phase === "thinking" ? (
+            <button
+              onClick={skipThinkingPhase}
+              className="vision-btn vision-btn--light vision-btn--end"
+              disabled={!cameraOn}
+            >
+              Ready Now
+            </button>
+          ) : (
+            <button
+              onClick={endInterviewByUser}
+              className="vision-btn vision-btn--danger vision-btn--end"
+              disabled={!cameraOn || phase !== "response"}
+            >
+              End Interview
+            </button>
+          )}
         </div>
 
         <div className="vision-tracker__timer-overlay">

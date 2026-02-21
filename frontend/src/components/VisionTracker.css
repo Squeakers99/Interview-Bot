@@ -88,6 +88,12 @@
   color: #fff;
 }
 
+.vision-btn--light {
+  background: #fff;
+  border-color: #fff;
+  color: #111;
+}
+
 .vision-btn--end {
   pointer-events: auto;
   min-width: 170px;
