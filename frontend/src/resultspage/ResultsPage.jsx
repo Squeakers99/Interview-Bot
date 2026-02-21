@@ -2,7 +2,7 @@ import "./ResultsPage.css";
 import { useState } from "react";
 import App from "../App";
 
-export default function resultspage() {
+export default function ResultsPage() {
     const [started, setStarted] = useState(false);
 
     if (started) {
