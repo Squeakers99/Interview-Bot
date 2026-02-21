@@ -1,6 +1,13 @@
 import "./WelcomePage.css";
+import { useState } from "react";
+import App from "../App";
 
-export default function WelcomePage({ onStart }) {
+export default function WelcomePage() {
+    const [started, setStarted] = useState(false);
+
+    if (started) {
+        return <App />;
+    }
 
     return (
         <div className="welcome-container">
@@ -16,7 +23,7 @@ export default function WelcomePage({ onStart }) {
 
             </p>
 
-            <button className="start-button" onClick={onStart}>
+            <button className="start-button" onClick={() => setStarted(true)}>
                 Start Interview
             </button>
         </div>

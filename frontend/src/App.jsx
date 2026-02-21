@@ -1,10 +1,8 @@
 import { useState } from "react";
 import VisionTracker from "./components/VisionTracker";
 import ScoreCard from "./components/ScoreCard";
-import WelcomePage from "./welcomepage/WelcomePage";
 
 export default function App() {
-  const [started, setStarted] = useState(false);
   const [vision, setVision] = useState({
     postureScore: null,
     eyeScore: null,
@@ -12,10 +10,6 @@ export default function App() {
     eyeGoodPct: 0,
   });
   const [analysisResult, setAnalysisResult] = useState(null);
-
-  if (!started) {
-    return <WelcomePage onStart={() => setStarted(true)} />;
-  }
 
   return (
     <div style={{ maxWidth: 1100, margin: "24px auto", fontFamily: "system-ui" }}>
