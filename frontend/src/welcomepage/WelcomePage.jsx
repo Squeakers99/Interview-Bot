@@ -25,7 +25,7 @@ export default function WelcomePage() {
                 </h1>
             
                 <p className="welcome-title1">
-                    You will answer 1 question typically seen in an interviews. 
+                    You will answer 1 question typically seen in an interview. 
                 </p>
 
                 <p className="welcome-title2">

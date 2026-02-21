@@ -1,5 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect,useMemo, useState } from "react";
 import "./ResultsPage.css";
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer
+} from "recharts";
+
 
 export default function ResultsPage({ onRestart }) {
   const [eyeHistory, setEyeHistory] = useState([]);
@@ -28,6 +38,50 @@ export default function ResultsPage({ onRestart }) {
     load();
   }, []);
 
+  function normalizeTimeline(arr) {
+  return (arr || []).map((item, index) => {
+    // If backend returns just numbers: [0.1, 0.3, 0.9]
+    if (typeof item === "number") {
+      return { time: index, value: item };
+    }
+
+    // If backend returns objects: pick time + best numeric value
+    if (item && typeof item === "object") {
+      const time =
+        item.time ?? item.t ?? item.ts ?? item.x ?? item.frame ?? item.seconds ?? item.timestamp ?? index;
+
+      // Try common value keys first
+      let raw =
+        item.value ??
+        item.score ??
+        item.y ??
+        item.prob ??
+        item.confidence ??
+        item.val ??
+        item.eye ??
+        item.eye_contact ??
+        item.posture ??
+        item.posture_score;
+
+      // If still undefined, auto-pick the first numeric field in the object
+      if (raw === undefined) {
+        const numericEntry = Object.entries(item).find(
+          ([key, v]) => key !== "time" && key !== "t" && key !== "ts" && key !== "timestamp" && typeof v === "number"
+        );
+        raw = numericEntry ? numericEntry[1] : 0;
+      }
+
+      const value = Number(raw);
+      return { time: Number(time), value: Number.isFinite(value) ? value : 0 };
+    }
+
+    return { time: index, value: 0 };
+  });
+}
+
+  const eyeData = useMemo(() => normalizeTimeline(eyeHistory), [eyeHistory]);
+  const postureData = useMemo(() => normalizeTimeline(postureHistory), [postureHistory]);
+
   return (
     <div className="results-container">
       <h1 className="results-title">Interview Results</h1>
@@ -38,12 +92,40 @@ export default function ResultsPage({ onRestart }) {
 
       {!loading && !error ? (
         <>
-          <p>Eye timeline points: {eyeHistory.length}</p>
-          <p>Posture timeline points: {postureHistory.length}</p>
+          <div className="graph-card">
+            <h2 className="graph-title">Eye Timeline</h2>
+            <div className="graph-wrap">
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={eyeData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="value" dot={true} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="graph-card">
+            <h2 className="graph-title">Posture Timeline</h2>
+            <div className="graph-wrap">
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={postureData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="value" dot={true} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </>
       ) : null}
+     
 
-      <button onClick={onRestart}>Start New Interview</button>
+      <button className="New-Interview" onClick={onRestart}>Start New Interview</button>
     </div>
   );
 }
