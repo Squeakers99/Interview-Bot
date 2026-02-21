@@ -38,27 +38,46 @@ export default function ResultsPage({ onRestart }) {
     load();
   }, []);
 
-  function normalizeTimeline(arr){
-    return (arr || []).map((item, index) => {
-      // If backend returns just numbers: [0.1, 0.3, 0.9]
-      if (typeof item === "number") {
-        return { time: index, value: item };
+  function normalizeTimeline(arr) {
+  return (arr || []).map((item, index) => {
+    // If backend returns just numbers: [0.1, 0.3, 0.9]
+    if (typeof item === "number") {
+      return { time: index, value: item };
+    }
+
+    // If backend returns objects: pick time + best numeric value
+    if (item && typeof item === "object") {
+      const time =
+        item.time ?? item.t ?? item.ts ?? item.x ?? item.frame ?? item.seconds ?? item.timestamp ?? index;
+
+      // Try common value keys first
+      let raw =
+        item.value ??
+        item.score ??
+        item.y ??
+        item.prob ??
+        item.confidence ??
+        item.val ??
+        item.eye ??
+        item.eye_contact ??
+        item.posture ??
+        item.posture_score;
+
+      // If still undefined, auto-pick the first numeric field in the object
+      if (raw === undefined) {
+        const numericEntry = Object.entries(item).find(
+          ([key, v]) => key !== "time" && key !== "t" && key !== "ts" && key !== "timestamp" && typeof v === "number"
+        );
+        raw = numericEntry ? numericEntry[1] : 0;
       }
 
-      // If backend returns objects: [{time: ..., value: ...}, ...]
-      if (item && typeof item === "object") {
-        const time =
-          item.time ?? item.t ?? item.ts ?? item.x ?? item.frame ?? item.seconds ?? index;
+      const value = Number(raw);
+      return { time: Number(time), value: Number.isFinite(value) ? value : 0 };
+    }
 
-        const value =
-          item.value ?? item.score ?? item.y ?? item.prob ?? item.confidence ?? item.val ?? 0;
-
-        return { time, value: Number(value) };
-      }
-
-      return { time: index, value: 0 };
-    });  
-  }
+    return { time: index, value: 0 };
+  });
+}
 
   const eyeData = useMemo(() => normalizeTimeline(eyeHistory), [eyeHistory]);
   const postureData = useMemo(() => normalizeTimeline(postureHistory), [postureHistory]);
@@ -82,7 +101,7 @@ export default function ResultsPage({ onRestart }) {
                   <XAxis dataKey="time" />
                   <YAxis />
                   <Tooltip />
-                  <Line type="monotone" dataKey="value" dot={false} />
+                  <Line type="monotone" dataKey="value" dot={true} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -97,7 +116,7 @@ export default function ResultsPage({ onRestart }) {
                   <XAxis dataKey="time" />
                   <YAxis />
                   <Tooltip />
-                  <Line type="monotone" dataKey="value" dot={false} />
+                  <Line type="monotone" dataKey="value" dot={true} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
