@@ -1,6 +1,5 @@
 import os
 import json
-import whisper
 import uuid
 import logging
 from fastapi import FastAPI, UploadFile, File, Form
@@ -17,8 +16,6 @@ load_dotenv() # Load your Groq or OpenAI API key from .env
 app = FastAPI()
 
 # 2. Setup AI Models
-# Whisper (Local)
-whisper_model = whisper.load_model("small")
 # LLM (API via Groq)
 llm_client = OpenAI(
     api_key=os.getenv("GROQ_API_KEY"),
@@ -41,9 +38,12 @@ async def analyze_interview(
         with open(file_path, "wb") as f:
             f.write(audio_bytes)
 
-        # B. Transcription
-        stt_result = whisper_model.transcribe(file_path)
-        transcript = stt_result["text"]
+        with open(file_path, "rb") as audio_file:
+            stt_result = llm_client.audio.transcriptions.create(
+                file=audio_file,
+                model="whisper-large-v3",
+            )
+        transcript = stt_result.text
         print(transcript, flush=True)  # Debug: Print transcript to console
 
         # C. Process Vision Metrics
