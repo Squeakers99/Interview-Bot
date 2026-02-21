@@ -1,0 +1,40 @@
+.countdown-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  background: radial-gradient(circle at top, #91b2ff 0%, #4868c7 45%, #202656 100%);
+  color: #f7f9ff;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.countdown-label {
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.countdown-number {
+  font-size: clamp(10rem, 34vw, 24rem);
+  line-height: 1;
+  font-weight: 700;
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  animation: pulsePop 0.9s ease;
+}
+
+@keyframes pulsePop {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.85);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

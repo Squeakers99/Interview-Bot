@@ -44,6 +44,8 @@ async def analyze(
         # Lazy import so missing optional deps (e.g. openai) do not break router startup.
         from app.services.Converter import analyze_interview
         interview_analysis = await analyze_interview(audio_bytes, vision_metrics)
+        save_json_payload(interview_analysis, "Interview-Results.json")
+        print("[/analyze] results saved to Interview-Results.json", flush=True)
     except Exception as exc:
         interview_analysis = {
             "error": "analysis_unavailable",
@@ -67,3 +69,11 @@ async def analyze(
         "interview_analysis": interview_analysis,
         "message": "Received audio + metrics. Next step: transcription + scoring.",
     }
+@router.get("/results/interview")
+async def get_interview_results():
+    import os
+    results_path = os.path.join("uploads", "Interview-Results.json")
+    if not os.path.exists(results_path):
+        return {"error": "No results found. Run an analysis first."}
+    with open(results_path, "r") as f:
+        return json.load(f)
