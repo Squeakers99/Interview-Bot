@@ -21,50 +21,90 @@ function formatMMSS(totalSeconds) {
   return `${mm}:${ss}`;
 }
 
-function decodeEscapedNewlines(value) {
-  if (typeof value !== "string") return value;
-  return value.replace(/\\n/g, "\n").replace(/\r\n/g, "\n");
+function toTitle(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "N/A";
+  return raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
 }
 
-function toReadableReview(value, indent = 0) {
-  const pad = " ".repeat(indent);
+function splitFeedbackBlock(value) {
+  if (!value) return [];
+  const normalized = String(value).replace(/\\n/g, "\n");
+  return normalized
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.replace(/^[:\-\*]\s*/, ""))
+    .map((line) => line.replace(/^:\s*/, ""))
+    .filter(Boolean);
+}
 
-  if (value == null) return `${pad}No LLM review available yet.`;
-  if (typeof value === "string") return `${pad}${decodeEscapedNewlines(value)}`;
-  if (typeof value === "number" || typeof value === "boolean") return `${pad}${String(value)}`;
+function scoreValue(value) {
+  if (value === null || value === undefined || value === "") return "N/A";
+  return String(value);
+}
 
-  if (Array.isArray(value)) {
-    if (!value.length) return `${pad}[]`;
-    return value
-      .map((item) => {
-        if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
-          return `${pad}- ${decodeEscapedNewlines(String(item))}`;
-        }
-        return `${pad}-\n${toReadableReview(item, indent + 2)}`;
-      })
-      .join("\n");
+function totalScoreLabel(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "N/A";
+  return raw.includes("/100") ? raw : `${raw}/100`;
+}
+
+function difficultyLabel(value) {
+  const raw = String(value ?? "").trim();
+  const map = {
+    "1": "Easy",
+    "2": "Medium",
+    "3": "Hard",
+    "4": "Expert",
+    "5": "Master",
+    easy: "Easy",
+    medium: "Medium",
+    hard: "Hard",
+    expert: "Expert",
+    master: "Master",
+  };
+  return map[raw.toLowerCase()] || toTitle(raw);
+}
+
+function fallbackParsedFromReview(llmReview) {
+  const text = String(llmReview || "");
+  if (!text) return {};
+  const grab = (label, endToken) => {
+    if (!text.includes(label)) return "";
+    try {
+      return text.split(label)[1].split(endToken)[0].trim();
+    } catch {
+      return "";
+    }
+  };
+  return {
+    clarity_score: grab("Communication Clarity: ", "/25"),
+    content_score: grab("Content & Substance: ", "/25"),
+    professionalism_score: grab("Professionalism: ", "/20"),
+    body_language_score: grab("Body Language: ", "/15"),
+    vocal_delivery_score: grab("Vocal Delivery: ", "/15"),
+    total_score: grab("TOTAL SCORE: ", "(") || grab("TOTAL SCORE: ", "/100"),
+  };
+}
+
+function renderList(items, emptyLabel) {
+  if (!items.length) {
+    return <p className="parsed-empty">{emptyLabel}</p>;
   }
-
-  if (typeof value === "object") {
-    const entries = Object.entries(value);
-    if (!entries.length) return `${pad}{}`;
-    return entries
-      .map(([key, val]) => {
-        if (typeof val === "string" || typeof val === "number" || typeof val === "boolean") {
-          return `${pad}${key}: ${decodeEscapedNewlines(String(val))}`;
-        }
-        return `${pad}${key}:\n${toReadableReview(val, indent + 2)}`;
-      })
-      .join("\n");
-  }
-
-  return `${pad}${String(value)}`;
+  return (
+    <ul className="parsed-list">
+      {items.map((item, index) => (
+        <li key={`${item}-${index}`}>{item}</li>
+      ))}
+    </ul>
+  );
 }
 
 export default function ResultsPage({ onRestart }) {
   const [eyeHistory, setEyeHistory] = useState([]);
   const [postureHistory, setPostureHistory] = useState([]);
-  const [llmReview, setLlmReview] = useState(null);
+  const [fullResults, setFullResults] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -72,22 +112,22 @@ export default function ResultsPage({ onRestart }) {
     async function load() {
       const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
       try {
-        const [eyeRes, postureRes, llmRes] = await Promise.all([
+        const [eyeRes, postureRes, fullRes] = await Promise.all([
           fetch(`${apiBase}/results/eye_timeline`),
           fetch(`${apiBase}/results/posture_timeline`),
-          fetch(`${apiBase}/results/llm_review`),
+          fetch(`${apiBase}/results/full`),
         ]);
 
         const eyeJson = await eyeRes.json();
         const postureJson = await postureRes.json();
-        const llmJson = await llmRes.json();
+        const fullJson = await fullRes.json();
 
         const eyePoints = Array.isArray(eyeJson) ? eyeJson : eyeJson.eye_timeline || [];
         const posturePoints = Array.isArray(postureJson) ? postureJson : postureJson.posture_timeline || [];
 
         setEyeHistory(eyePoints);
         setPostureHistory(posturePoints);
-        setLlmReview(llmJson?.llm_review ?? null);
+        setFullResults(fullJson?.results || {});
       } catch {
         setError("Failed to load results.");
       } finally {
@@ -106,7 +146,16 @@ export default function ResultsPage({ onRestart }) {
     () => Math.max(sessionLength(eyeData), sessionLength(postureData)),
     [eyeData, postureData]
   );
-  const llmReviewText = useMemo(() => toReadableReview(llmReview), [llmReview]);
+  const converterParsed = fullResults?.converter_parsed || {};
+  const parsedFallback = useMemo(
+    () => fallbackParsedFromReview(fullResults?.llm_review),
+    [fullResults?.llm_review]
+  );
+  const parsed = { ...parsedFallback, ...converterParsed };
+  const doingWellItems = useMemo(() => splitFeedbackBlock(parsed.doing_well), [parsed.doing_well]);
+  const mustImproveItems = useMemo(() => splitFeedbackBlock(parsed.must_improve), [parsed.must_improve]);
+  const habitsItems = useMemo(() => splitFeedbackBlock(parsed.habits_to_keep), [parsed.habits_to_keep]);
+  const actionPlanItems = useMemo(() => splitFeedbackBlock(parsed.action_plan), [parsed.action_plan]);
 
   const handleDownload = async () => { // added download section here
     const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
@@ -157,21 +206,67 @@ export default function ResultsPage({ onRestart }) {
                 <p className="metric-card__label">Session Length</p>
                 <p className="metric-card__value">{formatMMSS(totalDuration)}</p>
               </article>
-              <article className="metric-card">
-                <p className="metric-card__label">Timeline Samples</p>
-                <p className="metric-card__value">{Math.max(eyeData.length, postureData.length)}</p>
-              </article>
             </section>
 
             <section className="results-charts">
               <TimelineChart title="Eye Timeline" data={eyeData} />
               <TimelineChart title="Posture Timeline" data={postureData} />
-              <section className="graph-card llm-review-card">
-                <h2 className="graph-title">LLM Review</h2>
-                <div className="llm-review-content">
-                  <pre className="llm-review-pre">{llmReviewText}</pre>
+              <section className="graph-card parsed-summary-card">
+                <h2 className="graph-title">Interview Breakdown</h2>
+                <div className="parsed-meta">
+                  <p><strong>Question:</strong> {parsed.question || fullResults?.prompt_text || "N/A"}</p>
+                  <p><strong>Type:</strong> {toTitle(parsed.type || fullResults?.prompt_type || "N/A")}</p>
+                  <p>
+                    <strong>Difficulty:</strong>{" "}
+                    {difficultyLabel(parsed.difficulty || fullResults?.prompt_difficulty || "N/A")}
+                  </p>
+                </div>
+                <div className="parsed-score-grid">
+                  <div className="parsed-score-item">
+                    <span>Communication</span>
+                    <strong>{scoreValue(parsed.clarity_score)}/25</strong>
+                  </div>
+                  <div className="parsed-score-item">
+                    <span>Content</span>
+                    <strong>{scoreValue(parsed.content_score)}/25</strong>
+                  </div>
+                  <div className="parsed-score-item">
+                    <span>Professionalism</span>
+                    <strong>{scoreValue(parsed.professionalism_score)}/20</strong>
+                  </div>
+                  <div className="parsed-score-item">
+                    <span>Body Language</span>
+                    <strong>{scoreValue(parsed.body_language_score)}/15</strong>
+                  </div>
+                  <div className="parsed-score-item">
+                    <span>Vocal Delivery</span>
+                    <strong>{scoreValue(parsed.vocal_delivery_score)}/15</strong>
+                  </div>
+                  <div className="parsed-score-item parsed-score-item--total">
+                    <span>Total</span>
+                    <strong>{totalScoreLabel(parsed.total_score)}</strong>
+                  </div>
                 </div>
               </section>
+            </section>
+
+            <section className="results-analysis-grid">
+              <article className="analysis-card">
+                <h3>What You Are Doing Well</h3>
+                {renderList(doingWellItems, "No strengths captured.")}
+              </article>
+              <article className="analysis-card">
+                <h3>What You Must Improve</h3>
+                {renderList(mustImproveItems, "No improvement notes captured.")}
+              </article>
+              <article className="analysis-card">
+                <h3>Habits To Keep</h3>
+                {renderList(habitsItems, "No habits captured.")}
+              </article>
+              <article className="analysis-card">
+                <h3>Action Plan</h3>
+                {renderList(actionPlanItems, "No action plan captured.")}
+              </article>
             </section>
           </>
         ) : null}

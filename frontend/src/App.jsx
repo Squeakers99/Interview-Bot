@@ -18,7 +18,7 @@ function formatLabel(value) {
   return safe.charAt(0).toUpperCase() + safe.slice(1);
 }
 
-export default function App({ promptCategory = "all", promptDifficulty = "all" }) {
+export default function App({ promptCategory = "all", promptDifficulty = "all", onReturnHome }) {
   const [view, setView] = useState("interview");
   const [prompt, setPrompt] = useState(null);
   const [promptLoading, setPromptLoading] = useState(true);
@@ -80,6 +80,10 @@ export default function App({ promptCategory = "all", promptDifficulty = "all" }
   }
 
   function handleRestart() {
+    if (typeof onReturnHome === "function") {
+      onReturnHome();
+      return;
+    }
     setView("interview");
     setInterviewRound((previous) => previous + 1);
   }

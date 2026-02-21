@@ -9,12 +9,23 @@ export default function WelcomePage() {
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [selectedDifficulty, setSelectedDifficulty] = useState("1");
 
+    function handleReturnToMainPage() {
+        setCountdownDone(false);
+        setStarted(false);
+    }
+
     if (started && !countdownDone) {
         return <CountdownPage start={3} onComplete={() => setCountdownDone(true)} />;
     }
 
     if (started && countdownDone) {
-        return <App promptCategory={selectedCategory} promptDifficulty={selectedDifficulty} />;
+        return (
+            <App
+                promptCategory={selectedCategory}
+                promptDifficulty={selectedDifficulty}
+                onReturnHome={handleReturnToMainPage}
+            />
+        );
     }
 
     return (
