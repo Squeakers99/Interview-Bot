@@ -7,7 +7,7 @@ export default function WelcomePage() {
     const [started, setStarted] = useState(false);
     const [countdownDone, setCountdownDone] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("all");
-    const [selectedDifficulty, setSelectedDifficulty] = useState("all");
+    const [selectedDifficulty, setSelectedDifficulty] = useState("1");
 
     if (started && !countdownDone) {
         return <CountdownPage start={3} onComplete={() => setCountdownDone(true)} />;
@@ -61,7 +61,6 @@ export default function WelcomePage() {
                     value={selectedDifficulty}
                     onChange={(event) => setSelectedDifficulty(event.target.value)}
                 >
-                    <option value="any">Any Difficulty</option>
                     <option value="1">Easy</option>
                     <option value="2">Medium</option>
                     <option value="3">Hard</option>
