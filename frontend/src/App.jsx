@@ -20,13 +20,13 @@ export default function App() {
   }
 
   return (
-    <main className="app-shell">
+    <div className="app-shell">
       <VisionTracker
         enabled={true}
         autoStartCamera={true}
         drawLandmarks={true}
         onAnalysisResult={handleAnalysisResult}
       />
-    </main>
+    </div>
   );
 }
