@@ -27,6 +27,11 @@ const INTERVIEW_TIMINGS = {
   responseSeconds: 90,
 };
 
+function formatElapsedSeconds(msSinceStart) {
+  const seconds = Math.max(0, msSinceStart) / 1000;
+  return Number(seconds.toFixed(2));
+}
+
 function secondsToMMSS(totalSeconds) {
   const safeSeconds = Math.max(0, totalSeconds || 0);
   const minutes = Math.floor(safeSeconds / 60);
@@ -51,6 +56,9 @@ export default function VisionTracker({
   const recorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const latestMetricsRef = useRef({});
+  const postureTimelineRef = useRef([]);
+  const eyeTimelineRef = useRef([]);
+  const timelineStartMsRef = useRef(0);
 
   const rafRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
@@ -63,12 +71,12 @@ export default function VisionTracker({
 
   const [modelsReady, setModelsReady] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
-  const [status, setStatus] = useState("Loading models...");
+  const [, setStatus] = useState("Loading models...");
   const [phase, setPhase] = useState("idle");
   const [timeLeft, setTimeLeft] = useState(INTERVIEW_TIMINGS.thinkingSeconds);
 
-  const [postureScoreUI, setPostureScoreUI] = useState(null);
-  const [eyeScoreUI, setEyeScoreUI] = useState(null);
+  const [, setPostureScoreUI] = useState(null);
+  const [, setEyeScoreUI] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -160,6 +168,7 @@ export default function VisionTracker({
       setPhase("response");
       setTimeLeft(INTERVIEW_TIMINGS.responseSeconds);
       setStatus("Response time started.");
+      timelineStartMsRef.current = performance.now();
       if (streamRef.current) {
         startAudioRecording(streamRef.current);
       }
@@ -222,6 +231,7 @@ export default function VisionTracker({
   }
 
   async function endInterviewByUser() {
+    setPhase("finishing");
     stopLoop();
     try {
       if (recorderRef.current) {
@@ -244,6 +254,9 @@ export default function VisionTracker({
     setPostureScoreUI(null);
     setEyeScoreUI(null);
     lastFrameTimeRef.current = 0;
+    postureTimelineRef.current = [];
+    eyeTimelineRef.current = [];
+    timelineStartMsRef.current = 0;
   }
 
   function startLoop() {
@@ -314,11 +327,16 @@ export default function VisionTracker({
       postureScore: latestMetricsRef.current?.postureScore ?? postureScoreUI ?? null,
       eyeScore: latestMetricsRef.current?.eyeScore ?? eyeScoreUI ?? null,
     };
+    const interviewTimelines = {
+      posture_timeline: postureTimelineRef.current,
+      eye_timeline: eyeTimelineRef.current,
+    };
     formData.append("audio", audioBlob, filename);
     formData.append("prompt_id", "");
     formData.append("prompt_text", "");
     formData.append("vision_metrics", JSON.stringify(latestMetricsRef.current || {}));
     formData.append("interview_summary", JSON.stringify(interviewSummary));
+    formData.append("interview_timelines", JSON.stringify(interviewTimelines));
 
     const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
     const response = await fetch(`${apiBase}/analyze`, { method: "POST", body: formData });
@@ -374,6 +392,10 @@ export default function VisionTracker({
     const frames = aggRef.current.frames || 1;
     const postureGoodPct = Math.round((100 * aggRef.current.postureGoodFrames) / frames);
     const eyeGoodPct = Math.round((100 * aggRef.current.eyeGoodFrames) / frames);
+    const elapsedMs = now - (timelineStartMsRef.current || now);
+    const timestamp = formatElapsedSeconds(elapsedMs);
+    postureTimelineRef.current.push({ timestamp, percentage: postureGoodPct });
+    eyeTimelineRef.current.push({ timestamp, percentage: eyeGoodPct });
 
     onUpdate?.({
       postureScore: posture?.score ?? null,
@@ -402,13 +424,6 @@ export default function VisionTracker({
 
   return (
     <div className="vision-tracker">
-      <div className="vision-tracker__top">
-        <div className="vision-tracker__status">Status: {status}</div>
-        <div className="vision-tracker__live">
-          <b>Live:</b> Posture {postureScoreUI ?? "--"} · Eye {eyeScoreUI ?? "--"}
-        </div>
-      </div>
-
       <div className="vision-tracker__frame">
         <video ref={videoRef} className="vision-tracker__video-hidden" playsInline />
         <canvas ref={canvasRef} width={VIDEO_W} height={VIDEO_H} className="vision-tracker__canvas" />
@@ -427,11 +442,6 @@ export default function VisionTracker({
         <div className="vision-tracker__phase-overlay">
           <div className="vision-tracker__phase-badge">Phase: {phase.toUpperCase()}</div>
         </div>
-      </div>
-
-      <div className="vision-tracker__meta">
-        Phase: <b>{phase.toUpperCase()}</b> · Time left: <b>{secondsToMMSS(timeLeft)}</b> · Tracking is{" "}
-        <b>{enabled && phase === "response" ? "ON" : "PAUSED"}</b>. FPS target: {TARGET_FPS}.
       </div>
     </div>
   );
