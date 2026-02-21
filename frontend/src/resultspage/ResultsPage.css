@@ -43,17 +43,11 @@
 .Eye-timeline {
     text-align: center;
     padding: 2px;
-    background: linear-gradient(to right, #202656, #4e73df, #7790ba, rgb(133, 132, 132), #7790ba, #4e73df, #202656);
     font-family: 'Times New Roman', Times, serif;
-    background-size: 500%,500%;
-    animation: gradientAnimation 20s ease infinite;
 }
 
 .Posture-timeline {
     text-align: center;
     padding: 2px;
-    background: linear-gradient(to right, #202656, #4e73df, #7790ba, rgb(133, 132, 132), #7790ba, #4e73df, #202656);
     font-family: 'Times New Roman', Times, serif;
-    background-size: 500%,500%;
-    animation: gradientAnimation 20s ease infinite;
 }
