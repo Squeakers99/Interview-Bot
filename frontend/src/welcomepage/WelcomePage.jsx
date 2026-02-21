@@ -1,11 +1,17 @@
 import "./WelcomePage.css";
 import { useState } from "react";
 import App from "../App";
+import CountdownPage from "../countdown/CountdownPage";
 
 export default function WelcomePage() {
     const [started, setStarted] = useState(false);
+    const [countdownDone, setCountdownDone] = useState(false);
 
-    if (started) {
+    if (started && !countdownDone) {
+        return <CountdownPage start={3} onComplete={() => setCountdownDone(true)} />;
+    }
+
+    if (started && countdownDone) {
         return <App />;
     }
 
