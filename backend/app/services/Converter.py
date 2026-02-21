@@ -255,14 +255,14 @@ async def analyze_interview(
         print(f"TRANSCRIPT: {transcript}", flush=True)
         print(f"\nLLM REVIEW:\n{review}", flush=True)
         print("==============================\n", flush=True)
-
-
+        
+        
+        
         return {
             "transcript": transcript,
             "vision_summary": metrics,
             "voice_analysis": voice_analysis,
             "llm_review": review,
-            
         }
 
     except Exception as e:

@@ -1,76 +1,180 @@
-.results-container {
-  display: grid;
-  grid-template-columns: minmax(0, 680px) minmax(260px, 1fr);
-  column-gap: 24px;
-  align-items: start;
-  width: min(1280px, 100%);
+.results-page {
+  min-height: 100vh;
+  padding: 28px 18px 40px;
+  background: transparent;
+}
+
+.results-shell {
+  width: min(1100px, 100%);
   margin: 0 auto;
-  padding: 24px;
-  font-family: "Times New Roman", Times, serif;
-}
-
-.results-header {
-  grid-column: 1 / -1;
-  text-align: center;
-}
-
-.results-title {
-  font-size: 34px;
-  margin: 0 0 10px;
-}
-
-.results-subtitle {
-  color: #554848;
-  line-height: 1.6;
-  margin: 0 auto 24px;
-  max-width: 800px;
-}
-
-.results-charts {
-  grid-column: 1;
   display: grid;
   gap: 16px;
 }
 
+.results-header {
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #d9e2ef;
+  border-radius: 14px;
+  padding: 22px 18px;
+  box-shadow: 0 10px 24px rgba(20, 35, 61, 0.08);
+}
+
+.results-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #18253b;
+}
+
+.results-subtitle {
+  margin: 8px 0 0;
+  color: #51627c;
+}
+
+.results-status-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #d9e2ef;
+  padding: 18px;
+  color: #1f2c45;
+}
+
+.results-status-card--error {
+  border-color: #f3c3cd;
+  background: #fff7f9;
+  color: #7d1d33;
+}
+
+.results-status-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.results-status-card p {
+  margin: 0;
+}
+
+.results-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.metric-card {
+  background: #ffffff;
+  border: 1px solid #d9e2ef;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 18px rgba(20, 35, 61, 0.07);
+}
+
+.metric-card__label {
+  margin: 0;
+  color: #5b6b84;
+  font-size: 0.86rem;
+}
+
+.metric-card__value {
+  margin: 6px 0 0;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #10213b;
+}
+
+.results-charts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .graph-card {
-  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d9e2ef;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 8px 18px rgba(20, 35, 61, 0.07);
 }
 
 .graph-title {
-  margin: 0 0 8px;
-  text-align: center;
+  margin: 0 0 10px;
+  font-size: 1rem;
+  color: #1f3150;
 }
 
 .graph-wrap {
   width: 100%;
-  min-height: 300px;
+  height: 280px;
+}
+
+.llm-review-card {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.llm-review-content {
+  border: 1px solid #d9e2ef;
+  background: transparent;
+  border-radius: 10px;
+  padding: 10px;
+  height: 280px;
+  overflow: auto;
+}
+
+.llm-review-pre {
+  margin: 0;
+  font-size: 0.83rem;
+  line-height: 1.45;
+  color: #24364f;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: "Consolas", "Monaco", monospace;
+}
+
+.results-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
 }
 
 .results-button {
-  grid-column: 1 / -1;
-  justify-self: center;
-  margin: 20px auto 0;
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #4e73df;
-  color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
+  background: #153f7b;
+  color: #ffffff;
+  transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
 .results-button:hover {
-  background-color: #2e59d9;
-  transform: scale(1.05);
+  background: #0f3366;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 980px) {
-  .results-container {
-    grid-template-columns: 1fr;
-    column-gap: 0;
+  .results-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .results-charts {
-    grid-column: 1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .results-page {
+    padding: 18px 12px 28px;
+  }
+
+  .results-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .results-charts {
+    grid-template-columns: 1fr;
   }
 }
