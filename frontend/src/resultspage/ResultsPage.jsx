@@ -108,23 +108,17 @@ export default function ResultsPage({ onRestart }) {
   );
   const llmReviewText = useMemo(() => toReadableReview(llmReview), [llmReview]);
 
-  const handleDownload = () => { // added download section here
-  const data = {
-    eyeTimeline: eyeData,
-    postureTimeline: postureData,
+  const handleDownload = async () => { // added download section here
+    const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+    const res = await fetch(`${apiBase}/results/interview/pdf`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "interview-results.pdf";
+    a.click();
+    URL.revokeObjectURL(url);  
   };
-
-  const blob = new Blob(
-    [JSON.stringify(data, null, 2)],
-    { type: "application/json" }
-  );
-
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "interview_results.json";
-  link.click();
-}; //finishes
 
   return (
     <main className="results-page">

@@ -1,6 +1,14 @@
 import json
 import os
 from fastapi import APIRouter, UploadFile, File, Form
+from fastapi.responses import FileResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
+from reportlab.lib.units import inch
+import tempfile
+
 
 from app.services.analysis_service import (
     parse_json_field,
@@ -134,3 +142,84 @@ async def analyze(
         "interview_analysis": interview_analysis,
         "message": "Received audio + metrics. Next step: transcription + scoring.",
     }
+
+@router.get("/results/interview/pdf")
+async def download_interview_pdf():
+    results_path = os.path.join(UPLOAD_DIR, "Interview-Timelines.json")
+    if not os.path.exists(results_path):
+        return {"error": "No results found. Run an analysis first."}
+
+    with open(results_path, "r") as f:
+        data = json.load(f)
+
+    # Create a temp PDF file
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    pdf_path = tmp.name
+    tmp.close()
+
+    doc = SimpleDocTemplate(pdf_path, pagesize=letter, topMargin=0.75*inch, bottomMargin=0.75*inch)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Custom styles
+    title_style = ParagraphStyle("Title", parent=styles["Title"], fontSize=24, textColor=colors.HexColor("#1a1a2e"), spaceAfter=6)
+    heading_style = ParagraphStyle("Heading", parent=styles["Heading2"], fontSize=13, textColor=colors.HexColor("#16213e"), spaceBefore=14, spaceAfter=4)
+    body_style = ParagraphStyle("Body", parent=styles["Normal"], fontSize=10, leading=16, textColor=colors.HexColor("#333333"))
+    label_style = ParagraphStyle("Label", parent=styles["Normal"], fontSize=10, textColor=colors.HexColor("#666666"), spaceAfter=2)
+    value_style = ParagraphStyle("Value", parent=styles["Normal"], fontSize=11, textColor=colors.HexColor("#1a1a2e"), spaceBefore=0, spaceAfter=8)
+
+    # Header
+    story.append(Paragraph("Interview Results Report", title_style))
+    story.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor("#4f46e5")))
+    story.append(Spacer(1, 12))
+
+    # Vision Scores
+    vision = data.get("vision_summary", {})
+    if vision:
+        story.append(Paragraph("Body Language Scores", heading_style))
+        story.append(Paragraph("Posture Score", label_style))
+        story.append(Paragraph(f"{vision.get('postureGoodPct', 'N/A')}%", value_style))
+        story.append(Paragraph("Eye Contact Score", label_style))
+        story.append(Paragraph(f"{vision.get('eyeGoodPct', 'N/A')}%", value_style))
+        story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#dddddd")))
+
+    # Voice Analysis
+    voice = data.get("voice_analysis", {})
+    if voice and "error" not in voice:
+        story.append(Paragraph("Voice Analysis", heading_style))
+        story.append(Paragraph("Pitch", label_style))
+        story.append(Paragraph(f"{voice.get('avg_pitch_hz', 'N/A')} Hz — {voice.get('pitch_feedback', '')}", value_style))
+        story.append(Paragraph("Tone", label_style))
+        story.append(Paragraph(voice.get("tone_feedback", "N/A"), value_style))
+        story.append(Paragraph("Speaking Rate", label_style))
+        story.append(Paragraph(f"{voice.get('speaking_rate', 'N/A')} — {voice.get('rate_feedback', '')}", value_style))
+        story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#dddddd")))
+
+    # Transcript
+    transcript = data.get("transcript", "")
+    if transcript:
+        story.append(Paragraph("Transcript", heading_style))
+        story.append(Paragraph(transcript, body_style))
+        story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#dddddd")))
+
+    # LLM Review
+    review = data.get("llm_review", "")
+    if review:
+        story.append(Paragraph("AI Recruiter Feedback", heading_style))
+        for line in review.split("\n"):
+            line = line.strip()
+            if not line:
+                story.append(Spacer(1, 4))
+            elif line.isupper() or line.endswith(":"):
+                story.append(Paragraph(line, ParagraphStyle("Bold", parent=styles["Normal"], fontSize=10, fontName="Helvetica-Bold", spaceBefore=8, textColor=colors.HexColor("#16213e"))))
+            else:
+                story.append(Paragraph(line, body_style))
+
+    doc.build(story)
+
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename="interview-results.pdf",
+        headers={"Content-Disposition": "attachment; filename=interview-results.pdf"}
+    )
