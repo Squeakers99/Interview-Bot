@@ -40,3 +40,16 @@ def save_upload_bytes(raw_bytes: bytes, original_filename: str) -> str:
     output_path = upload_dir / f"Interview-Audio{suffix}"
     output_path.write_bytes(raw_bytes)
     return str(output_path)
+
+
+def save_json_payload(payload: Dict[str, Any], output_name: str) -> str:
+    """
+    Persists a JSON payload to backend/uploads and returns absolute path.
+    """
+    backend_root = Path(__file__).resolve().parents[2]
+    upload_dir = backend_root / "uploads"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    output_path = upload_dir / output_name
+    output_path.write_text(json.dumps(payload, ensure_ascii=True, indent=2), encoding="utf-8")
+    return str(output_path)
