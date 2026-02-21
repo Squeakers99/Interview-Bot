@@ -25,10 +25,15 @@ export default function ResultsPage({ onRestart }) {
           fetch(`${apiBase}/results/eye_timeline`),
           fetch(`${apiBase}/results/posture_timeline`),
         ]);
+
         const eyeJson = await eyeRes.json();
         const postureJson = await postureRes.json();
-        setEyeHistory(eyeJson.eye_timeline || []);
-        setPostureHistory(postureJson.posture_timeline || []);
+
+        const eyePoints = Array.isArray(eyeJson) ? eyeJson : (eyeJson.eye_timeline || []);
+        const posturePoints = Array.isArray(postureJson) ? postureJson : (postureJson.posture_timeline || []);
+
+        setEyeHistory(eyePoints);
+        setPostureHistory(posturePoints);
       } catch (e) {
         setError("Failed to load results.");
       } finally {
@@ -38,49 +43,30 @@ export default function ResultsPage({ onRestart }) {
     load();
   }, []);
 
-  function normalizeTimeline(arr) {
-  return (arr || []).map((item, index) => {
-    // If backend returns just numbers: [0.1, 0.3, 0.9]
-    if (typeof item === "number") {
-      return { time: index, value: item };
-    }
+  
+function normalizeXY(arr) {
+    return (arr || [])
+      .map((p, i) => {
+        const isPair = Array.isArray(p);
+        let timeSec = Number(isPair ? p[0] : (p?.x ?? p?.timestamp ?? i));
+        let score = Number(isPair ? p[1] : (p?.y ?? p?.score ?? p?.percentage ?? 0));
 
-    // If backend returns objects: pick time + best numeric value
-    if (item && typeof item === "object") {
-      const time =
-        item.time ?? item.t ?? item.ts ?? item.x ?? item.frame ?? item.seconds ?? item.timestamp ?? index;
+        // if x is milliseconds, convert to seconds (common)
+        if (Number.isFinite(timeSec) && timeSec > 1000) timeSec = timeSec / 1000;
 
-      // Try common value keys first
-      let raw =
-        item.value ??
-        item.score ??
-        item.y ??
-        item.prob ??
-        item.confidence ??
-        item.val ??
-        item.eye ??
-        item.eye_contact ??
-        item.posture ??
-        item.posture_score;
+        // if y is 0..1, convert to 0..100
+        if (Number.isFinite(score) && score <= 1) score = score * 100;
 
-      // If still undefined, auto-pick the first numeric field in the object
-      if (raw === undefined) {
-        const numericEntry = Object.entries(item).find(
-          ([key, v]) => key !== "time" && key !== "t" && key !== "ts" && key !== "timestamp" && typeof v === "number"
-        );
-        raw = numericEntry ? numericEntry[1] : 0;
-      }
+        // clamp score to 0..100
+        score = Math.max(0, Math.min(100, score));
 
-      const value = Number(raw);
-      return { time: Number(time), value: Number.isFinite(value) ? value : 0 };
-    }
+        return { timeSec, score };
+      })
+      .sort((a, b) => a.timeSec - b.timeSec);
+  }
 
-    return { time: index, value: 0 };
-  });
-}
-
-  const eyeData = useMemo(() => normalizeTimeline(eyeHistory), [eyeHistory]);
-  const postureData = useMemo(() => normalizeTimeline(postureHistory), [postureHistory]);
+  const eyeData = useMemo(() => normalizeXY(eyeHistory), [eyeHistory]);
+  const postureData = useMemo(() => normalizeXY(postureHistory), [postureHistory]);
 
   return (
     <div className="results-container">
@@ -98,10 +84,15 @@ export default function ResultsPage({ onRestart }) {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={eyeData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
+                  <XAxis 
+                  dataKey="timeSec" 
+                  type = "number"
+                  domain={[0, "dataMax"]}
+                  tickFormatter={(t)=> `${t}`}
+                  />
+                  <YAxis domain={[0,100]} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="value" dot={true} />
+                  <Line type="monotone" dataKey="score" dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -113,10 +104,15 @@ export default function ResultsPage({ onRestart }) {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={postureData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
+                  <XAxis 
+                  dataKey="timeSec"
+                  type = "number"
+                  domain ={[0, "dataMax"]} 
+                  tickFormatter={(t)=> `${t}`}
+                  />
+                  <YAxis domain={[0,100]} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="value" dot={true} />
+                  <Line type="monotone" dataKey="score" dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
