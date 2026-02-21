@@ -108,6 +108,18 @@ export default function ResultsPage({ onRestart }) {
   );
   const llmReviewText = useMemo(() => toReadableReview(llmReview), [llmReview]);
 
+  const handleDownload = async () => { // added download section here
+    const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+    const res = await fetch(`${apiBase}/results/interview/pdf`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "interview-results.pdf";
+    a.click();
+    URL.revokeObjectURL(url);  
+  };
+
   return (
     <main className="results-page">
       <section className="results-shell">
@@ -168,7 +180,14 @@ export default function ResultsPage({ onRestart }) {
           <button className="results-button" onClick={onRestart}>
             Start New Interview
           </button>
+
+           <button className="results-button" onClick={handleDownload}>
+              Download Results
+           </button>
+
         </div>
+
+        
       </section>
     </main>
   );
