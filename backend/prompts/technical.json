@@ -1,0 +1,506 @@
+[
+  {
+    "id": "tech_e_01",
+    "type": "technical",
+    "text": "Explain a technical concept to a non-technical person.",
+    "difficulty": "Easy",
+    "competencies": ["communication", "clarity"],
+    "recommended_structure": "Analogy → simple explanation → example",
+    "good_signals": ["clear language", "no jargon"],
+    "red_flags": ["overly technical explanation"]
+  },
+  {
+    "id": "tech_e_02",
+    "type": "technical",
+    "text": "What is the difference between frontend and backend?",
+    "difficulty": "Easy",
+    "competencies": ["fundamentals"],
+    "recommended_structure": "Define both → compare → example",
+    "good_signals": ["clear distinction"],
+    "red_flags": ["confuses concepts"]
+  },
+  {
+    "id": "tech_e_03",
+    "type": "technical",
+    "text": "What is an API in simple terms?",
+    "difficulty": "Easy",
+    "competencies": ["fundamentals"],
+    "recommended_structure": "Definition → analogy → use case",
+    "good_signals": ["simple explanation"],
+    "red_flags": ["overly abstract"]
+  },
+  {
+    "id": "tech_e_04",
+    "type": "technical",
+    "text": "What is version control and why is it useful?",
+    "difficulty": "Easy",
+    "competencies": ["engineering basics"],
+    "recommended_structure": "Definition → benefit → example",
+    "good_signals": ["collaboration emphasis"],
+    "red_flags": ["unclear purpose"]
+  },
+  {
+    "id": "tech_e_05",
+    "type": "technical",
+    "text": "What is debugging?",
+    "difficulty": "Easy",
+    "competencies": ["problem solving"],
+    "recommended_structure": "Definition → simple process",
+    "good_signals": ["step-by-step thinking"],
+    "red_flags": ["random guessing"]
+  },
+  {
+    "id": "tech_e_06",
+    "type": "technical",
+    "text": "What is a database?",
+    "difficulty": "Easy",
+    "competencies": ["fundamentals"],
+    "recommended_structure": "Definition → purpose → example",
+    "good_signals": ["real-world example"],
+    "red_flags": ["vague definition"]
+  },
+  {
+    "id": "tech_e_07",
+    "type": "technical",
+    "text": "What is the difference between a bug and a feature?",
+    "difficulty": "Easy",
+    "competencies": ["engineering basics"],
+    "recommended_structure": "Define both → contrast",
+    "good_signals": ["clear examples"],
+    "red_flags": ["confusion"]
+  },
+  {
+    "id": "tech_e_08",
+    "type": "technical",
+    "text": "What does scalability mean in software?",
+    "difficulty": "Easy",
+    "competencies": ["systems basics"],
+    "recommended_structure": "Definition → example",
+    "good_signals": ["growth-focused explanation"],
+    "red_flags": ["too abstract"]
+  },
+  {
+    "id": "tech_e_09",
+    "type": "technical",
+    "text": "What is testing in software development?",
+    "difficulty": "Easy",
+    "competencies": ["quality mindset"],
+    "recommended_structure": "Purpose → types → benefit",
+    "good_signals": ["quality focus"],
+    "red_flags": ["testing optional mindset"]
+  },
+  {
+    "id": "tech_e_10",
+    "type": "technical",
+    "text": "What happens when you click a link in a browser?",
+    "difficulty": "Easy",
+    "competencies": ["fundamentals"],
+    "recommended_structure": "Request → server → response",
+    "good_signals": ["basic flow explained"],
+    "red_flags": ["incorrect sequence"]
+  },
+
+  {
+    "id": "tech_m_01",
+    "type": "technical",
+    "text": "How do you debug a problem?",
+    "difficulty": "Medium",
+    "competencies": ["problem solving", "debugging"],
+    "recommended_structure": "Reproduce → isolate → test → fix",
+    "good_signals": ["systematic approach"],
+    "red_flags": ["trial-and-error only"]
+  },
+  {
+    "id": "tech_m_02",
+    "type": "technical",
+    "text": "What is Big-O and why does it matter?",
+    "difficulty": "Medium",
+    "competencies": ["CS fundamentals"],
+    "recommended_structure": "Definition → example → impact",
+    "good_signals": ["clear intuition"],
+    "red_flags": ["incorrect complexity explanation"]
+  },
+  {
+    "id": "tech_m_03",
+    "type": "technical",
+    "text": "How would you design a simple REST API?",
+    "difficulty": "Medium",
+    "competencies": ["API design"],
+    "recommended_structure": "Endpoints → methods → data flow",
+    "good_signals": ["clear structure"],
+    "red_flags": ["no resource modeling"]
+  },
+  {
+    "id": "tech_m_04",
+    "type": "technical",
+    "text": "What is the difference between SQL and NoSQL databases?",
+    "difficulty": "Medium",
+    "competencies": ["data modeling"],
+    "recommended_structure": "Compare structure → use cases",
+    "good_signals": ["tradeoff awareness"],
+    "red_flags": ["absolute statements"]
+  },
+  {
+    "id": "tech_m_05",
+    "type": "technical",
+    "text": "How do you ensure code readability?",
+    "difficulty": "Medium",
+    "competencies": ["engineering practices"],
+    "recommended_structure": "Naming → structure → reviews",
+    "good_signals": ["maintainability mindset"],
+    "red_flags": ["style ignored"]
+  },
+  {
+    "id": "tech_m_06",
+    "type": "technical",
+    "text": "What is caching and when would you use it?",
+    "difficulty": "Medium",
+    "competencies": ["performance"],
+    "recommended_structure": "Problem → cache → benefit",
+    "good_signals": ["performance reasoning"],
+    "red_flags": ["misuse of cache"]
+  },
+  {
+    "id": "tech_m_07",
+    "type": "technical",
+    "text": "Explain synchronous vs asynchronous operations.",
+    "difficulty": "Medium",
+    "competencies": ["fundamentals"],
+    "recommended_structure": "Definition → example",
+    "good_signals": ["clear analogy"],
+    "red_flags": ["mixes concepts"]
+  },
+  {
+    "id": "tech_m_08",
+    "type": "technical",
+    "text": "How do you approach writing tests?",
+    "difficulty": "Medium",
+    "competencies": ["quality assurance"],
+    "recommended_structure": "Unit → integration → edge cases",
+    "good_signals": ["test strategy"],
+    "red_flags": ["tests afterthought"]
+  },
+  {
+    "id": "tech_m_09",
+    "type": "technical",
+    "text": "What is dependency management?",
+    "difficulty": "Medium",
+    "competencies": ["engineering practices"],
+    "recommended_structure": "Definition → risks → best practices",
+    "good_signals": ["version awareness"],
+    "red_flags": ["ignores dependency risks"]
+  },
+  {
+    "id": "tech_m_10",
+    "type": "technical",
+    "text": "How do you handle technical debt?",
+    "difficulty": "Medium",
+    "competencies": ["engineering judgment"],
+    "recommended_structure": "Identify → prioritize → refactor",
+    "good_signals": ["balanced approach"],
+    "red_flags": ["ignore debt"]
+  },
+
+  {
+    "id": "tech_h_01",
+    "type": "technical",
+    "text": "Describe a technical project you built and its architecture.",
+    "difficulty": "Hard",
+    "competencies": ["system design", "ownership"],
+    "recommended_structure": "Goal → architecture → tradeoffs → result",
+    "good_signals": ["clear design reasoning"],
+    "red_flags": ["no tradeoffs discussed"]
+  },
+  {
+    "id": "tech_h_02",
+    "type": "technical",
+    "text": "How do you ensure code quality in a team?",
+    "difficulty": "Hard",
+    "competencies": ["engineering practices", "collaboration"],
+    "recommended_structure": "Standards → reviews → testing",
+    "good_signals": ["clear process"],
+    "red_flags": ["no quality checks"]
+  },
+  {
+    "id": "tech_h_03",
+    "type": "technical",
+    "text": "How do you optimize a slow system?",
+    "difficulty": "Hard",
+    "competencies": ["performance"],
+    "recommended_structure": "Measure → identify bottleneck → optimize",
+    "good_signals": ["data-driven"],
+    "red_flags": ["guessing"]
+  },
+  {
+    "id": "tech_h_04",
+    "type": "technical",
+    "text": "How do you design for reliability?",
+    "difficulty": "Hard",
+    "competencies": ["reliability"],
+    "recommended_structure": "Failures → mitigation → monitoring",
+    "good_signals": ["redundancy thinking"],
+    "red_flags": ["no failure planning"]
+  },
+  {
+    "id": "tech_h_05",
+    "type": "technical",
+    "text": "Explain a tradeoff you made in a technical design.",
+    "difficulty": "Hard",
+    "competencies": ["engineering judgment"],
+    "recommended_structure": "Options → tradeoff → decision",
+    "good_signals": ["clear reasoning"],
+    "red_flags": ["no alternatives considered"]
+  },
+  {
+    "id": "tech_h_06",
+    "type": "technical",
+    "text": "How do you handle production issues?",
+    "difficulty": "Hard",
+    "competencies": ["incident response"],
+    "recommended_structure": "Detect → stabilize → fix → learn",
+    "good_signals": ["calm approach"],
+    "red_flags": ["panic"]
+  },
+  {
+    "id": "tech_h_07",
+    "type": "technical",
+    "text": "How do you evaluate new technologies?",
+    "difficulty": "Hard",
+    "competencies": ["technical judgment"],
+    "recommended_structure": "Criteria → testing → decision",
+    "good_signals": ["objective evaluation"],
+    "red_flags": ["trend chasing"]
+  },
+  {
+    "id": "tech_h_08",
+    "type": "technical",
+    "text": "How do you design for maintainability?",
+    "difficulty": "Hard",
+    "competencies": ["architecture"],
+    "recommended_structure": "Modularity → documentation → testing",
+    "good_signals": ["long-term thinking"],
+    "red_flags": ["short-term hacks"]
+  },
+  {
+    "id": "tech_h_09",
+    "type": "technical",
+    "text": "Explain how you would scale a database.",
+    "difficulty": "Hard",
+    "competencies": ["systems design"],
+    "recommended_structure": "Vertical vs horizontal → strategies",
+    "good_signals": ["tradeoff awareness"],
+    "red_flags": ["single solution mindset"]
+  },
+  {
+    "id": "tech_h_10",
+    "type": "technical",
+    "text": "How do you approach refactoring legacy code?",
+    "difficulty": "Hard",
+    "competencies": ["engineering practices"],
+    "recommended_structure": "Understand → test → incremental changes",
+    "good_signals": ["safe refactoring"],
+    "red_flags": ["rewrite everything"]
+  },
+
+  {
+    "id": "tech_x_01",
+    "type": "technical",
+    "text": "How would you design a feature end-to-end?",
+    "difficulty": "Expert",
+    "competencies": ["system design", "product thinking"],
+    "recommended_structure": "Requirements → data → API → UI → rollout",
+    "good_signals": ["full-stack thinking"],
+    "red_flags": ["skips requirements"]
+  },
+  {
+    "id": "tech_x_02",
+    "type": "technical",
+    "text": "How do you handle failures and retries in distributed systems?",
+    "difficulty": "Expert",
+    "competencies": ["reliability", "systems thinking"],
+    "recommended_structure": "Failure types → retry strategy → safeguards",
+    "good_signals": ["timeouts", "idempotency"],
+    "red_flags": ["infinite retries"]
+  },
+  {
+    "id": "tech_x_03",
+    "type": "technical",
+    "text": "How do you design observability into a system?",
+    "difficulty": "Expert",
+    "competencies": ["monitoring"],
+    "recommended_structure": "Logs → metrics → alerts",
+    "good_signals": ["proactive monitoring"],
+    "red_flags": ["reactive only"]
+  },
+  {
+    "id": "tech_x_04",
+    "type": "technical",
+    "text": "How would you reduce latency in a large-scale system?",
+    "difficulty": "Expert",
+    "competencies": ["performance"],
+    "recommended_structure": "Measure → optimize layers",
+    "good_signals": ["bottleneck-first"],
+    "red_flags": ["premature optimization"]
+  },
+  {
+    "id": "tech_x_05",
+    "type": "technical",
+    "text": "How do you approach API versioning?",
+    "difficulty": "Expert",
+    "competencies": ["API design"],
+    "recommended_structure": "Compatibility → strategy → migration",
+    "good_signals": ["backward compatibility"],
+    "red_flags": ["breaking changes carelessly"]
+  },
+  {
+    "id": "tech_x_06",
+    "type": "technical",
+    "text": "How do you secure an application?",
+    "difficulty": "Expert",
+    "competencies": ["security"],
+    "recommended_structure": "Auth → validation → monitoring",
+    "good_signals": ["defense in depth"],
+    "red_flags": ["security as afterthought"]
+  },
+  {
+    "id": "tech_x_07",
+    "type": "technical",
+    "text": "How do you design for high availability?",
+    "difficulty": "Expert",
+    "competencies": ["systems design"],
+    "recommended_structure": "Redundancy → failover → monitoring",
+    "good_signals": ["fault tolerance"],
+    "red_flags": ["single point of failure"]
+  },
+  {
+    "id": "tech_x_08",
+    "type": "technical",
+    "text": "How do you balance technical debt vs feature delivery?",
+    "difficulty": "Expert",
+    "competencies": ["engineering judgment"],
+    "recommended_structure": "Risk → impact → prioritization",
+    "good_signals": ["balanced strategy"],
+    "red_flags": ["extreme approach"]
+  },
+  {
+    "id": "tech_x_09",
+    "type": "technical",
+    "text": "How do you design systems for failure?",
+    "difficulty": "Expert",
+    "competencies": ["resilience"],
+    "recommended_structure": "Assume failure → mitigation",
+    "good_signals": ["graceful degradation"],
+    "red_flags": ["assumes perfect conditions"]
+  },
+  {
+    "id": "tech_x_10",
+    "type": "technical",
+    "text": "How do you evaluate scalability bottlenecks?",
+    "difficulty": "Expert",
+    "competencies": ["systems thinking"],
+    "recommended_structure": "Measure → analyze → optimize",
+    "good_signals": ["data-driven"],
+    "red_flags": ["guessing bottlenecks"]
+  },
+
+  {
+    "id": "tech_mas_01",
+    "type": "technical",
+    "text": "Design a scalable system for millions of users.",
+    "difficulty": "Master",
+    "competencies": ["architecture", "scalability"],
+    "recommended_structure": "Requirements → scaling strategy → tradeoffs",
+    "good_signals": ["clear architecture"],
+    "red_flags": ["no scaling plan"]
+  },
+  {
+    "id": "tech_mas_02",
+    "type": "technical",
+    "text": "How would you balance performance, reliability, and cost in system design?",
+    "difficulty": "Master",
+    "competencies": ["architecture", "tradeoffs"],
+    "recommended_structure": "Constraints → tradeoffs → decisions",
+    "good_signals": ["balanced reasoning"],
+    "red_flags": ["optimizes only one dimension"]
+  },
+  {
+    "id": "tech_mas_03",
+    "type": "technical",
+    "text": "How would you design a globally distributed system?",
+    "difficulty": "Master",
+    "competencies": ["distributed systems"],
+    "recommended_structure": "Regions → consistency → latency",
+    "good_signals": ["geo-aware design"],
+    "red_flags": ["ignores latency"]
+  },
+  {
+    "id": "tech_mas_04",
+    "type": "technical",
+    "text": "How do you make architectural decisions under uncertainty?",
+    "difficulty": "Master",
+    "competencies": ["technical leadership"],
+    "recommended_structure": "Assumptions → experimentation → evolution",
+    "good_signals": ["iterative thinking"],
+    "red_flags": ["over-engineering"]
+  },
+  {
+    "id": "tech_mas_05",
+    "type": "technical",
+    "text": "How would you evolve a monolith into microservices?",
+    "difficulty": "Master",
+    "competencies": ["architecture evolution"],
+    "recommended_structure": "Identify boundaries → migrate gradually",
+    "good_signals": ["incremental migration"],
+    "red_flags": ["big bang rewrite"]
+  },
+  {
+    "id": "tech_mas_06",
+    "type": "technical",
+    "text": "How do you ensure long-term scalability of a platform?",
+    "difficulty": "Master",
+    "competencies": ["systems thinking"],
+    "recommended_structure": "Architecture → observability → iteration",
+    "good_signals": ["future-proofing mindset"],
+    "red_flags": ["short-term only"]
+  },
+  {
+    "id": "tech_mas_07",
+    "type": "technical",
+    "text": "How would you design a fault-tolerant system?",
+    "difficulty": "Master",
+    "competencies": ["reliability engineering"],
+    "recommended_structure": "Failure modes → mitigation → recovery",
+    "good_signals": ["redundancy + recovery"],
+    "red_flags": ["no failover"]
+  },
+  {
+    "id": "tech_mas_08",
+    "type": "technical",
+    "text": "How do you decide when to rewrite vs refactor?",
+    "difficulty": "Master",
+    "competencies": ["engineering judgment"],
+    "recommended_structure": "Criteria → risk → decision",
+    "good_signals": ["clear framework"],
+    "red_flags": ["rewrite bias"]
+  },
+  {
+    "id": "tech_mas_09",
+    "type": "technical",
+    "text": "How do you design systems that teams can scale with?",
+    "difficulty": "Master",
+    "competencies": ["organizational scalability"],
+    "recommended_structure": "Architecture → ownership → boundaries",
+    "good_signals": ["team-aware design"],
+    "red_flags": ["single-team assumptions"]
+  },
+  {
+    "id": "tech_mas_10",
+    "type": "technical",
+    "text": "How do you make architecture decisions that remain flexible long-term?",
+    "difficulty": "Master",
+    "competencies": ["strategic architecture"],
+    "recommended_structure": "Abstractions → extensibility → tradeoffs",
+    "good_signals": ["evolution-friendly design"],
+    "red_flags": ["rigid architecture"]
+  }
+]

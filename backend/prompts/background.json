@@ -1,0 +1,506 @@
+[
+  {
+    "id": "bg_e_01",
+    "type": "background",
+    "text": "Tell me about your background.",
+    "difficulty": "Easy",
+    "competencies": ["communication", "self-awareness"],
+    "recommended_structure": "Past → key experiences → current direction",
+    "good_signals": ["clear story", "relevant details"],
+    "red_flags": ["rambling", "unrelated history"]
+  },
+  {
+    "id": "bg_e_02",
+    "type": "background",
+    "text": "What is your favorite subject and why?",
+    "difficulty": "Easy",
+    "competencies": ["motivation", "self-awareness"],
+    "recommended_structure": "Subject → reason → example",
+    "good_signals": ["specific reasons", "enthusiasm"],
+    "red_flags": ["vague answer"]
+  },
+  {
+    "id": "bg_e_03",
+    "type": "background",
+    "text": "What is your least favorite subject and why?",
+    "difficulty": "Easy",
+    "competencies": ["reflection"],
+    "recommended_structure": "Subject → challenge → how you handled it",
+    "good_signals": ["constructive framing"],
+    "red_flags": ["negative tone"]
+  },
+  {
+    "id": "bg_e_04",
+    "type": "background",
+    "text": "What made you choose your area of study?",
+    "difficulty": "Easy",
+    "competencies": ["motivation"],
+    "recommended_structure": "Interest → decision → confirmation",
+    "good_signals": ["clear reason"],
+    "red_flags": ["random choice"]
+  },
+  {
+    "id": "bg_e_05",
+    "type": "background",
+    "text": "What do you enjoy learning about most?",
+    "difficulty": "Easy",
+    "competencies": ["curiosity"],
+    "recommended_structure": "Topic → example",
+    "good_signals": ["authentic interest"],
+    "red_flags": ["generic"]
+  },
+  {
+    "id": "bg_e_06",
+    "type": "background",
+    "text": "What clubs, teams, or activities have you been involved in?",
+    "difficulty": "Easy",
+    "competencies": ["teamwork"],
+    "recommended_structure": "Activity → role → takeaway",
+    "good_signals": ["clear involvement"],
+    "red_flags": ["no ownership"]
+  },
+  {
+    "id": "bg_e_07",
+    "type": "background",
+    "text": "What skills have you developed outside school or work?",
+    "difficulty": "Easy",
+    "competencies": ["growth mindset"],
+    "recommended_structure": "Skill → how learned → application",
+    "good_signals": ["initiative"],
+    "red_flags": ["unclear examples"]
+  },
+  {
+    "id": "bg_e_08",
+    "type": "background",
+    "text": "What kind of work do you naturally enjoy?",
+    "difficulty": "Easy",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Preference → example",
+    "good_signals": ["specific examples"],
+    "red_flags": ["unclear preferences"]
+  },
+  {
+    "id": "bg_e_09",
+    "type": "background",
+    "text": "How would you describe your learning style?",
+    "difficulty": "Easy",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Style → example",
+    "good_signals": ["practical insight"],
+    "red_flags": ["no reflection"]
+  },
+  {
+    "id": "bg_e_10",
+    "type": "background",
+    "text": "What accomplishment are you most proud of so far?",
+    "difficulty": "Easy",
+    "competencies": ["confidence", "reflection"],
+    "recommended_structure": "Context → action → result",
+    "good_signals": ["clear impact"],
+    "red_flags": ["no ownership"]
+  },
+
+  {
+    "id": "bg_m_01",
+    "type": "background",
+    "text": "Tell me about your strengths and weaknesses.",
+    "difficulty": "Medium",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Strength → example, Weakness → improvement",
+    "good_signals": ["honest reflection"],
+    "red_flags": ["fake weakness"]
+  },
+  {
+    "id": "bg_m_02",
+    "type": "background",
+    "text": "What differentiates you from other candidates?",
+    "difficulty": "Medium",
+    "competencies": ["positioning"],
+    "recommended_structure": "Unique trait → proof",
+    "good_signals": ["specific examples"],
+    "red_flags": ["generic claims"]
+  },
+  {
+    "id": "bg_m_03",
+    "type": "background",
+    "text": "Where do you see yourself in 5 years?",
+    "difficulty": "Medium",
+    "competencies": ["planning"],
+    "recommended_structure": "Direction → skills → impact",
+    "good_signals": ["realistic growth"],
+    "red_flags": ["unclear vision"]
+  },
+  {
+    "id": "bg_m_04",
+    "type": "background",
+    "text": "Describe your ideal work environment.",
+    "difficulty": "Medium",
+    "competencies": ["culture fit"],
+    "recommended_structure": "Traits → why",
+    "good_signals": ["balanced expectations"],
+    "red_flags": ["rigid demands"]
+  },
+  {
+    "id": "bg_m_05",
+    "type": "background",
+    "text": "Why are you looking for a job?",
+    "difficulty": "Medium",
+    "competencies": ["motivation"],
+    "recommended_structure": "Growth-focused explanation",
+    "good_signals": ["positive framing"],
+    "red_flags": ["negative tone"]
+  },
+  {
+    "id": "bg_m_06",
+    "type": "background",
+    "text": "What specific skills are you hoping to develop next?",
+    "difficulty": "Medium",
+    "competencies": ["growth mindset"],
+    "recommended_structure": "Skill → plan",
+    "good_signals": ["clear intention"],
+    "red_flags": ["no direction"]
+  },
+  {
+    "id": "bg_m_07",
+    "type": "background",
+    "text": "What kind of responsibilities energize you?",
+    "difficulty": "Medium",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Responsibility → example",
+    "good_signals": ["clear examples"],
+    "red_flags": ["vague"]
+  },
+  {
+    "id": "bg_m_08",
+    "type": "background",
+    "text": "What role do you usually take on in a team?",
+    "difficulty": "Medium",
+    "competencies": ["teamwork"],
+    "recommended_structure": "Role → example",
+    "good_signals": ["self-awareness"],
+    "red_flags": ["no examples"]
+  },
+  {
+    "id": "bg_m_09",
+    "type": "background",
+    "text": "What is a skill you had to teach yourself?",
+    "difficulty": "Medium",
+    "competencies": ["initiative"],
+    "recommended_structure": "Need → learning → result",
+    "good_signals": ["resourcefulness"],
+    "red_flags": ["no outcome"]
+  },
+  {
+    "id": "bg_m_10",
+    "type": "background",
+    "text": "What feedback have you received that changed you?",
+    "difficulty": "Medium",
+    "competencies": ["coachability"],
+    "recommended_structure": "Feedback → action → improvement",
+    "good_signals": ["growth shown"],
+    "red_flags": ["defensive"]
+  },
+
+  {
+    "id": "bg_h_01",
+    "type": "background",
+    "text": "Tell me about a time you had lots of tasks and how you prioritized them.",
+    "difficulty": "Hard",
+    "competencies": ["prioritization", "execution"],
+    "recommended_structure": "Criteria → plan → result",
+    "good_signals": ["clear system"],
+    "red_flags": ["chaotic approach"]
+  },
+  {
+    "id": "bg_h_02",
+    "type": "background",
+    "text": "Tell me about a time you asked for feedback.",
+    "difficulty": "Hard",
+    "competencies": ["coachability"],
+    "recommended_structure": "Context → feedback → change",
+    "good_signals": ["ownership"],
+    "red_flags": ["no action taken"]
+  },
+  {
+    "id": "bg_h_03",
+    "type": "background",
+    "text": "How do you decide what to learn next?",
+    "difficulty": "Hard",
+    "competencies": ["strategic growth"],
+    "recommended_structure": "Goals → gaps → learning",
+    "good_signals": ["intentional choices"],
+    "red_flags": ["random learning"]
+  },
+  {
+    "id": "bg_h_04",
+    "type": "background",
+    "text": "Describe a time your background helped you solve a problem.",
+    "difficulty": "Hard",
+    "competencies": ["transferable skills"],
+    "recommended_structure": "Background → application → result",
+    "good_signals": ["clear connection"],
+    "red_flags": ["weak link"]
+  },
+  {
+    "id": "bg_h_05",
+    "type": "background",
+    "text": "How has your perspective changed since starting your studies or career?",
+    "difficulty": "Hard",
+    "competencies": ["reflection"],
+    "recommended_structure": "Before → experience → after",
+    "good_signals": ["growth mindset"],
+    "red_flags": ["no change"]
+  },
+  {
+    "id": "bg_h_06",
+    "type": "background",
+    "text": "What is a misconception people have about you professionally?",
+    "difficulty": "Hard",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Misconception → reality → example",
+    "good_signals": ["clarity"],
+    "red_flags": ["defensive tone"]
+  },
+  {
+    "id": "bg_h_07",
+    "type": "background",
+    "text": "What experience best prepared you for this role?",
+    "difficulty": "Hard",
+    "competencies": ["role alignment"],
+    "recommended_structure": "Experience → skills → relevance",
+    "good_signals": ["clear linkage"],
+    "red_flags": ["weak relevance"]
+  },
+  {
+    "id": "bg_h_08",
+    "type": "background",
+    "text": "How do you balance multiple commitments?",
+    "difficulty": "Hard",
+    "competencies": ["time management"],
+    "recommended_structure": "System → example",
+    "good_signals": ["structure"],
+    "red_flags": ["overcommitment"]
+  },
+  {
+    "id": "bg_h_09",
+    "type": "background",
+    "text": "What personal habit has most improved your performance?",
+    "difficulty": "Hard",
+    "competencies": ["self-improvement"],
+    "recommended_structure": "Habit → impact",
+    "good_signals": ["specific results"],
+    "red_flags": ["no evidence"]
+  },
+  {
+    "id": "bg_h_10",
+    "type": "background",
+    "text": "Describe a time you had to adapt your learning style.",
+    "difficulty": "Hard",
+    "competencies": ["adaptability"],
+    "recommended_structure": "Challenge → adjustment → outcome",
+    "good_signals": ["flexibility"],
+    "red_flags": ["resistance"]
+  },
+
+  {
+    "id": "bg_x_01",
+    "type": "background",
+    "text": "How has your background shaped your leadership style?",
+    "difficulty": "Expert",
+    "competencies": ["leadership", "reflection"],
+    "recommended_structure": "Experience → leadership approach",
+    "good_signals": ["insightful connections"],
+    "red_flags": ["surface-level"]
+  },
+  {
+    "id": "bg_x_02",
+    "type": "background",
+    "text": "What tradeoffs have you made in your career or academic path?",
+    "difficulty": "Expert",
+    "competencies": ["decision-making"],
+    "recommended_structure": "Options → decision → lesson",
+    "good_signals": ["clear reasoning"],
+    "red_flags": ["no reflection"]
+  },
+  {
+    "id": "bg_x_03",
+    "type": "background",
+    "text": "Describe a time your background gave you a unique perspective.",
+    "difficulty": "Expert",
+    "competencies": ["diversity of thought"],
+    "recommended_structure": "Context → perspective → impact",
+    "good_signals": ["clear impact"],
+    "red_flags": ["unclear relevance"]
+  },
+  {
+    "id": "bg_x_04",
+    "type": "background",
+    "text": "What experiences most influenced your professional identity?",
+    "difficulty": "Expert",
+    "competencies": ["identity", "reflection"],
+    "recommended_structure": "Experience → change → outcome",
+    "good_signals": ["deep reflection"],
+    "red_flags": ["generic"]
+  },
+  {
+    "id": "bg_x_05",
+    "type": "background",
+    "text": "How do you evaluate whether a role aligns with your goals?",
+    "difficulty": "Expert",
+    "competencies": ["strategy"],
+    "recommended_structure": "Criteria → evaluation",
+    "good_signals": ["clear framework"],
+    "red_flags": ["impulsive decisions"]
+  },
+  {
+    "id": "bg_x_06",
+    "type": "background",
+    "text": "How do you turn past experiences into future advantages?",
+    "difficulty": "Expert",
+    "competencies": ["strategic thinking"],
+    "recommended_structure": "Experience → lesson → application",
+    "good_signals": ["forward thinking"],
+    "red_flags": ["no application"]
+  },
+  {
+    "id": "bg_x_07",
+    "type": "background",
+    "text": "What patterns have you noticed in your own growth?",
+    "difficulty": "Expert",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Pattern → example",
+    "good_signals": ["insightful"],
+    "red_flags": ["no pattern identified"]
+  },
+  {
+    "id": "bg_x_08",
+    "type": "background",
+    "text": "What is a defining decision you made early in your path?",
+    "difficulty": "Expert",
+    "competencies": ["judgment"],
+    "recommended_structure": "Decision → impact",
+    "good_signals": ["clear impact"],
+    "red_flags": ["unclear outcome"]
+  },
+  {
+    "id": "bg_x_09",
+    "type": "background",
+    "text": "How do you ensure continuous growth in your career?",
+    "difficulty": "Expert",
+    "competencies": ["growth mindset"],
+    "recommended_structure": "System → example",
+    "good_signals": ["intentional habits"],
+    "red_flags": ["no plan"]
+  },
+  {
+    "id": "bg_x_10",
+    "type": "background",
+    "text": "How has failure shaped your professional direction?",
+    "difficulty": "Expert",
+    "competencies": ["resilience"],
+    "recommended_structure": "Failure → learning → change",
+    "good_signals": ["ownership"],
+    "red_flags": ["blame"]
+  },
+
+  {
+    "id": "bg_mas_01",
+    "type": "background",
+    "text": "How has your definition of success evolved over time?",
+    "difficulty": "Master",
+    "competencies": ["reflection", "values"],
+    "recommended_structure": "Past → turning points → present",
+    "good_signals": ["deep reflection"],
+    "red_flags": ["no evolution"]
+  },
+  {
+    "id": "bg_mas_02",
+    "type": "background",
+    "text": "What personal values guide your career decisions?",
+    "difficulty": "Master",
+    "competencies": ["values", "judgment"],
+    "recommended_structure": "Values → examples",
+    "good_signals": ["consistency"],
+    "red_flags": ["generic values"]
+  },
+  {
+    "id": "bg_mas_03",
+    "type": "background",
+    "text": "How do you decide which opportunities to say no to?",
+    "difficulty": "Master",
+    "competencies": ["strategy"],
+    "recommended_structure": "Criteria → decision",
+    "good_signals": ["clear boundaries"],
+    "red_flags": ["overcommitment"]
+  },
+  {
+    "id": "bg_mas_04",
+    "type": "background",
+    "text": "What long-term impact do you want your career to have?",
+    "difficulty": "Master",
+    "competencies": ["vision"],
+    "recommended_structure": "Vision → path",
+    "good_signals": ["grounded ambition"],
+    "red_flags": ["abstract only"]
+  },
+  {
+    "id": "bg_mas_05",
+    "type": "background",
+    "text": "How do you align personal growth with organizational goals?",
+    "difficulty": "Master",
+    "competencies": ["strategy"],
+    "recommended_structure": "Alignment framework",
+    "good_signals": ["win-win thinking"],
+    "red_flags": ["self-only focus"]
+  },
+  {
+    "id": "bg_mas_06",
+    "type": "background",
+    "text": "What experiences fundamentally changed how you work?",
+    "difficulty": "Master",
+    "competencies": ["reflection"],
+    "recommended_structure": "Experience → transformation",
+    "good_signals": ["clear change"],
+    "red_flags": ["surface-level"]
+  },
+  {
+    "id": "bg_mas_07",
+    "type": "background",
+    "text": "How do you intentionally design your career path?",
+    "difficulty": "Master",
+    "competencies": ["career strategy"],
+    "recommended_structure": "Vision → milestones",
+    "good_signals": ["intentional planning"],
+    "red_flags": ["drifting"]
+  },
+  {
+    "id": "bg_mas_08",
+    "type": "background",
+    "text": "What tradeoffs define your professional philosophy?",
+    "difficulty": "Master",
+    "competencies": ["judgment"],
+    "recommended_structure": "Tradeoff → rationale",
+    "good_signals": ["balanced reasoning"],
+    "red_flags": ["extreme stance"]
+  },
+  {
+    "id": "bg_mas_09",
+    "type": "background",
+    "text": "How do you maintain authenticity while adapting to different environments?",
+    "difficulty": "Master",
+    "competencies": ["adaptability", "identity"],
+    "recommended_structure": "Core values → adaptation strategy",
+    "good_signals": ["balance"],
+    "red_flags": ["people-pleasing"]
+  },
+  {
+    "id": "bg_mas_10",
+    "type": "background",
+    "text": "What lessons from your background would you pass to future teammates?",
+    "difficulty": "Master",
+    "competencies": ["leadership", "reflection"],
+    "recommended_structure": "Lesson → example → application",
+    "good_signals": ["transferable insight"],
+    "red_flags": ["generic advice"]
+  }
+]

@@ -1,0 +1,506 @@
+[
+  {
+    "id": "sit_e_01",
+    "type": "situational",
+    "text": "If you were given unclear instructions, what would you do?",
+    "difficulty": "Easy",
+    "competencies": ["communication", "execution"],
+    "recommended_structure": "Clarify → confirm → execute",
+    "good_signals": ["asks questions", "confirms expectations"],
+    "red_flags": ["assumes without checking"]
+  },
+  {
+    "id": "sit_e_02",
+    "type": "situational",
+    "text": "If you made a small mistake at work, what would you do?",
+    "difficulty": "Easy",
+    "competencies": ["accountability"],
+    "recommended_structure": "Acknowledge → fix → communicate",
+    "good_signals": ["ownership"],
+    "red_flags": ["hiding mistakes"]
+  },
+  {
+    "id": "sit_e_03",
+    "type": "situational",
+    "text": "If you finished your work early, what would you do next?",
+    "difficulty": "Easy",
+    "competencies": ["initiative"],
+    "recommended_structure": "Review → help others → improve",
+    "good_signals": ["proactive mindset"],
+    "red_flags": ["waits passively"]
+  },
+  {
+    "id": "sit_e_04",
+    "type": "situational",
+    "text": "If a teammate asked for help, how would you respond?",
+    "difficulty": "Easy",
+    "competencies": ["teamwork"],
+    "recommended_structure": "Understand → assist → follow up",
+    "good_signals": ["collaborative"],
+    "red_flags": ["dismissive"]
+  },
+  {
+    "id": "sit_e_05",
+    "type": "situational",
+    "text": "If you didn’t understand a task, what would you do?",
+    "difficulty": "Easy",
+    "competencies": ["communication"],
+    "recommended_structure": "Clarify → summarize → proceed",
+    "good_signals": ["asks early"],
+    "red_flags": ["pretends to understand"]
+  },
+  {
+    "id": "sit_e_06",
+    "type": "situational",
+    "text": "If you noticed a small issue no one else saw, what would you do?",
+    "difficulty": "Easy",
+    "competencies": ["ownership"],
+    "recommended_structure": "Verify → communicate → resolve",
+    "good_signals": ["responsible mindset"],
+    "red_flags": ["ignores issue"]
+  },
+  {
+    "id": "sit_e_07",
+    "type": "situational",
+    "text": "If you were new to a team, how would you integrate yourself?",
+    "difficulty": "Easy",
+    "competencies": ["adaptability", "communication"],
+    "recommended_structure": "Observe → ask → contribute",
+    "good_signals": ["proactive onboarding"],
+    "red_flags": ["isolates"]
+  },
+  {
+    "id": "sit_e_08",
+    "type": "situational",
+    "text": "If you disagreed with a teammate on a small issue, what would you do?",
+    "difficulty": "Easy",
+    "competencies": ["collaboration"],
+    "recommended_structure": "Discuss → align → move forward",
+    "good_signals": ["respectful tone"],
+    "red_flags": ["argumentative"]
+  },
+  {
+    "id": "sit_e_09",
+    "type": "situational",
+    "text": "If you had multiple small tasks due today, how would you start?",
+    "difficulty": "Easy",
+    "competencies": ["prioritization"],
+    "recommended_structure": "List → prioritize → execute",
+    "good_signals": ["organized approach"],
+    "red_flags": ["random order"]
+  },
+  {
+    "id": "sit_e_10",
+    "type": "situational",
+    "text": "If you saw someone struggling, what would you do?",
+    "difficulty": "Easy",
+    "competencies": ["empathy", "teamwork"],
+    "recommended_structure": "Offer help → support appropriately",
+    "good_signals": ["supportive"],
+    "red_flags": ["ignores others"]
+  },
+
+  {
+    "id": "sit_m_01",
+    "type": "situational",
+    "text": "What would you do if you were falling behind on a deadline?",
+    "difficulty": "Medium",
+    "competencies": ["ownership", "time management"],
+    "recommended_structure": "Assess → communicate → adjust plan",
+    "good_signals": ["early communication"],
+    "red_flags": ["silence"]
+  },
+  {
+    "id": "sit_m_02",
+    "type": "situational",
+    "text": "How would you handle multiple tasks due at the same time?",
+    "difficulty": "Medium",
+    "competencies": ["prioritization"],
+    "recommended_structure": "Prioritize → communicate → execute",
+    "good_signals": ["clear framework"],
+    "red_flags": ["chaotic execution"]
+  },
+  {
+    "id": "sit_m_03",
+    "type": "situational",
+    "text": "If you received feedback you didn’t agree with, what would you do?",
+    "difficulty": "Medium",
+    "competencies": ["coachability"],
+    "recommended_structure": "Listen → clarify → reflect",
+    "good_signals": ["open mindset"],
+    "red_flags": ["defensive"]
+  },
+  {
+    "id": "sit_m_04",
+    "type": "situational",
+    "text": "If a project requirement changed suddenly, what would you do?",
+    "difficulty": "Medium",
+    "competencies": ["adaptability"],
+    "recommended_structure": "Reassess → replan → communicate",
+    "good_signals": ["flexibility"],
+    "red_flags": ["resistance"]
+  },
+  {
+    "id": "sit_m_05",
+    "type": "situational",
+    "text": "If a teammate wasn’t responding, how would you handle it?",
+    "difficulty": "Medium",
+    "competencies": ["communication"],
+    "recommended_structure": "Follow-up → clarify → escalate if needed",
+    "good_signals": ["professionalism"],
+    "red_flags": ["aggressive escalation"]
+  },
+  {
+    "id": "sit_m_06",
+    "type": "situational",
+    "text": "If you had to learn a new tool quickly, what would you do?",
+    "difficulty": "Medium",
+    "competencies": ["learning agility"],
+    "recommended_structure": "Resources → practice → apply",
+    "good_signals": ["resourcefulness"],
+    "red_flags": ["waits for others"]
+  },
+  {
+    "id": "sit_m_07",
+    "type": "situational",
+    "text": "If you noticed inefficiency in a process, what would you do?",
+    "difficulty": "Medium",
+    "competencies": ["continuous improvement"],
+    "recommended_structure": "Observe → propose → test",
+    "good_signals": ["constructive approach"],
+    "red_flags": ["complaining only"]
+  },
+  {
+    "id": "sit_m_08",
+    "type": "situational",
+    "text": "If you had to present to a group unexpectedly, what would you do?",
+    "difficulty": "Medium",
+    "competencies": ["communication"],
+    "recommended_structure": "Prepare quickly → structure message",
+    "good_signals": ["composure"],
+    "red_flags": ["panic"]
+  },
+  {
+    "id": "sit_m_09",
+    "type": "situational",
+    "text": "If you had limited time to finish a task, how would you approach it?",
+    "difficulty": "Medium",
+    "competencies": ["execution"],
+    "recommended_structure": "Scope → prioritize → deliver",
+    "good_signals": ["focus on essentials"],
+    "red_flags": ["tries everything"]
+  },
+  {
+    "id": "sit_m_10",
+    "type": "situational",
+    "text": "If a teammate made a mistake that affected you, what would you do?",
+    "difficulty": "Medium",
+    "competencies": ["collaboration"],
+    "recommended_structure": "Address respectfully → solve together",
+    "good_signals": ["constructive"],
+    "red_flags": ["blame"]
+  },
+
+  {
+    "id": "sit_h_01",
+    "type": "situational",
+    "text": "A teammate isn’t pulling their weight. How do you handle it?",
+    "difficulty": "Hard",
+    "competencies": ["conflict resolution", "leadership"],
+    "recommended_structure": "Private conversation → expectations → support",
+    "good_signals": ["professional approach"],
+    "red_flags": ["public confrontation"]
+  },
+  {
+    "id": "sit_h_02",
+    "type": "situational",
+    "text": "You disagree with your manager’s decision. What do you do?",
+    "difficulty": "Hard",
+    "competencies": ["communication", "judgment"],
+    "recommended_structure": "Clarify → respectfully discuss → align",
+    "good_signals": ["respectful disagreement"],
+    "red_flags": ["undermining"]
+  },
+  {
+    "id": "sit_h_03",
+    "type": "situational",
+    "text": "A client/user is upset. How do you respond?",
+    "difficulty": "Hard",
+    "competencies": ["customer focus"],
+    "recommended_structure": "Acknowledge → understand → resolve",
+    "good_signals": ["empathy"],
+    "red_flags": ["defensive"]
+  },
+  {
+    "id": "sit_h_04",
+    "type": "situational",
+    "text": "You realize you may miss a major deadline. What do you do?",
+    "difficulty": "Hard",
+    "competencies": ["ownership"],
+    "recommended_structure": "Early communication → mitigation plan",
+    "good_signals": ["proactive"],
+    "red_flags": ["hides risk"]
+  },
+  {
+    "id": "sit_h_05",
+    "type": "situational",
+    "text": "You are assigned work outside your expertise. What do you do?",
+    "difficulty": "Hard",
+    "competencies": ["learning agility"],
+    "recommended_structure": "Clarify → learn → deliver",
+    "good_signals": ["resourceful"],
+    "red_flags": ["refuses task"]
+  },
+  {
+    "id": "sit_h_06",
+    "type": "situational",
+    "text": "Two teammates disagree strongly. What would you do?",
+    "difficulty": "Hard",
+    "competencies": ["mediation"],
+    "recommended_structure": "Listen → align → resolve",
+    "good_signals": ["neutral facilitation"],
+    "red_flags": ["takes sides quickly"]
+  },
+  {
+    "id": "sit_h_07",
+    "type": "situational",
+    "text": "You discover a mistake late in a project. What do you do?",
+    "difficulty": "Hard",
+    "competencies": ["accountability"],
+    "recommended_structure": "Assess impact → communicate → fix",
+    "good_signals": ["ownership"],
+    "red_flags": ["hide mistake"]
+  },
+  {
+    "id": "sit_h_08",
+    "type": "situational",
+    "text": "You have to make a decision with limited information. What do you do?",
+    "difficulty": "Hard",
+    "competencies": ["judgment"],
+    "recommended_structure": "Assumptions → decision → mitigation",
+    "good_signals": ["structured reasoning"],
+    "red_flags": ["guessing"]
+  },
+  {
+    "id": "sit_h_09",
+    "type": "situational",
+    "text": "You notice your team is falling behind. What do you do?",
+    "difficulty": "Hard",
+    "competencies": ["leadership"],
+    "recommended_structure": "Diagnose → align → act",
+    "good_signals": ["clear action plan"],
+    "red_flags": ["blame"]
+  },
+  {
+    "id": "sit_h_10",
+    "type": "situational",
+    "text": "You receive conflicting instructions from two leaders. What do you do?",
+    "difficulty": "Hard",
+    "competencies": ["stakeholder management"],
+    "recommended_structure": "Clarify priorities → align stakeholders",
+    "good_signals": ["transparent communication"],
+    "red_flags": ["chooses randomly"]
+  },
+
+  {
+    "id": "sit_x_01",
+    "type": "situational",
+    "text": "How would you handle multiple stakeholders with conflicting priorities?",
+    "difficulty": "Expert",
+    "competencies": ["stakeholder management"],
+    "recommended_structure": "Align goals → define criteria → decide",
+    "good_signals": ["facilitates alignment"],
+    "red_flags": ["tries to please everyone"]
+  },
+  {
+    "id": "sit_x_02",
+    "type": "situational",
+    "text": "You discover a major risk late in a project. What do you do?",
+    "difficulty": "Expert",
+    "competencies": ["risk management"],
+    "recommended_structure": "Assess → communicate → mitigate",
+    "good_signals": ["clear mitigation"],
+    "red_flags": ["ignores risk"]
+  },
+  {
+    "id": "sit_x_03",
+    "type": "situational",
+    "text": "You must make a decision that will disappoint some stakeholders. What do you do?",
+    "difficulty": "Expert",
+    "competencies": ["leadership", "communication"],
+    "recommended_structure": "Decision rationale → communicate clearly",
+    "good_signals": ["transparent reasoning"],
+    "red_flags": ["avoids conversation"]
+  },
+  {
+    "id": "sit_x_04",
+    "type": "situational",
+    "text": "You inherit a failing project. How do you proceed?",
+    "difficulty": "Expert",
+    "competencies": ["execution", "leadership"],
+    "recommended_structure": "Assess → stabilize → improve",
+    "good_signals": ["structured recovery"],
+    "red_flags": ["random changes"]
+  },
+  {
+    "id": "sit_x_05",
+    "type": "situational",
+    "text": "You must choose between speed and quality. What do you do?",
+    "difficulty": "Expert",
+    "competencies": ["judgment"],
+    "recommended_structure": "Tradeoff analysis",
+    "good_signals": ["context-aware"],
+    "red_flags": ["extreme choice"]
+  },
+  {
+    "id": "sit_x_06",
+    "type": "situational",
+    "text": "You notice morale dropping on your team. What would you do?",
+    "difficulty": "Expert",
+    "competencies": ["leadership"],
+    "recommended_structure": "Diagnose → address → follow-up",
+    "good_signals": ["empathetic leadership"],
+    "red_flags": ["ignores issue"]
+  },
+  {
+    "id": "sit_x_07",
+    "type": "situational",
+    "text": "You must onboard a new team member quickly. How do you approach it?",
+    "difficulty": "Expert",
+    "competencies": ["mentorship"],
+    "recommended_structure": "Plan → support → feedback",
+    "good_signals": ["structured onboarding"],
+    "red_flags": ["no guidance"]
+  },
+  {
+    "id": "sit_x_08",
+    "type": "situational",
+    "text": "A high-priority project suddenly changes direction. What do you do?",
+    "difficulty": "Expert",
+    "competencies": ["adaptability"],
+    "recommended_structure": "Reassess → communicate → execute",
+    "good_signals": ["fast alignment"],
+    "red_flags": ["resistance"]
+  },
+  {
+    "id": "sit_x_09",
+    "type": "situational",
+    "text": "You must make a decision that has no perfect answer. What do you do?",
+    "difficulty": "Expert",
+    "competencies": ["judgment"],
+    "recommended_structure": "Criteria → tradeoffs → decision",
+    "good_signals": ["clear reasoning"],
+    "red_flags": ["indecision"]
+  },
+  {
+    "id": "sit_x_10",
+    "type": "situational",
+    "text": "You notice a systemic issue across multiple projects. What do you do?",
+    "difficulty": "Expert",
+    "competencies": ["systems thinking"],
+    "recommended_structure": "Identify → propose systemic fix",
+    "good_signals": ["long-term thinking"],
+    "red_flags": ["quick patch only"]
+  },
+
+  {
+    "id": "sit_mas_01",
+    "type": "situational",
+    "text": "You’re asked to do something you believe is unethical. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["integrity", "judgment"],
+    "recommended_structure": "Clarify → raise concern → escalate appropriately",
+    "good_signals": ["calm integrity"],
+    "red_flags": ["blind compliance"]
+  },
+  {
+    "id": "sit_mas_02",
+    "type": "situational",
+    "text": "You must choose between two high-impact options with limited data. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["decision-making"],
+    "recommended_structure": "Assumptions → analysis → decision",
+    "good_signals": ["structured thinking"],
+    "red_flags": ["guessing"]
+  },
+  {
+    "id": "sit_mas_03",
+    "type": "situational",
+    "text": "A decision you make could impact many teams negatively in the short term. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["leadership", "ethics"],
+    "recommended_structure": "Tradeoff → communication → mitigation",
+    "good_signals": ["transparent leadership"],
+    "red_flags": ["ignores impact"]
+  },
+  {
+    "id": "sit_mas_04",
+    "type": "situational",
+    "text": "You must lead through major uncertainty with little guidance. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["leadership"],
+    "recommended_structure": "Set direction → iterate → communicate",
+    "good_signals": ["calm clarity"],
+    "red_flags": ["paralysis"]
+  },
+  {
+    "id": "sit_mas_05",
+    "type": "situational",
+    "text": "You see a strategic opportunity that others don’t. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["vision", "influence"],
+    "recommended_structure": "Validate → pitch → execute",
+    "good_signals": ["data-backed"],
+    "red_flags": ["unsupported idea"]
+  },
+  {
+    "id": "sit_mas_06",
+    "type": "situational",
+    "text": "Your team disagrees on the direction of a major initiative. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["leadership", "alignment"],
+    "recommended_structure": "Facilitate → decide → align",
+    "good_signals": ["clear decision-making"],
+    "red_flags": ["avoids decision"]
+  },
+  {
+    "id": "sit_mas_07",
+    "type": "situational",
+    "text": "You need to stop a project that people are emotionally invested in. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["leadership", "communication"],
+    "recommended_structure": "Rationale → empathy → transition",
+    "good_signals": ["respectful communication"],
+    "red_flags": ["cold delivery"]
+  },
+  {
+    "id": "sit_mas_08",
+    "type": "situational",
+    "text": "You must make a decision that conflicts with your personal preference but benefits the organization. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["professionalism"],
+    "recommended_structure": "Evaluate → decide for impact",
+    "good_signals": ["organization-first mindset"],
+    "red_flags": ["self-first bias"]
+  },
+  {
+    "id": "sit_mas_09",
+    "type": "situational",
+    "text": "You identify a long-term risk that leadership is ignoring. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["risk management", "influence"],
+    "recommended_structure": "Evidence → communicate → escalate appropriately",
+    "good_signals": ["data-driven"],
+    "red_flags": ["alarmist"]
+  },
+  {
+    "id": "sit_mas_10",
+    "type": "situational",
+    "text": "You need to align multiple teams around a new strategy quickly. What do you do?",
+    "difficulty": "Master",
+    "competencies": ["strategy", "leadership"],
+    "recommended_structure": "Vision → communication → execution",
+    "good_signals": ["clear alignment"],
+    "red_flags": ["confusing messaging"]
+  }
+]

@@ -256,13 +256,41 @@ async def analyze_interview(
         print(f"\nLLM REVIEW:\n{review}", flush=True)
         print("==============================\n", flush=True)
         
+        #------- LLM SEPERATION -------#
+        question = prompt_text
+        type_ = prompt_type
+        difficulty = prompt_difficulty
         
+        clarity_score = review.split("Communication Clarity: ")[1].split("/25")[0].strip()
+        content_score = review.split("Content & Substance: ")[1].split("/25")[0].strip()
+        professionalism_score = review.split("Professionalism: ")[1].split("/20")[0].strip()
+        body_language_score = review.split("Body Language: ")[1].split("/15")[0].strip()
+        vocal_delivery_score = review.split("Vocal Delivery: ")[1].split("/15")[0].strip()
+        total_score = review.split("TOTAL SCORE: ")[1].split("/100")[0].strip()
+        
+        doing_well = review.split("WHAT YOU ARE DOING WELL")[1].split("WHAT YOU MUST IMPROVE")[0].strip()
+        must_improve = review.split("WHAT YOU MUST IMPROVE")[1].split("HABITS TO KEEP")[0].strip()
+        habits_to_keep = review.split("HABITS TO KEEP")[1].split("ACTION PLAN FOR NEXT INTERVIEW")[0].strip()
+        action_plan = review.split("ACTION PLAN FOR NEXT INTERVIEW")[1].strip()
         
         return {
             "transcript": transcript,
             "vision_summary": metrics,
             "voice_analysis": voice_analysis,
             "llm_review": review,
+            "question": question,
+            "type": type_,
+            "difficulty": difficulty,
+            "clarity_score": clarity_score,
+            "content_score": content_score,
+            "professionalism_score": professionalism_score,
+            "body_language_score": body_language_score,
+            "vocal_delivery_score": vocal_delivery_score,
+            "total_score": total_score,
+            "doing_well": doing_well,
+            "must_improve": must_improve,
+            "habits_to_keep": habits_to_keep,
+            "action_plan": action_plan
         }
 
     except Exception as e:
