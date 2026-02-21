@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form
 
 from app.services.analysis_service import parse_vision_metrics, read_upload_bytes, save_upload_bytes
+from app.services.Converter import analyze_interview
 
 router = APIRouter()
 
@@ -26,6 +27,10 @@ async def analyze(
     print(f"filename={filename} content_type={content_type} bytes={audio_size}", flush=True)
     print(f"saved_to={saved_path}", flush=True)
     print(f"audio_preview_hex={audio_bytes[:24].hex()}", flush=True)
+
+    # Call the analyze_interview function from Converter.py
+    interview_analysis = await analyze_interview(audio_bytes, vision_metrics)
+
 
     return {
         "ok": True,
