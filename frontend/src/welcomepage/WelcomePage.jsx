@@ -13,14 +13,14 @@ export default function WelcomePage() {
         <div className="welcome-container">
             <div className="body-container">
 
-                    <h1 className="welcome-title0">
-                        Take a Practice Interview to be Prepared for the Real One with 
-                        Unemployment No Longer!
-                    </h1>
-                
-                    <p className="welcome-title1">
-                        You will answer 1 question typically seen in an interviews. 
-                    </p>
+                <h1 className="welcome-title0">
+                    Take a Practice Interview to be Prepared for the Real One with 
+                    Unemployment No Longer!
+                </h1>
+            
+                <p className="welcome-title1">
+                    You will answer 1 question typically seen in an interviews. 
+                </p>
 
                 <p className="welcome-title2">
                     We will analyze your posture and eye contact and give you feedback on

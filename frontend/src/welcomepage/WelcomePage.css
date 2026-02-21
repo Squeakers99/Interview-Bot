@@ -30,37 +30,37 @@ body {
 .welcome-title0 {
     font-size: 2rem;
     margin-bottom: 20px;
-    animation: fadeInSimple 5s ease-in-out;
+    animation: fadeInSimple 2s ease-in-out;
 }
 
 .welcome-title1 {
     font-size: 2rem;
     margin-bottom: 20px;
-    animation: fadeInSimple 10s ease-in-out;
+    animation: fadeInSimple 4s ease-in-out;
 }
 
 .welcome-title2 {
     font-size: 2rem;
     margin-bottom: 20px;
-    animation: fadeInSimple 15s ease-in-out;
+    animation: fadeInSimple 6s ease-in-out;
 }
 
 .welcome-title3 {
     font-size: 2rem;
     margin-bottom: 20px;
-    animation: fadeInSimple 20s ease-in-out;
+    animation: fadeInSimple 8s ease-in-out;
 }
 
 .welcome-title4 {
     font-size: 2rem;
     margin-bottom: 20px;
-    animation: fadeInSimple 25s ease-in-out;
+    animation: fadeInSimple 10s ease-in-out;
 }
 
 .welcome-title5 {
     font-size: 2rem;
     margin-bottom: 20px;
-    animation: fadeInSimple 30s ease-in-out;
+    animation: fadeInSimple 12s ease-in-out;
 }
 
 /* Button styling */
