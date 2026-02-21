@@ -21,6 +21,7 @@
 
 .vision-tracker__frame {
   position: relative;
+  display: inline-block;
 }
 
 .vision-tracker__video-hidden {
@@ -30,6 +31,7 @@
 .vision-tracker__canvas {
   border: 1px solid #ddd;
   border-radius: 12px;
+  display: block;
 }
 
 .vision-tracker__timer-overlay {
@@ -39,11 +41,38 @@
   pointer-events: none;
 }
 
+.vision-tracker__center-overlay {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  pointer-events: none;
+  z-index: 3;
+}
+
 .vision-tracker__timer-badge {
   padding: 6px 10px;
   border-radius: 8px;
   font-weight: 800;
   font-size: 16px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.vision-tracker__phase-overlay {
+  position: absolute;
+  inset: 10px 10px auto auto;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.vision-tracker__phase-badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 12px;
   color: #fff;
   background: rgba(0, 0, 0, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -70,7 +99,17 @@
 }
 
 .vision-btn--danger {
-  background: #fff;
-  border-color: #e0a0a0;
-  color: #9a1b1b;
+  background: #c62828;
+  border-color: #c62828;
+  color: #fff;
+}
+
+.vision-btn--end {
+  pointer-events: auto;
+  min-width: 170px;
+}
+
+.vision-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }

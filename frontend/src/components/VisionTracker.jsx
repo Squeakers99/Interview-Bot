@@ -36,7 +36,7 @@ function secondsToMMSS(totalSeconds) {
 
 export default function VisionTracker({
   enabled = true,
-  autoStartCamera = false,
+  autoStartCamera = true,
   drawLandmarks = true,
   onUpdate,
   onAnalysisResult,
@@ -203,7 +203,6 @@ export default function VisionTracker({
     stream?.getTracks?.().forEach((t) => t.stop());
     streamRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
-
     setCameraOn(false);
   }
 
@@ -219,6 +218,24 @@ export default function VisionTracker({
       stopCamera();
       setPhase("done");
       setTimeLeft(0);
+    }
+  }
+
+  async function endInterviewByUser() {
+    stopLoop();
+    try {
+      if (recorderRef.current) {
+        await stopAudioRecording(true);
+        setStatus("Interview ended and audio uploaded.");
+      } else {
+        setStatus("Interview ended.");
+      }
+    } catch (e) {
+      setStatus(`Stop/upload error: ${String(e)}`);
+    } finally {
+      stopCamera();
+      setPhase("idle");
+      setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
     }
   }
 
@@ -244,7 +261,6 @@ export default function VisionTracker({
       setStatus("MediaRecorder not supported in this browser.");
       return;
     }
-
     try {
       audioChunksRef.current = [];
       const audioTracks = stream.getAudioTracks();
@@ -253,18 +269,14 @@ export default function VisionTracker({
         return;
       }
       const audioOnlyStream = new MediaStream(audioTracks);
-
       let options;
       if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
         options = { mimeType: "audio/webm;codecs=opus" };
       }
-
       const recorder = options ? new MediaRecorder(audioOnlyStream, options) : new MediaRecorder(audioOnlyStream);
       recorderRef.current = recorder;
       recorder.ondataavailable = (event) => {
-        if (event.data && event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
+        if (event.data && event.data.size > 0) audioChunksRef.current.push(event.data);
       };
       recorder.start(250);
     } catch (e) {
@@ -274,10 +286,7 @@ export default function VisionTracker({
 
   async function stopAudioRecording(uploadAfterStop) {
     const recorder = recorderRef.current;
-    if (!recorder) {
-      setStatus("No active audio recorder.");
-      return;
-    }
+    if (!recorder) return;
 
     if (recorder.state !== "inactive") {
       await new Promise((resolve, reject) => {
@@ -293,34 +302,27 @@ export default function VisionTracker({
     const blob = new Blob(audioChunksRef.current, { type });
     recorderRef.current = null;
     audioChunksRef.current = [];
-
-    if (uploadAfterStop) {
-      await uploadAudio(blob);
-    }
+    if (uploadAfterStop) await uploadAudio(blob);
   }
 
   async function uploadAudio(audioBlob) {
     setStatus("Uploading audio for analysis...");
-
     const formData = new FormData();
     const ext = audioBlob.type.includes("ogg") ? "ogg" : "webm";
     const filename = `interview-audio.${ext}`;
+    const interviewSummary = {
+      postureScore: latestMetricsRef.current?.postureScore ?? postureScoreUI ?? null,
+      eyeScore: latestMetricsRef.current?.eyeScore ?? eyeScoreUI ?? null,
+    };
     formData.append("audio", audioBlob, filename);
     formData.append("prompt_id", "");
     formData.append("prompt_text", "");
     formData.append("vision_metrics", JSON.stringify(latestMetricsRef.current || {}));
+    formData.append("interview_summary", JSON.stringify(interviewSummary));
 
     const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
-    console.log("[uploadAudio] POST", `${apiBase}/analyze`, "bytes=", audioBlob.size);
-    const response = await fetch(`${apiBase}/analyze`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Analyze failed with status ${response.status}`);
-    }
-
+    const response = await fetch(`${apiBase}/analyze`, { method: "POST", body: formData });
+    if (!response.ok) throw new Error(`Analyze failed with status ${response.status}`);
     const data = await response.json();
     onAnalysisResult?.(data);
     setStatus(`Uploaded ${filename} (${audioBlob.size} bytes).`);
@@ -338,7 +340,6 @@ export default function VisionTracker({
     const canvas = canvasRef.current;
     const pose = poseRef.current;
     const face = faceRef.current;
-
     if (!video || !canvas || !pose || !face) {
       rafRef.current = requestAnimationFrame(loop);
       return;
@@ -354,7 +355,6 @@ export default function VisionTracker({
 
     let posture = null;
     if (poseRes?.landmarks?.length) posture = computePostureScore(poseRes.landmarks[0]);
-
     let eye = null;
     if (faceRes?.faceLandmarks?.length) {
       const matrix = faceRes.facialTransformationMatrixes?.[0] || null;
@@ -362,12 +362,10 @@ export default function VisionTracker({
     }
 
     aggRef.current.frames += 1;
-
     if (posture?.score != null) {
       setPostureScoreUI((prev) => Math.round(ema(prev, posture.score, SMOOTHING_ALPHA)));
       if (posture.score >= GOOD_SCORE_THRESHOLD) aggRef.current.postureGoodFrames += 1;
     }
-
     if (eye?.score != null) {
       setEyeScoreUI((prev) => Math.round(ema(prev, eye.score, SMOOTHING_ALPHA)));
       if (eye.score >= GOOD_SCORE_THRESHOLD) aggRef.current.eyeGoodFrames += 1;
@@ -405,37 +403,7 @@ export default function VisionTracker({
   return (
     <div className="vision-tracker">
       <div className="vision-tracker__top">
-        {!cameraOn ? (
-          <button onClick={startCamera} disabled={!modelsReady} className="vision-btn vision-btn--primary">
-            Start Camera
-          </button>
-        ) : (
-          <button
-            onClick={async () => {
-              stopLoop();
-              try {
-                if (recorderRef.current) {
-                  await stopAudioRecording(true);
-                  setStatus("Camera stopped and audio uploaded.");
-                } else {
-                  setStatus("Camera stopped.");
-                }
-              } catch (e) {
-                setStatus(`Stop/upload error: ${String(e)}`);
-              } finally {
-                stopCamera();
-                setPhase("idle");
-                setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
-              }
-            }}
-            className="vision-btn vision-btn--danger"
-          >
-            Stop Camera
-          </button>
-        )}
-
         <div className="vision-tracker__status">Status: {status}</div>
-
         <div className="vision-tracker__live">
           <b>Live:</b> Posture {postureScoreUI ?? "--"} · Eye {eyeScoreUI ?? "--"}
         </div>
@@ -444,8 +412,20 @@ export default function VisionTracker({
       <div className="vision-tracker__frame">
         <video ref={videoRef} className="vision-tracker__video-hidden" playsInline />
         <canvas ref={canvasRef} width={VIDEO_W} height={VIDEO_H} className="vision-tracker__canvas" />
+        <div className="vision-tracker__center-overlay">
+          <button
+            onClick={endInterviewByUser}
+            className="vision-btn vision-btn--danger vision-btn--end"
+            disabled={!cameraOn}
+          >
+            End Interview
+          </button>
+        </div>
         <div className="vision-tracker__timer-overlay">
           <div className="vision-tracker__timer-badge">{secondsToMMSS(timeLeft)}</div>
+        </div>
+        <div className="vision-tracker__phase-overlay">
+          <div className="vision-tracker__phase-badge">Phase: {phase.toUpperCase()}</div>
         </div>
       </div>
 

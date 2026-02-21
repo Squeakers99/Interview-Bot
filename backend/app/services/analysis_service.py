@@ -10,6 +10,15 @@ def parse_vision_metrics(raw: str) -> Dict[str, Any]:
     except Exception:
         return {"parse_error": True, "raw": raw}
 
+
+def parse_json_field(raw: str) -> Dict[str, Any]:
+    if not raw:
+        return {}
+    try:
+        return json.loads(raw)
+    except Exception:
+        return {"parse_error": True, "raw": raw}
+
 async def read_upload_bytes(upload_file) -> Tuple[int, str, str, bytes]:
     """
     Returns (byte_count, filename, content_type, raw_bytes)

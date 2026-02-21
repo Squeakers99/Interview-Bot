@@ -20,7 +20,7 @@ export default function App() {
 
       <VisionTracker
         enabled={true}
-        autoStartCamera={false}
+        autoStartCamera={true}
         drawLandmarks={true}
         onUpdate={setVision}
         onAnalysisResult={setAnalysisResult}
