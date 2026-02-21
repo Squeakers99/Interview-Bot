@@ -1,0 +1,76 @@
+.vision-tracker {
+  margin-bottom: 16px;
+}
+
+.vision-tracker__top {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.vision-tracker__status {
+  color: #666;
+  align-self: center;
+}
+
+.vision-tracker__live {
+  color: #444;
+  align-self: center;
+}
+
+.vision-tracker__frame {
+  position: relative;
+}
+
+.vision-tracker__video-hidden {
+  display: none;
+}
+
+.vision-tracker__canvas {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.vision-tracker__timer-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  pointer-events: none;
+}
+
+.vision-tracker__timer-badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 16px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.vision-tracker__meta {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.vision-btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.vision-btn--primary {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.vision-btn--danger {
+  background: #fff;
+  border-color: #e0a0a0;
+  color: #9a1b1b;
+}

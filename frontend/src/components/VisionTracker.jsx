@@ -20,6 +20,7 @@ import {
 import { ema } from "../utils/math";
 import { computePostureScore } from "../utils/scoringPosture";
 import { computeEyeContactScore } from "../utils/scoringEye";
+import "./VisionTracker.css";
 
 const INTERVIEW_TIMINGS = {
   thinkingSeconds: 30,
@@ -33,19 +34,12 @@ function secondsToMMSS(totalSeconds) {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-/**
- * VisionTracker:
- * - loads MediaPipe models once
- * - starts/stops camera
- * - runs vision loop only when enabled=true
- * - throttles FPS, smooths scores, aggregates % good-time
- */
 export default function VisionTracker({
-  enabled = true,          // parent can pause tracking
-  autoStartCamera = false, // optional convenience
-  drawLandmarks = true,    // disable if too slow
-  onUpdate,                // receives metrics object each frame
-  onAnalysisResult,        // receives backend analyze response after stop
+  enabled = true,
+  autoStartCamera = false,
+  drawLandmarks = true,
+  onUpdate,
+  onAnalysisResult,
 }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -76,7 +70,6 @@ export default function VisionTracker({
   const [postureScoreUI, setPostureScoreUI] = useState(null);
   const [eyeScoreUI, setEyeScoreUI] = useState(null);
 
-  // Load models once
   useEffect(() => {
     let cancelled = false;
 
@@ -122,7 +115,6 @@ export default function VisionTracker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Auto-start camera if requested
   useEffect(() => {
     if (!modelsReady) return;
     if (!autoStartCamera) return;
@@ -130,7 +122,6 @@ export default function VisionTracker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelsReady, autoStartCamera]);
 
-  // Start/stop loop based on enabled
   useEffect(() => {
     if (!modelsReady || !cameraOn) return;
     const trackingEnabled = enabled && phase === "response";
@@ -336,7 +327,6 @@ export default function VisionTracker({
   }
 
   function loop(t) {
-    // FPS throttle
     const minDelta = 1000 / TARGET_FPS;
     if (t - lastFrameTimeRef.current < minDelta) {
       rafRef.current = requestAnimationFrame(loop);
@@ -358,7 +348,6 @@ export default function VisionTracker({
     const poseRes = pose.detectForVideo(video, now);
     const faceRes = face.detectForVideo(video, now);
 
-    // Draw base video frame
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -372,7 +361,6 @@ export default function VisionTracker({
       eye = computeEyeContactScore(faceRes.faceLandmarks[0], matrix);
     }
 
-    // Aggregates
     aggRef.current.frames += 1;
 
     if (posture?.score != null) {
@@ -389,7 +377,6 @@ export default function VisionTracker({
     const postureGoodPct = Math.round((100 * aggRef.current.postureGoodFrames) / frames);
     const eyeGoodPct = Math.round((100 * aggRef.current.eyeGoodFrames) / frames);
 
-    // Emit metrics
     onUpdate?.({
       postureScore: posture?.score ?? null,
       eyeScore: eye?.score ?? null,
@@ -407,7 +394,6 @@ export default function VisionTracker({
       eyeMetrics: eye?.metrics ?? null,
     };
 
-    // Optional landmark drawing
     if (drawLandmarks && drawingRef.current) {
       if (poseRes?.landmarks?.length) drawingRef.current.drawLandmarks(poseRes.landmarks[0], { radius: 2 });
       if (faceRes?.faceLandmarks?.length) drawingRef.current.drawLandmarks(faceRes.faceLandmarks[0], { radius: 0.6 });
@@ -417,10 +403,10 @@ export default function VisionTracker({
   }
 
   return (
-    <div style={{ marginBottom: 16 }}>
-      <div style={{ display: "flex", gap: 10, marginBottom: 10, flexWrap: "wrap" }}>
+    <div className="vision-tracker">
+      <div className="vision-tracker__top">
         {!cameraOn ? (
-          <button onClick={startCamera} disabled={!modelsReady} style={btnPrimary}>
+          <button onClick={startCamera} disabled={!modelsReady} className="vision-btn vision-btn--primary">
             Start Camera
           </button>
         ) : (
@@ -442,75 +428,31 @@ export default function VisionTracker({
                 setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
               }
             }}
-            style={btnDanger}
+            className="vision-btn vision-btn--danger"
           >
             Stop Camera
           </button>
         )}
 
-        <div style={{ color: "#666", alignSelf: "center" }}>Status: {status}</div>
+        <div className="vision-tracker__status">Status: {status}</div>
 
-        <div style={{ color: "#444", alignSelf: "center" }}>
+        <div className="vision-tracker__live">
           <b>Live:</b> Posture {postureScoreUI ?? "--"} · Eye {eyeScoreUI ?? "--"}
         </div>
       </div>
 
-      <div style={{ position: "relative", width: VIDEO_W, height: VIDEO_H }}>
-        <video ref={videoRef} style={{ display: "none" }} playsInline />
-        <canvas
-          ref={canvasRef}
-          width={VIDEO_W}
-          height={VIDEO_H}
-          style={{ border: "1px solid #ddd", borderRadius: 12 }}
-        />
-        <div style={timerOverlayStyle}>
-          <div style={timerBadgeStyle}>{secondsToMMSS(timeLeft)}</div>
+      <div className="vision-tracker__frame">
+        <video ref={videoRef} className="vision-tracker__video-hidden" playsInline />
+        <canvas ref={canvasRef} width={VIDEO_W} height={VIDEO_H} className="vision-tracker__canvas" />
+        <div className="vision-tracker__timer-overlay">
+          <div className="vision-tracker__timer-badge">{secondsToMMSS(timeLeft)}</div>
         </div>
       </div>
 
-      <div style={{ marginTop: 8, fontSize: 12, color: "#666" }}>
+      <div className="vision-tracker__meta">
         Phase: <b>{phase.toUpperCase()}</b> · Time left: <b>{secondsToMMSS(timeLeft)}</b> · Tracking is{" "}
         <b>{enabled && phase === "response" ? "ON" : "PAUSED"}</b>. FPS target: {TARGET_FPS}.
       </div>
     </div>
   );
 }
-
-const btnBase = {
-  padding: "10px 14px",
-  borderRadius: 10,
-  border: "1px solid #ddd",
-  cursor: "pointer",
-  fontWeight: 700,
-};
-
-const btnPrimary = {
-  ...btnBase,
-  background: "#111",
-  color: "white",
-  borderColor: "#111",
-};
-
-const btnDanger = {
-  ...btnBase,
-  background: "#fff",
-  borderColor: "#e0a0a0",
-  color: "#9a1b1b",
-};
-
-const timerOverlayStyle = {
-  position: "absolute",
-  top: 10,
-  left: 10,
-  pointerEvents: "none",
-};
-
-const timerBadgeStyle = {
-  padding: "6px 10px",
-  borderRadius: 8,
-  fontWeight: 800,
-  fontSize: 16,
-  color: "#fff",
-  background: "rgba(0, 0, 0, 0.65)",
-  border: "1px solid rgba(255, 255, 255, 0.3)",
-};
