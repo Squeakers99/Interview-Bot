@@ -122,6 +122,8 @@ async def analyze_interview(
     prompt_text: str = "",
     prompt_type: str = "",
     prompt_difficulty: str = "",
+    prompt_good_signals: str = "",
+    prompt_red_flags: str = "",
 ):
     # Unique filename prevents user overlap
     temp_filename = f"{uuid.uuid4()}.webm"
@@ -169,6 +171,14 @@ async def analyze_interview(
         {"Medium difficulty expects some structure and relevant examples." if prompt_difficulty.lower() == "medium" else ""}
         {"Easy difficulty just needs a clear and confident response." if prompt_difficulty.lower() == "easy" else ""}
 
+        --- POSITIVE SIGNALS TO LOOK FOR ---
+        These are things the candidate SHOULD say or demonstrate. If you detect any of these in the transcript, highlight them as strengths:
+        {prompt_good_signals if prompt_good_signals else "No specific signals provided."}
+           
+        --- RED FLAGS TO WATCH FOR ---
+        These are things the candidate should NEVER say or do for this question. If you detect any of these in the transcript, call them out directly and firmly in the improvements section:
+        {prompt_red_flags if prompt_red_flags else "No specific red flags provided."}
+        
         --- INTERVIEW DATA ---
         Transcript: {transcript}
         Posture Score: {metrics['postureGoodPct']}%

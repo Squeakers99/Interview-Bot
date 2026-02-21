@@ -45,7 +45,7 @@ async def analyze(
     interview_summary: str = Form("{}"),
     interview_timelines: str = Form("{}"),
     interview_feedback: str = Form("{}"),
-    audio: UploadFile = File(...),
+    audio: UploadFile = File(...)
 ):
     """
     MVP endpoint:
@@ -57,8 +57,8 @@ async def analyze(
     summary = parse_json_field(interview_summary)
     timelines = parse_json_field(interview_timelines)
     feedback = normalize_feedback_payload(parse_json_field(interview_feedback))
-    good_signals = feedback.get("good_signals", [])
-    red_flags = feedback.get("red_flags", [])
+    good_signals = summary.get("good_signals", [])
+    red_flags = summary.get("red_flags", [])
     audio_size, filename, content_type, audio_bytes = await read_upload_bytes(audio)
     saved_path = save_upload_bytes(audio_bytes, filename)
     timelines_saved_path = save_json_payload(timelines, "results.json")
@@ -83,6 +83,8 @@ async def analyze(
             prompt_text=prompt_text,
             prompt_difficulty=summary.get("difficulty", ""),
             prompt_type=summary.get("type", ""),
+            prompt_good_signals=good_signals,
+            prompt_red_flags=red_flags,
             )
         
         combined_results = {
