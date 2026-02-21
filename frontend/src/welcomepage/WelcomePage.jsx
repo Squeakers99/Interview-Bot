@@ -33,9 +33,9 @@ export default function WelcomePage() {
                     how you should present yourself in an interview.
                 </p>
 
-                    <p className="welcome-title3">
-                        You will be given 30 seconds to think and 90 seconds to respond to the question. 
-                    </p>
+                <p className="welcome-title3">
+                     You will be given 30 seconds to think and 90 seconds to respond to the question. 
+                </p>
 
                 <p className="welcome-title4">
                     After you answer the question, click the "End Interview" button. 
@@ -44,7 +44,7 @@ export default function WelcomePage() {
                 <p className="welcome-title5">
                     You will be given a score and tips on how to improve your answers and presentation.
                 </p>
-                </div>
+            </div>
 
                 <button className="start-button" onClick={() => setStarted(true)}>
                     Start Interview
