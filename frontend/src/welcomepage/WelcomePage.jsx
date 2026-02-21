@@ -19,71 +19,58 @@ export default function WelcomePage() {
 
     return (
         <div className="welcome-container">
-            <div className="body-container">
-
-                <h1 className="welcome-title0">
-                    Take a Practice Interview to be Prepared for the Real One with 
-                    Unemployment No Longer!
+            <div className="welcome-card">
+                <h1 className="welcome-title">
+                    Practice Interview with Unemployment No Longer
                 </h1>
-            
-                <p className="welcome-title1">
-                    You will answer 1 question typically seen in an interview. 
+
+                <p className="welcome-subtitle">
+                    Answer one interview question and receive feedback on delivery and presentation.
                 </p>
 
-                <p className="welcome-title2">
-                    We will analyze your posture and eye contact and give you feedback on
-                    how you should present yourself in an interview.
-                </p>
-
-                <p className="welcome-title3">
-                     You will be given 30 seconds to think and 90 seconds to respond to the question. 
-                </p>
-
-                <p className="welcome-title4">
-                    After you answer the question, click the "End Interview" button. 
-                </p>
-                
-                <p className="welcome-title5">
-                    You will be given a score and tips on how to improve your answers and presentation.
-                </p>
+                <div className="welcome-points">
+                    <p className="welcome-point">30 seconds to think, 90 seconds to respond.</p>
+                    <p className="welcome-point">We track posture and eye contact during your answer.</p>
+                    <p className="welcome-point">Click <b>End Interview</b> when you finish speaking.</p>
+                </div>
             </div>
 
-                <div className="welcome-filters">
-                    <label className="welcome-filter-label" htmlFor="question-category">
-                        Question Type
-                    </label>
-                    <select
-                        id="question-category"
-                        className="welcome-filter-select"
-                        value={selectedCategory}
-                        onChange={(event) => setSelectedCategory(event.target.value)}
-                    >
-                        <option value="all">All</option>
-                        <option value="behaviour">Behaviour</option>
-                        <option value="situation">Situation</option>
-                        <option value="technical">Technical</option>
-                        <option value="general">Other / General</option>
-                    </select>
+            <div className="welcome-filters">
+                <label className="welcome-filter-label" htmlFor="question-category">
+                    Question Type
+                </label>
+                <select
+                    id="question-category"
+                    className="welcome-filter-select"
+                    value={selectedCategory}
+                    onChange={(event) => setSelectedCategory(event.target.value)}
+                >
+                    <option value="all">All</option>
+                    <option value="behaviour">Behaviour</option>
+                    <option value="situation">Situation</option>
+                    <option value="technical">Technical</option>
+                    <option value="general">Other / General</option>
+                </select>
 
-                    <label className="welcome-filter-label" htmlFor="question-difficulty">
-                        Difficulty
-                    </label>
-                    <select
-                        id="question-difficulty"
-                        className="welcome-filter-select"
-                        value={selectedDifficulty}
-                        onChange={(event) => setSelectedDifficulty(event.target.value)}
-                    >
-                        <option value="all">Default Difficulty Level</option>
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
-                    </select>
-                </div>
+                <label className="welcome-filter-label" htmlFor="question-difficulty">
+                    Difficulty
+                </label>
+                <select
+                    id="question-difficulty"
+                    className="welcome-filter-select"
+                    value={selectedDifficulty}
+                    onChange={(event) => setSelectedDifficulty(event.target.value)}
+                >
+                    <option value="all">Default Difficulty Level</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
 
-                <button className="start-button" onClick={() => setStarted(true)}>
-                    Start Interview
-                </button>
+            <button className="start-button" onClick={() => setStarted(true)}>
+                Start Interview
+            </button>
             
         </div>
     );
