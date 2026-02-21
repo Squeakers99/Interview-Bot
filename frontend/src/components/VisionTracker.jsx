@@ -21,6 +21,7 @@ import { ema } from "../utils/math";
 import { computePostureScore } from "../utils/scoringPosture";
 import { computeEyeContactScore } from "../utils/scoringEye";
 import "./VisionTracker.css";
+import AnalyzingPage from "../analyzing/AnalyzingPage";
 
 const INTERVIEW_TIMINGS = {
   thinkingSeconds: 30,
@@ -494,6 +495,7 @@ export default function VisionTracker({
   }
 
   if (!enabled) return null;
+  if (phase === "finishing") return <AnalyzingPage />;
 
   return (
     <div className="vision-tracker">

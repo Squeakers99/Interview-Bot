@@ -1,0 +1,46 @@
+.analyzing-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #1e2859 0%, #4f74df 50%, #7f94bb 100%);
+  font-family: "Times New Roman", Times, serif;
+  color: #f7f9ff;
+}
+
+.analyzing-card {
+  min-width: min(90vw, 640px);
+  padding: 2rem 2.5rem;
+  border-radius: 14px;
+  background: rgba(10, 18, 48, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.analyzing-spinner {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 1.25rem;
+  border: 7px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.analyzing-title {
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  margin: 0 0 0.8rem;
+}
+
+.analyzing-subtitle {
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  opacity: 0.95;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
