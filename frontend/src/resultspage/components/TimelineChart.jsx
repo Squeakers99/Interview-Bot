@@ -15,16 +15,25 @@ export default function TimelineChart({ title, data }) {
       <div className="graph-wrap">
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid 
+            stroke = "rgba(255,255,255,0.2)"
+            strokeDasharray="3 3" 
+            />
             <XAxis
               dataKey="timeSec"
               type="number"
               domain={[0, "dataMax"]}
               tickFormatter={(t) => `${t}`}
+              stroke="#fff"
+              tick={{ fill: "#ffffff" }}
+              
             />
-            <YAxis domain={[0, 100]} />
+            <YAxis 
+            domain={[0, 100]} 
+            stroke="#fff"
+            />
             <Tooltip />
-            <Line type="monotone" dataKey="score" dot={false} />
+            <Line type="monotone" dataKey="score" stroke="#000000" strokeWidth={2} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>
