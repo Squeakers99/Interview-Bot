@@ -1,8 +1,8 @@
 .results-container{
     max-width: 800px;
-    margin: 40px auto;
+    margin: auto auto;
     padding: 24px;
-    font-family: "Times New Roman"
+    font-family: "Times New Roman", Times, serif;
 }
 
 .results-title {
@@ -13,7 +13,7 @@
 }
 .results-subtitle {
     text-align: center;
-    color: #555555;
+    color: #554848;
     line-height: 1.6;
     margin: 0 auto 24px auto;
     max-width: 800px;
@@ -21,6 +21,39 @@
 
 .results-container {
     display:grid;
-    
+}
 
+.New-Interview {
+    display: block;
+    position: relative;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4e73df;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.New-Interview:hover {
+    background-color: #2e59d9;
+    transform: scale(1.05);
+}
+
+.Eye-timeline {
+    text-align: center;
+    padding: 2px;
+    background: linear-gradient(to right, #202656, #4e73df, #7790ba, rgb(133, 132, 132), #7790ba, #4e73df, #202656);
+    font-family: 'Times New Roman', Times, serif;
+    background-size: 500%,500%;
+    animation: gradientAnimation 20s ease infinite;
+}
+
+.Posture-timeline {
+    text-align: center;
+    padding: 2px;
+    background: linear-gradient(to right, #202656, #4e73df, #7790ba, rgb(133, 132, 132), #7790ba, #4e73df, #202656);
+    font-family: 'Times New Roman', Times, serif;
+    background-size: 500%,500%;
+    animation: gradientAnimation 20s ease infinite;
 }

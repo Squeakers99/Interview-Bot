@@ -38,12 +38,12 @@ export default function ResultsPage({ onRestart }) {
 
       {!loading && !error ? (
         <>
-          <p>Eye timeline points: {eyeHistory.length}</p>
-          <p>Posture timeline points: {postureHistory.length}</p>
+          <p className="Eye-timeline">Eye timeline points: {eyeHistory.length}</p>
+          <p className="Posture-timeline">Posture timeline points: {postureHistory.length}</p>
         </>
       ) : null}
 
-      <button onClick={onRestart}>Start New Interview</button>
+      <button className="New-Interview" onClick={onRestart}>Start New Interview</button>
     </div>
   );
 }
