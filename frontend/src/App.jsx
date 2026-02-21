@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import VisionTracker from "./components/VisionTracker";
 import ResultsPage from "./resultspage/ResultsPage";
+import AnalyzingPage from "./analyzing/AnalyzingPage";
 
 const FALLBACK_PROMPT = {
   id: "fallback-prompt",
@@ -24,6 +25,7 @@ export default function App({ promptCategory = "all", promptDifficulty = "all", 
   const [promptLoading, setPromptLoading] = useState(true);
   const [promptError, setPromptError] = useState("");
   const [interviewRound, setInterviewRound] = useState(0);
+  const [trackerPhase, setTrackerPhase] = useState("idle");
 
   const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 
@@ -84,6 +86,7 @@ export default function App({ promptCategory = "all", promptDifficulty = "all", 
       onReturnHome();
       return;
     }
+    setTrackerPhase("idle");
     setView("interview");
     setInterviewRound((previous) => previous + 1);
   }
@@ -110,6 +113,10 @@ export default function App({ promptCategory = "all", promptDifficulty = "all", 
     );
   }
 
+  if (view === "interview" && trackerPhase === "finishing") {
+    return <AnalyzingPage />;
+  }
+
   return (
     <div className="app-shell">
       <div className="interview-layout">
@@ -131,6 +138,7 @@ export default function App({ promptCategory = "all", promptDifficulty = "all", 
           autoStartCamera={true}
           drawLandmarks={true}
           onAnalysisResult={handleAnalysisResult}
+          onPhaseChange={setTrackerPhase}
           onEnd={() => setView("results")}
           prompt={prompt || FALLBACK_PROMPT}
         />

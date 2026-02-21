@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import {
   FilesetResolver,
   PoseLandmarker,
@@ -48,7 +48,8 @@ export default function VisionTracker({
   prompt = null,
   onUpdate,
   onAnalysisResult,
-  onEnd, // ✅ NEW: lets parent return to entry page
+  onPhaseChange,
+  onEnd, // âœ… NEW: lets parent return to entry page
 }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -88,6 +89,10 @@ export default function VisionTracker({
   useEffect(() => {
     phaseRef.current = phase;
   }, [phase]);
+
+  useEffect(() => {
+    onPhaseChange?.(phase);
+  }, [phase, onPhaseChange]);
 
   // ------------------ Load Models ------------------
   useEffect(() => {
@@ -270,7 +275,7 @@ export default function VisionTracker({
       stopCamera();
       setPhase("done");
       setTimeLeft(0);
-      onEnd?.(); // ✅ NEW: go back to entry
+      onEnd?.(); // âœ… NEW: go back to entry
     }
   }
 
@@ -290,7 +295,7 @@ export default function VisionTracker({
       stopCamera();
       setPhase("idle");
       setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
-      onEnd?.(); // ✅ NEW: go back to entry
+      onEnd?.(); // âœ… NEW: go back to entry
     }
   }
 
@@ -554,3 +559,4 @@ export default function VisionTracker({
     </div>
   );
 }
+
