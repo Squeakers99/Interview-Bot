@@ -381,6 +381,8 @@ export default function VisionTracker({
       posture_timeline: postureTimelineRef.current,
       eye_timeline: eyeTimelineRef.current,
     };
+    const goodSignals = Array.isArray(prompt?.good_signals) ? prompt.good_signals.slice(0, 2) : [];
+    const redFlags = Array.isArray(prompt?.red_flags) ? prompt.red_flags.slice(0, 2) : [];
 
     formData.append("audio", audioBlob, filename);
     formData.append("prompt_id", prompt?.id || "");
@@ -388,6 +390,8 @@ export default function VisionTracker({
     formData.append("vision_metrics", JSON.stringify(latestMetricsRef.current || {}));
     formData.append("interview_summary", JSON.stringify(interviewSummary));
     formData.append("interview_timelines", JSON.stringify(interviewTimelines));
+    formData.append("good_signals", JSON.stringify(goodSignals));
+    formData.append("red_flags", JSON.stringify(redFlags));
 
     const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
     const response = await fetch(`${apiBase}/analyze`, { method: "POST", body: formData });
@@ -500,13 +504,6 @@ export default function VisionTracker({
 
   return (
     <div className="vision-tracker">
-      <div className="vision-tracker__prompt">
-        <div className="vision-tracker__prompt-label">Interview Prompt</div>
-        <div className="vision-tracker__prompt-text">
-          {prompt?.text || "Prompt unavailable. Please continue your interview response."}
-        </div>
-      </div>
-
       <div className="vision-tracker__frame">
         {/* IMPORTANT: muted helps autoplay reliability */}
         <video ref={videoRef} muted className="vision-tracker__video-hidden" playsInline />

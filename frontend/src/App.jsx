@@ -8,6 +8,8 @@ const FALLBACK_PROMPT = {
   text: "Tell me about yourself and background.",
   type: "general",
   difficulty: "easy",
+  good_signals: [],
+  red_flags: [],
 };
 
 function formatLabel(value) {

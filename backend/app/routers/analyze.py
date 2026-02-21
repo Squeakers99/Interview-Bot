@@ -12,6 +12,29 @@ from app.services.analysis_service import (
 router = APIRouter()
 UPLOAD_DIR = "uploads"
 
+
+def _as_list(value):
+    return value if isinstance(value, list) else []
+
+
+def normalize_feedback_payload(raw_feedback):
+    if not isinstance(raw_feedback, dict):
+        return {"good_signals": [], "red_flags": []}
+
+    good_signals = _as_list(raw_feedback.get("good_signals"))
+    if not good_signals:
+        good_signals = _as_list(raw_feedback.get("goodSignals"))
+
+    red_flags = _as_list(raw_feedback.get("red_flags"))
+    if not red_flags:
+        red_flags = _as_list(raw_feedback.get("redFlags"))
+
+    return {
+        "good_signals": good_signals,
+        "red_flags": red_flags,
+    }
+
+
 @router.post("/analyze")
 async def analyze(
     prompt_id: str = Form(""),
@@ -21,6 +44,7 @@ async def analyze(
     vision_metrics: str = Form("{}"),
     interview_summary: str = Form("{}"),
     interview_timelines: str = Form("{}"),
+    interview_feedback: str = Form("{}"),
     audio: UploadFile = File(...),
 ):
     """
@@ -32,6 +56,9 @@ async def analyze(
     vision = parse_vision_metrics(vision_metrics)
     summary = parse_json_field(interview_summary)
     timelines = parse_json_field(interview_timelines)
+    feedback = normalize_feedback_payload(parse_json_field(interview_feedback))
+    good_signals = feedback.get("good_signals", [])
+    red_flags = feedback.get("red_flags", [])
     audio_size, filename, content_type, audio_bytes = await read_upload_bytes(audio)
     saved_path = save_upload_bytes(audio_bytes, filename)
     timelines_saved_path = save_json_payload(timelines, "results.json")
@@ -43,6 +70,7 @@ async def analyze(
     print(f"timelines_saved_to={timelines_saved_path}", flush=True)
     print(f"audio_preview_hex={audio_bytes[:24].hex()}", flush=True)
     print(f"interview_summary={summary}", flush=True)
+    print(f"interview_feedback={feedback}", flush=True)
 
     interview_analysis = None
     try:
@@ -53,6 +81,9 @@ async def analyze(
         combined_results = {
             "interview_timelines": timelines,
             "interview_summary": summary,
+            "interview_feedback": feedback,
+            "good_signals": good_signals,
+            "red_flags": red_flags,
             "transcription_analysis": interview_analysis.get("transcript"),
             "vision_summary": interview_analysis.get("vision_summary"),
             "voice_analysis": interview_analysis.get("voice_analysis"),
@@ -86,6 +117,9 @@ async def analyze(
         },
         "interview_summary": summary,
         "interview_timelines": timelines,
+        "interview_feedback": feedback,
+        "good_signals": good_signals,
+        "red_flags": red_flags,
         "interview_timelines_saved_to": timelines_saved_path,
         "vision_metrics": vision,
         "interview_analysis": interview_analysis,

@@ -5,37 +5,6 @@
   justify-content: center;
   align-items: center;
   margin: 0;
-  gap: 12px;
-}
-
-.vision-tracker__prompt {
-  width: min(58vw, 680px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 12px;
-  padding: 12px 14px;
-  background: rgba(0, 0, 0, 0.42);
-  color: #fff;
-}
-
-.vision-tracker__prompt-label {
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  opacity: 0.92;
-  margin-bottom: 6px;
-}
-
-.vision-tracker__prompt-text {
-  font-size: 1.15rem;
-  line-height: 1.35;
-  font-weight: 600;
-}
-
-.vision-tracker__prompt-error {
-  margin-top: 6px;
-  font-size: 12px;
-  color: #ffd1d1;
 }
 
 .vision-tracker__frame {
@@ -130,12 +99,7 @@
 }
 
 @media (max-width: 900px) {
-  .vision-tracker__prompt,
   .vision-tracker__frame {
     width: min(94vw, 680px);
-  }
-
-  .vision-tracker__prompt-text {
-    font-size: 1rem;
   }
 }
