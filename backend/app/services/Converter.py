@@ -18,7 +18,7 @@ app = FastAPI()
 
 # 2. Setup AI Models
 # Whisper (Local)
-whisper_model = whisper.load_model("base")
+whisper_model = whisper.load_model("small")
 # LLM (API via Groq)
 llm_client = OpenAI(
     api_key=os.getenv("GROQ_API_KEY"),
