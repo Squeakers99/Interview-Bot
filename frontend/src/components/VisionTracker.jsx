@@ -45,6 +45,7 @@ export default function VisionTracker({
   drawLandmarks = true,
   onUpdate,
   onAnalysisResult,
+  onEnd, // ✅ NEW: lets parent return to entry page
 }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -121,7 +122,7 @@ export default function VisionTracker({
       }
     }
 
-    loadModels();
+    if (enabled) loadModels();
 
     return () => {
       cancelled = true;
@@ -129,18 +130,20 @@ export default function VisionTracker({
       stopCamera();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [enabled]);
 
   // ------------------ Auto Start Camera ------------------
   useEffect(() => {
+    if (!enabled) return;
     if (!modelsReady) return;
     if (!autoStartCamera) return;
     if (!cameraOn) startCamera();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelsReady, autoStartCamera]);
+  }, [enabled, modelsReady, autoStartCamera]);
 
   // ------------------ Preview Loop Control ------------------
   useEffect(() => {
+    if (!enabled) return;
     if (!modelsReady || !cameraOn) return;
 
     // Preview should run during THINKING + RESPONSE
@@ -158,10 +161,11 @@ export default function VisionTracker({
       stopLoop();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelsReady, cameraOn, phase]);
+  }, [enabled, modelsReady, cameraOn, phase]);
 
   // ------------------ Countdown Timer ------------------
   useEffect(() => {
+    if (!enabled) return;
     if (!cameraOn) return;
     if (phase !== "thinking" && phase !== "response") return;
     if (timeLeft <= 0) return;
@@ -171,10 +175,11 @@ export default function VisionTracker({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [cameraOn, phase, timeLeft]);
+  }, [enabled, cameraOn, phase, timeLeft]);
 
   // ------------------ Phase Transitions ------------------
   useEffect(() => {
+    if (!enabled) return;
     if (!cameraOn) return;
     if (timeLeft > 0) return;
 
@@ -191,7 +196,7 @@ export default function VisionTracker({
       endInterviewAndUpload();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraOn, phase, timeLeft]);
+  }, [enabled, cameraOn, phase, timeLeft]);
 
   // ------------------ Camera ------------------
   async function startCamera() {
@@ -203,7 +208,7 @@ export default function VisionTracker({
       });
 
       streamRef.current = stream;
-      videoRef.current.srcObject = stream;
+      if (videoRef.current) videoRef.current.srcObject = stream;
 
       // Wait for video to have data before playing/drawing
       await new Promise((resolve) => {
@@ -250,6 +255,7 @@ export default function VisionTracker({
       stopCamera();
       setPhase("done");
       setTimeLeft(0);
+      onEnd?.(); // ✅ NEW: go back to entry
     }
   }
 
@@ -269,6 +275,7 @@ export default function VisionTracker({
       stopCamera();
       setPhase("idle");
       setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
+      onEnd?.(); // ✅ NEW: go back to entry
     }
   }
 
@@ -473,6 +480,8 @@ export default function VisionTracker({
     rafRef.current = requestAnimationFrame(loop);
   }
 
+  if (!enabled) return null;
+
   return (
     <div className="vision-tracker">
       <div className="vision-tracker__frame">
@@ -484,7 +493,7 @@ export default function VisionTracker({
           <button
             onClick={endInterviewByUser}
             className="vision-btn vision-btn--danger vision-btn--end"
-            disabled={!cameraOn}
+            disabled={!cameraOn || phase !== "response"}
           >
             End Interview
           </button>
