@@ -12,3 +12,7 @@ starlette==0.52.1
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 uvicorn==0.41.0
+openai-whisper
+openai
+python-multipart
+python-dotenv
