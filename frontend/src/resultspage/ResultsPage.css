@@ -7,7 +7,19 @@
 
 .results-title {
     font-size: 34px;
-
-
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+.results-subtitle {
+    text-align: center;
+    color: #555555;
+    line-height: 1.6;
+    margin: 0 auto 24px auto;
+    max-width: 800px;
 }
 
+.results-container {
+    display:grid;
+    
+
+}
