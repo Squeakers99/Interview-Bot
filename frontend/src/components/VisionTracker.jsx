@@ -82,6 +82,9 @@ export default function VisionTracker({
   // These are used in uploadAudio summary; must exist (not just setters)
   const [postureScoreUI, setPostureScoreUI] = useState(null);
   const [eyeScoreUI, setEyeScoreUI] = useState(null);
+  const [prompt, setPrompt] = useState({ id: "", text: "" });
+  const [promptLoading, setPromptLoading] = useState(true);
+  const [promptError, setPromptError] = useState("");
 
   // Avoid stale phase inside requestAnimationFrame loop
   const phaseRef = useRef("idle");
@@ -133,6 +136,42 @@ export default function VisionTracker({
       stopCamera();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
+
+  // ------------------ Prompt Fetch ------------------
+  useEffect(() => {
+    if (!enabled) return;
+    let cancelled = false;
+
+    async function fetchRandomPrompt() {
+      setPromptLoading(true);
+      setPromptError("");
+      try {
+        const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+        const response = await fetch(`${apiBase}/prompt/random`);
+        if (!response.ok) throw new Error(`Prompt fetch failed with status ${response.status}`);
+        const data = await response.json();
+        const nextPrompt = data?.prompt || {};
+        if (!cancelled) {
+          setPrompt({
+            id: nextPrompt?.id || "",
+            text: nextPrompt?.text || "",
+          });
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setPrompt({ id: "", text: "" });
+          setPromptError(String(e));
+        }
+      } finally {
+        if (!cancelled) setPromptLoading(false);
+      }
+    }
+
+    fetchRandomPrompt();
+    return () => {
+      cancelled = true;
+    };
   }, [enabled]);
 
   // ------------------ Auto Start Camera ------------------
@@ -385,8 +424,6 @@ export default function VisionTracker({
     formData.append("audio", audioBlob, filename);
     formData.append("prompt_id", prompt?.id || "");
     formData.append("prompt_text", prompt?.text || "");
-    formData.append("prompt_type", prompt?.type || "");
-    formData.append("prompt_difficulty", prompt?.difficulty || "");
     formData.append("vision_metrics", JSON.stringify(latestMetricsRef.current || {}));
     formData.append("interview_summary", JSON.stringify(interviewSummary));
     formData.append("interview_timelines", JSON.stringify(interviewTimelines));
@@ -502,6 +539,16 @@ export default function VisionTracker({
 
   return (
     <div className="vision-tracker">
+      <div className="vision-tracker__prompt">
+        <div className="vision-tracker__prompt-label">Interview Prompt</div>
+        <div className="vision-tracker__prompt-text">
+          {promptLoading
+            ? "Loading question..."
+            : prompt?.text || "Prompt unavailable. Please continue your interview response."}
+        </div>
+        {promptError ? <div className="vision-tracker__prompt-error">Unable to fetch random prompt.</div> : null}
+      </div>
+
       <div className="vision-tracker__frame">
         {/* IMPORTANT: muted helps autoplay reliability */}
         <video ref={videoRef} muted className="vision-tracker__video-hidden" playsInline />

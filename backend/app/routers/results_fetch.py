@@ -7,7 +7,7 @@ from fastapi import APIRouter
 router = APIRouter(prefix="/results", tags=["results"])
 
 def load_interview_timelines() -> Dict[str, Any]:
-    timelines_path = Path(__file__).resolve().parents[2] / "uploads" / "Interview-Timelines.json"
+    timelines_path = Path(__file__).resolve().parents[2] / "uploads" / "results.json"
     if not timelines_path.exists():
         return {"posture_timeline": [], "eye_timeline": []}
     try:
@@ -40,13 +40,11 @@ def get_timelines():
         },
     }
 
-
 @router.get("/posture_timeline")
 def get_posture_timeline():
     interview_timelines = load_interview_timelines()
     posture_timeline = to_pairs(interview_timelines.get("posture_timeline", []))
     return {"ok": True, "posture_timeline": posture_timeline}
-
 
 @router.get("/eye_timeline")
 def get_eye_timeline():

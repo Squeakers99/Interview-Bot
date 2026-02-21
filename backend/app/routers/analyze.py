@@ -1,5 +1,5 @@
 import json
-
+import os
 from fastapi import APIRouter, UploadFile, File, Form
 
 from app.services.analysis_service import (
@@ -10,6 +10,7 @@ from app.services.analysis_service import (
     save_upload_bytes,
 )
 router = APIRouter()
+UPLOAD_DIR = "uploads"
 
 @router.post("/analyze")
 async def analyze(
@@ -33,7 +34,7 @@ async def analyze(
     timelines = parse_json_field(interview_timelines)
     audio_size, filename, content_type, audio_bytes = await read_upload_bytes(audio)
     saved_path = save_upload_bytes(audio_bytes, filename)
-    timelines_saved_path = save_json_payload(timelines, "Interview-Timelines.json")
+    timelines_saved_path = save_json_payload(timelines, "results.json")
 
     # Terminal log for quick debugging during development.
     print("[/analyze] received audio upload", flush=True)
@@ -48,9 +49,24 @@ async def analyze(
         # Lazy import so missing optional deps (e.g. openai) do not break router startup.
         from app.services.Converter import analyze_interview
         interview_analysis = await analyze_interview(audio_bytes, vision_metrics)
-        save_json_payload(interview_analysis, "Interview-Results.json")
-        print("[/analyze] results saved to Interview-Results.json", flush=True)
+        
+        combined_results = {
+            "interview_timelines": timelines,
+            "interview_summary": summary,
+            "transcription_analysis": interview_analysis.get("transcript"),
+            "vision_summary": interview_analysis.get("vision_summary"),
+            "voice_analysis": interview_analysis.get("voice_analysis"),
+            "llm_review": interview_analysis.get("llm_review"),
+        }
+        
+        results_path = os.path.join(UPLOAD_DIR, "results.json")
+        with open(results_path, "w") as f:
+            json.dump(combined_results, f, indent=2)
+        print(f"[/analyze] results saved to {results_path}", flush=True)
+
+
     except Exception as exc:
+        print(f"Error during interview analysis: {exc}", flush=True)
         interview_analysis = {
             "error": "analysis_unavailable",
             "detail": str(exc),
@@ -75,11 +91,3 @@ async def analyze(
         "interview_analysis": interview_analysis,
         "message": "Received audio + metrics. Next step: transcription + scoring.",
     }
-@router.get("/results/interview")
-async def get_interview_results():
-    import os
-    results_path = os.path.join("uploads", "Interview-Results.json")
-    if not os.path.exists(results_path):
-        return {"error": "No results found. Run an analysis first."}
-    with open(results_path, "r") as f:
-        return json.load(f)
