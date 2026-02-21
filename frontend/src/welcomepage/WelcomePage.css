@@ -6,10 +6,16 @@
 body {
     overflow: hidden;
 }
+
+.body-container {
+    max-width: 800px;
+    width: 100%;
+}
 .welcome-container {
     height: 100vh;
     width: 100vw;
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -21,12 +27,40 @@ body {
     animation: gradientAnimation 20s ease infinite;
 }
 
-.welcome-title {
-    font-size: 3rem;
+.welcome-title0 {
+    font-size: 2rem;
     margin-bottom: 20px;
-    animation: fadeInOut 6s ease-in-out;
-    color: white;
-    opacity: 0;
+    animation: fadeInSimple 5s ease-in-out;
+}
+
+.welcome-title1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    animation: fadeInSimple 10s ease-in-out;
+}
+
+.welcome-title2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    animation: fadeInSimple 15s ease-in-out;
+}
+
+.welcome-title3 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    animation: fadeInSimple 20s ease-in-out;
+}
+
+.welcome-title4 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    animation: fadeInSimple 25s ease-in-out;
+}
+
+.welcome-title5 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    animation: fadeInSimple 30s ease-in-out;
 }
 
 /* Button styling */
