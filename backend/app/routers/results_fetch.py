@@ -11,8 +11,18 @@ def load_interview_timelines() -> Dict[str, Any]:
     if not timelines_path.exists():
         return {"posture_timeline": [], "eye_timeline": []}
     try:
-        interview_timelines = json.loads(timelines_path.read_text(encoding="utf-8"))
-        return interview_timelines
+        payload = json.loads(timelines_path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            return {"posture_timeline": [], "eye_timeline": [], "parse_error": True}
+
+        # New shape in results.json:
+        # { "interview_timelines": { "posture_timeline": [...], "eye_timeline": [...] }, ... }
+        nested = payload.get("interview_timelines")
+        if isinstance(nested, dict):
+            return nested
+
+        # Backward compatibility for older files where timelines were top-level.
+        return payload
     except Exception:
         return {"posture_timeline": [], "eye_timeline": [], "parse_error": True}
 
