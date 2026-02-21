@@ -76,7 +76,14 @@ async def analyze(
     try:
         # Lazy import so missing optional deps (e.g. openai) do not break router startup.
         from app.services.Converter import analyze_interview
-        interview_analysis = await analyze_interview(audio_bytes, vision_metrics)
+        interview_analysis = await analyze_interview(
+            audio_bytes, 
+            vision_metrics,
+            prompt_id=prompt_id,
+            prompt_text=prompt_text,
+            prompt_difficulty=summary.get("difficulty", ""),
+            prompt_type=summary.get("type", ""),
+            )
         
         combined_results = {
             "interview_timelines": timelines,

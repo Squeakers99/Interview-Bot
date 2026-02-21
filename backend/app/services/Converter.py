@@ -117,7 +117,11 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 async def analyze_interview(
     audio_bytes: bytes, 
-    vision_metrics: str
+    vision_metrics: str,
+    prompt_id: str = "",
+    prompt_text: str = "",
+    prompt_type: str = "",
+    prompt_difficulty: str = "",
 ):
     # Unique filename prevents user overlap
     temp_filename = f"{uuid.uuid4()}.webm"
@@ -151,6 +155,20 @@ async def analyze_interview(
         You are a Senior Tech Recruiter with 15 years of experience evaluating candidates.
         Evaluate this mock interview and provide detailed, realistic feedback.
 
+        --- INTERVIEW QUESTION ---
+        Question Asked: {prompt_text if prompt_text else "General interview question"}
+        Question Type: {prompt_type if prompt_type else "General"}
+        Difficulty Level: {prompt_difficulty if prompt_difficulty else "Unknown"}
+
+        --- WHAT A GOOD ANSWER LOOKS LIKE ---
+        {"For a BEHAVIOURAL question: The candidate should use the STAR method (Situation, Task, Action, Result). Penalize vague answers with no real example." if prompt_type.lower() == "behavioural" else ""}
+        {"For a SITUATIONAL question: The candidate should walk through their thought process clearly, explain what they would do and why." if prompt_type.lower() == "situational" else ""}
+        {"For a TECHNICAL question: The candidate should demonstrate knowledge, use correct terminology, and explain their reasoning step by step." if prompt_type.lower() == "technical" else ""}
+        {"For a GENERAL question: The candidate should give a clear, confident, and professional answer." if prompt_type.lower() in ("general", "other", "") else ""}
+        {"Hard difficulty requires depth, specifics, and structured responses. Penalize surface-level answers harshly." if prompt_difficulty.lower() in ("hard", "expert") else ""}
+        {"Medium difficulty expects some structure and relevant examples." if prompt_difficulty.lower() == "medium" else ""}
+        {"Easy difficulty just needs a clear and confident response." if prompt_difficulty.lower() == "easy" else ""}
+
         --- INTERVIEW DATA ---
         Transcript: {transcript}
         Posture Score: {metrics['postureGoodPct']}%
@@ -162,7 +180,8 @@ async def analyze_interview(
         Speaking Rate: {voice_analysis.get('speaking_rate')} — {voice_analysis.get('rate_feedback')}
 
         --- SCORING RUBRIC (100 points total) ---
-        Score each category honestly. A 7/10 overall is a GOOD interview. Reserve 9-10 for exceptional candidates.
+        Score each category honestly based on the question type and difficulty.
+        A 7/10 overall is a GOOD interview. Reserve 9-10 for exceptional candidates.
 
         1. COMMUNICATION CLARITY (25 pts)
         - Are answers clear, concise, and well-structured?
@@ -170,16 +189,15 @@ async def analyze_interview(
         - Are filler words (um, uh, like) avoided?
 
         2. CONTENT & SUBSTANCE (25 pts)
-        - Are answers specific and detailed?
-        - Does the candidate use examples or stories?
-        - Do they demonstrate knowledge of the field?
+        - Did the candidate actually answer the question that was asked?
+        - Are answers specific and detailed enough for the difficulty level?
+        - Does the candidate use examples or STAR method where appropriate?
 
         3. PROFESSIONALISM (20 pts)
         - Is the tone confident but not arrogant?
-        - Is the introduction strong and polished?
         - Is the language appropriate for a professional setting?
 
-        4. BODY LANGUAGE (15 pts) — use posture ({metrics['postureGoodPct']}%) and eye contact ({metrics['eyeGoodPct']}%) scores
+        4. BODY LANGUAGE (15 pts)
         - Posture above 80% = full marks for posture
         - Eye contact above 80% = full marks for eye contact
 
@@ -187,13 +205,16 @@ async def analyze_interview(
         - Pitch: {voice_analysis.get('avg_pitch_hz')} Hz — {voice_analysis.get('pitch_feedback')}
         - Tone variation: {voice_analysis.get('tone_feedback')}
         - Speaking rate: {voice_analysis.get('rate_feedback')}
-        - Is the voice confident, varied, and appropriately paced?
 
         --- RESPONSE FORMAT (follow this exactly) ---
 
+        QUESTION: {prompt_text}
+        TYPE: {prompt_type}
+        DIFFICULTY: {prompt_difficulty}
+
         CATEGORY SCORES:
         - Communication Clarity: X/25
-        - Content & Substance: X/25  
+        - Content & Substance: X/25
         - Professionalism: X/20
         - Body Language: X/15
         - Vocal Delivery: X/15
@@ -204,9 +225,9 @@ async def analyze_interview(
         - [Strength 1]
         - [Strength 2]
 
-        WHAT YOU MUST IMPROVE (be direct and actionable, not vague):
-        - [Improvement 1 with specific example from transcript]
-        - [Improvement 2 with specific example from transcript]
+        WHAT YOU MUST IMPROVE (be direct and actionable, reference exact moments from the transcript):
+        - [Improvement 1 with specific example]
+        - [Improvement 2 with specific example]
 
         HABITS TO KEEP:
         - [Specific positive behavior to continue]
