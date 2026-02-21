@@ -171,7 +171,7 @@ async def analyze_interview(
         - Content & Substance: X/25  
         - Professionalism: X/20
         - Body Language: X/15
-        - Engagement & Energy: X/15
+        - Vocal Delivery: X/15
 
         TOTAL SCORE: X/100 (X/10)
 
