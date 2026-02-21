@@ -1,4 +1,4 @@
-import "./resultspage.css";
+import "./ResultsPage.css";
 import { useState } from "react";
 import App from "../App";
 
