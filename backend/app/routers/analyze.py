@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, UploadFile, File, Form
 
 from app.services.analysis_service import (
@@ -13,6 +15,8 @@ router = APIRouter()
 async def analyze(
     prompt_id: str = Form(""),
     prompt_text: str = Form(""),
+    prompt_type: str = Form(""),
+    prompt_difficulty: str = Form(""),
     vision_metrics: str = Form("{}"),
     interview_summary: str = Form("{}"),
     interview_timelines: str = Form("{}"),
@@ -56,6 +60,8 @@ async def analyze(
         "ok": True,
         "prompt_id": prompt_id,
         "prompt_text": prompt_text,
+        "prompt_type": prompt_type,
+        "prompt_difficulty": prompt_difficulty,
         "audio": {
             "filename": filename,
             "content_type": content_type,
