@@ -20,26 +20,37 @@ import {
 import { ema } from "../utils/math";
 import { computePostureScore } from "../utils/scoringPosture";
 import { computeEyeContactScore } from "../utils/scoringEye";
+import "./VisionTracker.css";
 
-/**
- * VisionTracker:
- * - loads MediaPipe models once
- * - starts/stops camera
- * - runs vision loop only when enabled=true
- * - throttles FPS, smooths scores, aggregates % good-time
- */
+const INTERVIEW_TIMINGS = {
+  thinkingSeconds: 30,
+  responseSeconds: 90,
+};
+
+function secondsToMMSS(totalSeconds) {
+  const safeSeconds = Math.max(0, totalSeconds || 0);
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
 export default function VisionTracker({
-  enabled = true,          // parent can pause tracking
-  autoStartCamera = false, // optional convenience
-  drawLandmarks = true,    // disable if too slow
-  onUpdate,                // receives metrics object each frame
+  enabled = true,
+  autoStartCamera = false,
+  drawLandmarks = true,
+  onUpdate,
+  onAnalysisResult,
 }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const streamRef = useRef(null);
 
   const poseRef = useRef(null);
   const faceRef = useRef(null);
   const drawingRef = useRef(null);
+  const recorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const latestMetricsRef = useRef({});
 
   const rafRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
@@ -53,11 +64,12 @@ export default function VisionTracker({
   const [modelsReady, setModelsReady] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
   const [status, setStatus] = useState("Loading models...");
+  const [phase, setPhase] = useState("idle");
+  const [timeLeft, setTimeLeft] = useState(INTERVIEW_TIMINGS.thinkingSeconds);
 
   const [postureScoreUI, setPostureScoreUI] = useState(null);
   const [eyeScoreUI, setEyeScoreUI] = useState(null);
 
-  // Load models once
   useEffect(() => {
     let cancelled = false;
 
@@ -103,7 +115,6 @@ export default function VisionTracker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Auto-start camera if requested
   useEffect(() => {
     if (!modelsReady) return;
     if (!autoStartCamera) return;
@@ -111,28 +122,65 @@ export default function VisionTracker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelsReady, autoStartCamera]);
 
-  // Start/stop loop based on enabled
   useEffect(() => {
     if (!modelsReady || !cameraOn) return;
+    const trackingEnabled = enabled && phase === "response";
 
-    if (enabled) {
+    if (trackingEnabled) {
       setStatus("Camera on. Tracking enabled.");
       startLoop();
     } else {
-      setStatus("Camera on. Tracking paused.");
+      if (phase === "thinking") {
+        setStatus("Thinking time running. Tracking paused.");
+      } else {
+        setStatus("Camera on. Tracking paused.");
+      }
       stopLoop();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, modelsReady, cameraOn]);
+  }, [enabled, modelsReady, cameraOn, phase]);
+
+  useEffect(() => {
+    if (!cameraOn) return;
+    if (phase !== "thinking" && phase !== "response") return;
+    if (timeLeft <= 0) return;
+
+    const timer = setTimeout(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [cameraOn, phase, timeLeft]);
+
+  useEffect(() => {
+    if (!cameraOn) return;
+    if (timeLeft > 0) return;
+
+    if (phase === "thinking") {
+      setPhase("response");
+      setTimeLeft(INTERVIEW_TIMINGS.responseSeconds);
+      setStatus("Response time started.");
+      if (streamRef.current) {
+        startAudioRecording(streamRef.current);
+      }
+      return;
+    }
+
+    if (phase === "response") {
+      endInterviewAndUpload();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cameraOn, phase, timeLeft]);
 
   async function startCamera() {
     try {
       setStatus("Requesting camera...");
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: VIDEO_W, height: VIDEO_H },
-        audio: false,
+        audio: true,
       });
 
+      streamRef.current = stream;
       videoRef.current.srcObject = stream;
       await videoRef.current.play();
 
@@ -140,20 +188,38 @@ export default function VisionTracker({
       drawingRef.current = new DrawingUtils(ctx);
 
       resetAggregates();
+      setPhase("thinking");
+      setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
 
       setCameraOn(true);
-      setStatus(enabled ? "Camera on. Tracking enabled." : "Camera on. Tracking paused.");
+      setStatus("Thinking time started.");
     } catch (e) {
       setStatus(`Camera error: ${String(e)}`);
     }
   }
 
   function stopCamera() {
-    const stream = videoRef.current?.srcObject;
+    const stream = streamRef.current || videoRef.current?.srcObject;
     stream?.getTracks?.().forEach((t) => t.stop());
+    streamRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
 
     setCameraOn(false);
+  }
+
+  async function endInterviewAndUpload() {
+    setPhase("finishing");
+    stopLoop();
+    try {
+      await stopAudioRecording(true);
+      setStatus("Response time ended. Audio uploaded.");
+    } catch (e) {
+      setStatus(`Auto-stop error: ${String(e)}`);
+    } finally {
+      stopCamera();
+      setPhase("done");
+      setTimeLeft(0);
+    }
   }
 
   function resetAggregates() {
@@ -173,8 +239,94 @@ export default function VisionTracker({
     rafRef.current = null;
   }
 
+  function startAudioRecording(stream) {
+    if (!window.MediaRecorder) {
+      setStatus("MediaRecorder not supported in this browser.");
+      return;
+    }
+
+    try {
+      audioChunksRef.current = [];
+      const audioTracks = stream.getAudioTracks();
+      if (!audioTracks.length) {
+        setStatus("No microphone track found.");
+        return;
+      }
+      const audioOnlyStream = new MediaStream(audioTracks);
+
+      let options;
+      if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+        options = { mimeType: "audio/webm;codecs=opus" };
+      }
+
+      const recorder = options ? new MediaRecorder(audioOnlyStream, options) : new MediaRecorder(audioOnlyStream);
+      recorderRef.current = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+      recorder.start(250);
+    } catch (e) {
+      setStatus(`Audio record error: ${String(e)}`);
+    }
+  }
+
+  async function stopAudioRecording(uploadAfterStop) {
+    const recorder = recorderRef.current;
+    if (!recorder) {
+      setStatus("No active audio recorder.");
+      return;
+    }
+
+    if (recorder.state !== "inactive") {
+      await new Promise((resolve, reject) => {
+        const onStop = () => resolve();
+        const onError = (event) => reject(event?.error || new Error("Recorder error"));
+        recorder.addEventListener("stop", onStop, { once: true });
+        recorder.addEventListener("error", onError, { once: true });
+        recorder.stop();
+      });
+    }
+
+    const type = recorder.mimeType || "audio/webm";
+    const blob = new Blob(audioChunksRef.current, { type });
+    recorderRef.current = null;
+    audioChunksRef.current = [];
+
+    if (uploadAfterStop) {
+      await uploadAudio(blob);
+    }
+  }
+
+  async function uploadAudio(audioBlob) {
+    setStatus("Uploading audio for analysis...");
+
+    const formData = new FormData();
+    const ext = audioBlob.type.includes("ogg") ? "ogg" : "webm";
+    const filename = `interview-audio.${ext}`;
+    formData.append("audio", audioBlob, filename);
+    formData.append("prompt_id", "");
+    formData.append("prompt_text", "");
+    formData.append("vision_metrics", JSON.stringify(latestMetricsRef.current || {}));
+
+    const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+    console.log("[uploadAudio] POST", `${apiBase}/analyze`, "bytes=", audioBlob.size);
+    const response = await fetch(`${apiBase}/analyze`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Analyze failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    onAnalysisResult?.(data);
+    setStatus(`Uploaded ${filename} (${audioBlob.size} bytes).`);
+  }
+
   function loop(t) {
-    // FPS throttle
     const minDelta = 1000 / TARGET_FPS;
     if (t - lastFrameTimeRef.current < minDelta) {
       rafRef.current = requestAnimationFrame(loop);
@@ -196,7 +348,6 @@ export default function VisionTracker({
     const poseRes = pose.detectForVideo(video, now);
     const faceRes = face.detectForVideo(video, now);
 
-    // Draw base video frame
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -210,7 +361,6 @@ export default function VisionTracker({
       eye = computeEyeContactScore(faceRes.faceLandmarks[0], matrix);
     }
 
-    // Aggregates
     aggRef.current.frames += 1;
 
     if (posture?.score != null) {
@@ -227,7 +377,6 @@ export default function VisionTracker({
     const postureGoodPct = Math.round((100 * aggRef.current.postureGoodFrames) / frames);
     const eyeGoodPct = Math.round((100 * aggRef.current.eyeGoodFrames) / frames);
 
-    // Emit metrics
     onUpdate?.({
       postureScore: posture?.score ?? null,
       eyeScore: eye?.score ?? null,
@@ -236,8 +385,15 @@ export default function VisionTracker({
       postureMetrics: posture?.metrics ?? null,
       eyeMetrics: eye?.metrics ?? null,
     });
+    latestMetricsRef.current = {
+      postureScore: posture?.score ?? null,
+      eyeScore: eye?.score ?? null,
+      postureGoodPct,
+      eyeGoodPct,
+      postureMetrics: posture?.metrics ?? null,
+      eyeMetrics: eye?.metrics ?? null,
+    };
 
-    // Optional landmark drawing
     if (drawLandmarks && drawingRef.current) {
       if (poseRes?.landmarks?.length) drawingRef.current.drawLandmarks(poseRes.landmarks[0], { radius: 2 });
       if (faceRes?.faceLandmarks?.length) drawingRef.current.drawLandmarks(faceRes.faceLandmarks[0], { radius: 0.6 });
@@ -247,56 +403,56 @@ export default function VisionTracker({
   }
 
   return (
-    <div style={{ marginBottom: 16 }}>
-      <div style={{ display: "flex", gap: 10, marginBottom: 10, flexWrap: "wrap" }}>
+    <div className="vision-tracker">
+      <div className="vision-tracker__top">
         {!cameraOn ? (
-          <button onClick={startCamera} disabled={!modelsReady} style={btnPrimary}>
+          <button onClick={startCamera} disabled={!modelsReady} className="vision-btn vision-btn--primary">
             Start Camera
           </button>
         ) : (
           <button
-            onClick={() => {
+            onClick={async () => {
               stopLoop();
-              stopCamera();
-              setStatus("Camera stopped.");
+              try {
+                if (recorderRef.current) {
+                  await stopAudioRecording(true);
+                  setStatus("Camera stopped and audio uploaded.");
+                } else {
+                  setStatus("Camera stopped.");
+                }
+              } catch (e) {
+                setStatus(`Stop/upload error: ${String(e)}`);
+              } finally {
+                stopCamera();
+                setPhase("idle");
+                setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
+              }
             }}
-            style={btnDanger}
+            className="vision-btn vision-btn--danger"
           >
             Stop Camera
           </button>
         )}
 
-        <div style={{ color: "#666", alignSelf: "center" }}>Status: {status}</div>
+        <div className="vision-tracker__status">Status: {status}</div>
 
-        <div style={{ color: "#444", alignSelf: "center" }}>
+        <div className="vision-tracker__live">
           <b>Live:</b> Posture {postureScoreUI ?? "--"} · Eye {eyeScoreUI ?? "--"}
         </div>
       </div>
 
-      <div style={{ position: "relative", width: VIDEO_W, height: VIDEO_H }}>
-        <video ref={videoRef} style={{ display: "none" }} playsInline />
-        <canvas
-          ref={canvasRef}
-          width={VIDEO_W}
-          height={VIDEO_H}
-          style={{ border: "1px solid #ddd", borderRadius: 12 }}
-        />
+      <div className="vision-tracker__frame">
+        <video ref={videoRef} className="vision-tracker__video-hidden" playsInline />
+        <canvas ref={canvasRef} width={VIDEO_W} height={VIDEO_H} className="vision-tracker__canvas" />
+        <div className="vision-tracker__timer-overlay">
+          <div className="vision-tracker__timer-badge">{secondsToMMSS(timeLeft)}</div>
+        </div>
       </div>
 
-      <div style={{ marginTop: 8, fontSize: 12, color: "#666" }}>
-        Tracking is <b>{enabled ? "ON" : "PAUSED"}</b>. FPS target: {TARGET_FPS}.
+      <div className="vision-tracker__meta">
+        Phase: <b>{phase.toUpperCase()}</b> · Time left: <b>{secondsToMMSS(timeLeft)}</b> · Tracking is{" "}
+        <b>{enabled && phase === "response" ? "ON" : "PAUSED"}</b>. FPS target: {TARGET_FPS}.
       </div>
     </div>
   );
 }
-
-const btnBase = {
-  padding: "10px 14px",
-  borderRadius: 10,
-  border: "1px solid #ddd",
-  cursor: "pointer",
-  fontWeight: 700,
-};
-
-const btnPrimary = { ...btnBase, background: "#111", color: "white", borderColor: "#111" };
-const btnDanger = { ...btnBase, background: "#fff", borderColor: "#e0a0a0", color: "#9a1b1b" };
