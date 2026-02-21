@@ -6,13 +6,15 @@ import CountdownPage from "../countdown/CountdownPage";
 export default function WelcomePage() {
     const [started, setStarted] = useState(false);
     const [countdownDone, setCountdownDone] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState("all");
+    const [selectedDifficulty, setSelectedDifficulty] = useState("all");
 
     if (started && !countdownDone) {
         return <CountdownPage start={3} onComplete={() => setCountdownDone(true)} />;
     }
 
     if (started && countdownDone) {
-        return <App />;
+        return <App promptCategory={selectedCategory} promptDifficulty={selectedDifficulty} />;
     }
 
     return (
@@ -44,6 +46,39 @@ export default function WelcomePage() {
                 <p className="welcome-title5">
                     You will be given a score and tips on how to improve your answers and presentation.
                 </p>
+                </div>
+
+                <div className="welcome-filters">
+                    <label className="welcome-filter-label" htmlFor="question-category">
+                        Question Type
+                    </label>
+                    <select
+                        id="question-category"
+                        className="welcome-filter-select"
+                        value={selectedCategory}
+                        onChange={(event) => setSelectedCategory(event.target.value)}
+                    >
+                        <option value="all">All</option>
+                        <option value="behaviour">Behaviour</option>
+                        <option value="situation">Situation</option>
+                        <option value="technical">Technical</option>
+                        <option value="general">Other / General</option>
+                    </select>
+
+                    <label className="welcome-filter-label" htmlFor="question-difficulty">
+                        Difficulty
+                    </label>
+                    <select
+                        id="question-difficulty"
+                        className="welcome-filter-select"
+                        value={selectedDifficulty}
+                        onChange={(event) => setSelectedDifficulty(event.target.value)}
+                    >
+                        <option value="all">Default Difficulty Level</option>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
                 </div>
 
                 <button className="start-button" onClick={() => setStarted(true)}>

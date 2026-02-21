@@ -1,3 +1,78 @@
+.interview-layout {
+  width: min(980px, 94vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.prompt-loading-card {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  padding: 16px 22px;
+  text-align: center;
+  color: #fff;
+}
+
+.prompt-loading-card h2 {
+  margin: 0 0 10px;
+  font-size: 1.3rem;
+}
+
+.prompt-loading-card p {
+  margin: 0;
+}
+
+.prompt-banner {
+  width: min(58vw, 680px);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 14px 16px;
+  box-sizing: border-box;
+}
+
+.prompt-banner__meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.prompt-chip {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+}
+
+.prompt-banner__title {
+  margin: 0 0 8px;
+  font-size: 1.08rem;
+}
+
+.prompt-banner__text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.prompt-banner__warning {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  color: #ffd8d8;
+}
+
+@media (max-width: 900px) {
+  .prompt-banner {
+    width: min(92vw, 680px);
+  }
+}
+
 .promptRow {
   display: grid;
   grid-template-columns: 1fr 320px;

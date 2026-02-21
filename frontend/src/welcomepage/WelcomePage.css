@@ -63,6 +63,31 @@ body {
     animation: fadeInSimple 6s ease-in-out;
 }
 
+.welcome-filters {
+    width: min(680px, 88vw);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 8px auto 18px;
+    text-align: left;
+    animation: fadeInSimple 6s ease-in-out;
+}
+
+.welcome-filter-label {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.welcome-filter-select {
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
 /* Button styling */
 .start-button {
     padding: 14px 28px;
@@ -98,4 +123,20 @@ body {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+}
+
+@media (max-width: 900px) {
+    .welcome-title0,
+    .welcome-title1,
+    .welcome-title2,
+    .welcome-title3,
+    .welcome-title4,
+    .welcome-title5 {
+        font-size: 1.2rem;
+        margin-bottom: 14px;
+    }
+
+    .start-button {
+        font-size: 1.25rem;
+    }
 }

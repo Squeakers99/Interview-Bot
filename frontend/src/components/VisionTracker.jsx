@@ -45,6 +45,7 @@ export default function VisionTracker({
   autoStartCamera = true,
   drawLandmarks = true,
   initialStream = null,
+  prompt = null,
   onUpdate,
   onAnalysisResult,
   onEnd, // ✅ NEW: lets parent return to entry page
@@ -382,8 +383,10 @@ export default function VisionTracker({
     };
 
     formData.append("audio", audioBlob, filename);
-    formData.append("prompt_id", "");
-    formData.append("prompt_text", "");
+    formData.append("prompt_id", prompt?.id || "");
+    formData.append("prompt_text", prompt?.text || "");
+    formData.append("prompt_type", prompt?.type || "");
+    formData.append("prompt_difficulty", prompt?.difficulty || "");
     formData.append("vision_metrics", JSON.stringify(latestMetricsRef.current || {}));
     formData.append("interview_summary", JSON.stringify(interviewSummary));
     formData.append("interview_timelines", JSON.stringify(interviewTimelines));
