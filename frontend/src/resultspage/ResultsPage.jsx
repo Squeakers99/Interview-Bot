@@ -108,6 +108,24 @@ export default function ResultsPage({ onRestart }) {
   );
   const llmReviewText = useMemo(() => toReadableReview(llmReview), [llmReview]);
 
+  const handleDownload = () => { // added download section here
+  const data = {
+    eyeTimeline: eyeData,
+    postureTimeline: postureData,
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "interview_results.json";
+  link.click();
+}; //finishes
+
   return (
     <main className="results-page">
       <section className="results-shell">
@@ -168,7 +186,14 @@ export default function ResultsPage({ onRestart }) {
           <button className="results-button" onClick={onRestart}>
             Start New Interview
           </button>
+
+           <button className="results-button" onClick={handleDownload}>
+              Download Results
+           </button>
+
         </div>
+
+        
       </section>
     </main>
   );
