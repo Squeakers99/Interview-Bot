@@ -32,7 +32,7 @@ async def analyze(
     timelines = parse_json_field(interview_timelines)
     audio_size, filename, content_type, audio_bytes = await read_upload_bytes(audio)
     saved_path = save_upload_bytes(audio_bytes, filename)
-    timelines_saved_path = save_json_payload(timelines, "Interview-Timelines.json")
+    timelines_saved_path = save_json_payload(timelines, "results.json")
 
     # Terminal log for quick debugging during development.
     print("[/analyze] received audio upload", flush=True)
@@ -57,7 +57,7 @@ async def analyze(
             "llm_review": interview_analysis.get("llm_review"),
         }
         
-        results_path = os.path.join(UPLOAD_DIR, "Interview-Timelines.json")
+        results_path = os.path.join(UPLOAD_DIR, "results.json")
         with open(results_path, "w") as f:
             json.dump(combined_results, f, indent=2)
         print(f"[/analyze] results saved to {results_path}", flush=True)

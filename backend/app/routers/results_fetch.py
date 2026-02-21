@@ -7,7 +7,7 @@ from fastapi import APIRouter
 router = APIRouter(prefix="/results", tags=["results"])
 
 def load_interview_timelines() -> Dict[str, Any]:
-    timelines_path = Path(__file__).resolve().parents[2] / "uploads" / "Interview-Timelines.json"
+    timelines_path = Path(__file__).resolve().parents[2] / "uploads" / "results.json"
     if not timelines_path.exists():
         return {"posture_timeline": [], "eye_timeline": []}
     try:
