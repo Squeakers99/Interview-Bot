@@ -9,6 +9,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 from dotenv import load_dotenv
 
+logger = logging.getLogger("uvicorn.error")
+
+load_dotenv() # Load your Groq or OpenAI API key from .env
+
 def analyze_voice_tone(file_path: str) -> dict:
     try:
         # Load audio file
@@ -21,7 +25,7 @@ def analyze_voice_tone(file_path: str) -> dict:
         avg_pitch = float(np.mean(voiced_f0)) if len(voiced_f0) > 0 else 0.0
         pitch_variability = float(np.std(voiced_f0)) if len(voiced_f0) > 0 else 0.0
 
-        duration = lirbosa.get_duration(y=y, sr=sr)
+        duration = librosa.get_duration(y=y, sr=sr)
         zcr = librosa.feature.zero_crossing_rate(y)
         avg_zcr = float(np.mean(zcr))
 
@@ -58,7 +62,7 @@ def analyze_voice_tone(file_path: str) -> dict:
 
         return {
             "avg_pitch_hz": round(avg_pitch, 2),
-            "pitch_variation": round(pitch_variation, 2),
+            "pitch_variation": round(pitch_variability, 2),
             "speaking_rate": round(speaking_rate, 2),
             "avg_energy": round(avg_energy, 4),
             "energy_variation": round(energy_variation, 4),
@@ -66,15 +70,13 @@ def analyze_voice_tone(file_path: str) -> dict:
             "tone_feedback": monotone_feedback,
             "rate_feedback": rate_feedback,
         }
-        except Exception as e:
-            logger.error(f"Error analyzing voice tone: {e}")
-            return {"error": str(e)}  
+    except Exception as e:
+        logger.error(f"Error analyzing voice tone: {e}")
+        return {"error": str(e)}  
 
 print("DEBUG: Analysis started...", flush=True)
 
-logger = logging.getLogger("uvicorn.error")
 
-load_dotenv() # Load your Groq or OpenAI API key from .env
 
 app = FastAPI()
 
@@ -105,7 +107,7 @@ async def analyze_interview(
             stt_result = llm_client.audio.transcriptions.create(
                 file=audio_file,
                 model="whisper-large-v3",
-                promtpt="Transcribe this interview audio clearly and accurately. Focus on capturing the candidate's words verbatim, including filler words and hesitations, as these are important for analysis."
+                prompt="Transcribe this interview audio clearly and accurately. Focus on capturing the candidate's words verbatim, including filler words and hesitations, as these are important for analysis."
             )
         transcript = stt_result.text
 
