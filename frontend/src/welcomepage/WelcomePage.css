@@ -12,86 +12,22 @@
     align-items: center;
     text-align: center;
     padding: 24px;
-    background: linear-gradient(to right, #4e73df, #1cc88a);
-}
-
-.landing-page {
-    height: 100vh;
-    background: linear-gradient(to bottom, #007BFF, #0056b3);
+    background: linear-gradient(to right, #4e73df, #202656);
     font-family: 'Times New Roman', Times, serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 20px;
-    font-family: 'Poppins', sans-serif;
-    color: white;
 }
 
-.welcome-title, .welcome-subtitle {
+.welcome-title {
     font-size: 3rem;
     margin-bottom: 20px;
-    animation: fadeIn 2s ease-in-out;
+    animation: fadeIn 3s ease-in-out;
     color: white;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in-fade-out {
+.welcome-subtitle {
     font-size: 2rem;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-.welcome-message {
+    margin-bottom: 20px;
+    animation: fadeIn 4s ease-in-out;
     color: white;
-    font-size: 48px;
-    text-align: center;
-    margin-top: 20%;
-}
-
-/* Full screen center layout */
-.landing-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(to right, #4e73df, #1cc88a);
-    text-align: center;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-/* Title */
-.landing-title {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-/* Subtitle */
-.landing-subtitle {
-    font-size: 1.3rem;
-    margin-bottom: 2rem;
-}
-
-/* Button */
-.start-button {
-    padding: 12px 24px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 8px;
-    background-color: white;
-    color: #4e73df;
-    cursor: pointer;
-    transition: 0.3s ease;
-}
-
-.start-button:hover {
-    background-color: #f8f9fc;
-    transform: scale(1.05);
 }
 
 /* Button styling */
@@ -104,9 +40,20 @@
     color: #007BFF;
     cursor: pointer;
     transition: 0.3s ease;
+    animation: fadeIn 6s ease-in-out;
 }
 
 .start-button:hover {
+    background-color: #f8f9fc;
     transform: scale(1.05);
-    background-color: #f1f1f1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-fade-out {
+    font-size: 2rem;
+    animation: fadeIn 3s ease-in-out;
 }
