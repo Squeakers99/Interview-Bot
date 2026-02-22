@@ -210,7 +210,7 @@ export default function App({
           key={`${prompt?.id || "prompt"}-${interviewRound}`}
           enabled={true}
           autoStartCamera={true}
-          drawLandmarks={false}
+          drawLandmarks={true}
           onAnalysisResult={handleAnalysisResult}
           onPhaseChange={setTrackerPhase}
           onEnd={() => setView("results")}
