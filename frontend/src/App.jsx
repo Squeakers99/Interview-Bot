@@ -17,6 +17,14 @@ const FALLBACK_PROMPT = {
 function formatLabel(value) {
   const safe = String(value || "").trim().toLowerCase();
   if (!safe || safe === "all") return "All";
+  const difficultyMap = {
+    "1": "Easy",
+    "2": "Medium",
+    "3": "Hard",
+    "4": "Expert",
+    "5": "Master",
+  };
+  if (difficultyMap[safe]) return difficultyMap[safe];
   return safe.charAt(0).toUpperCase() + safe.slice(1);
 }
 

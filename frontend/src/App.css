@@ -23,16 +23,15 @@
 }
 
 .prompt-loading-screen {
-  width: min(420px, 82vw);
-  height: min(420px, 82vw);
+  width: min(520px, 90vw);
   padding: 28px 22px;
-  border-radius: 999px;
+  border-radius: 18px;
   background: rgba(8, 12, 32, 0.48);
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
   text-align: center;
   display: grid;
-  place-content: center;
+  align-content: center;
   justify-items: center;
   gap: 8px;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
@@ -58,7 +57,7 @@
   margin: 0;
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
-  width: min(260px, 70%);
+  width: auto;
 }
 
 .prompt-loading-card h2 {

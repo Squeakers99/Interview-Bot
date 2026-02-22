@@ -4,6 +4,7 @@ import App from "../App";
 
 const CATEGORY_OPTIONS = [
   { value: "all", label: "Any Type" },
+  { value: "background", label: "Background" },
   { value: "behaviour", label: "Behavioural" },
   { value: "situation", label: "Situational" },
   { value: "technical", label: "Technical" },
@@ -70,6 +71,11 @@ export default function WelcomePage() {
   const filtersRef = useRef(null);
 
   function handleReturnToMainPage() {
+    setSelectedCategory("all");
+    setSelectedDifficulty("all");
+    setJobAdTitle("");
+    setJobAdText("");
+    setOpenDropdown(null);
     setStarted(false);
   }
 

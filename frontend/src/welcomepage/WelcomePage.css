@@ -65,7 +65,7 @@
   align-content: start;
   min-width: 0;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .welcome-filters--options {
@@ -136,6 +136,7 @@
 
 .welcome-dropdown {
   position: relative;
+  z-index: 5;
 }
 
 .welcome-dropdown-arrow {
@@ -150,15 +151,16 @@
 
 .welcome-dropdown-menu {
   position: absolute;
-  z-index: 20;
+  z-index: 50;
   width: 100%;
   left: 0;
-  top: calc(100% + 8px);
+  bottom: calc(100% + 8px);
   margin: 0;
   padding: 8px;
   list-style: none;
   border-radius: 14px;
-  background: rgba(15, 20, 45, 0.96);
+  background-color: rgba(15, 20, 45, 0.98);
+  background: rgba(15, 20, 45, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(6px);
