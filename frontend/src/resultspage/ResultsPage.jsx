@@ -214,12 +214,16 @@ export default function ResultsPage({ onRestart }) {
               <section className="graph-card parsed-summary-card">
                 <h2 className="graph-title">Interview Breakdown</h2>
                 <div className="parsed-meta">
-                  <p><strong>Question:</strong> {parsed.question || fullResults?.prompt_text || "N/A"}</p>
-                  <p><strong>Type:</strong> {toTitle(parsed.type || fullResults?.prompt_type || "N/A")}</p>
-                  <p>
-                    <strong>Difficulty:</strong>{" "}
-                    {difficultyLabel(parsed.difficulty || fullResults?.prompt_difficulty || "N/A")}
+                  <p className="parsed-meta-question">
+                    <strong>Question:</strong> {parsed.question || fullResults?.prompt_text || "N/A"}
                   </p>
+                  <div className="parsed-meta-row">
+                    <p><strong>Type:</strong> {toTitle(parsed.type || fullResults?.prompt_type || "N/A")}</p>
+                    <p>
+                      <strong>Difficulty:</strong>{" "}
+                      {difficultyLabel(parsed.difficulty || fullResults?.prompt_difficulty || "N/A")}
+                    </p>
+                  </div>
                 </div>
                 <div className="parsed-score-grid">
                   <div className="parsed-score-item">
