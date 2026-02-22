@@ -36,6 +36,13 @@ function splitFeedbackBlock(value) {
     .filter(Boolean)
     .map((line) => line.replace(/^[:\-\*]\s*/, ""))
     .map((line) => line.replace(/^:\s*/, ""))
+    .filter(
+      (line) =>
+        !/^\(.*\)\s*:?$/.test(line) &&
+        !/^\[(strength|improvement).*?\]$/i.test(line) &&
+        !/reference exact moments from the transcript/i.test(line) &&
+        !/be direct and actionable/i.test(line)
+    )
     .filter(Boolean);
 }
 

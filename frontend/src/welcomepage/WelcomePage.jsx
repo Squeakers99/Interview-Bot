@@ -1,7 +1,6 @@
 import "./WelcomePage.css";
 import { useEffect, useRef, useState } from "react";
 import App from "../App";
-import CountdownPage from "../countdown/CountdownPage";
 
 const CATEGORY_OPTIONS = [
   { value: "all", label: "Any Type" },
@@ -63,7 +62,6 @@ function CustomDropdown({ id, label, value, options, isOpen, onToggle, onSelect 
 
 export default function WelcomePage() {
   const [started, setStarted] = useState(false);
-  const [countdownDone, setCountdownDone] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
   const [jobAdTitle, setJobAdTitle] = useState("");
@@ -72,7 +70,6 @@ export default function WelcomePage() {
   const filtersRef = useRef(null);
 
   function handleReturnToMainPage() {
-    setCountdownDone(false);
     setStarted(false);
   }
 
@@ -98,11 +95,7 @@ export default function WelcomePage() {
     };
   }, []);
 
-  if (started && !countdownDone) {
-    return <CountdownPage start={3} onComplete={() => setCountdownDone(true)} />;
-  }
-
-  if (started && countdownDone) {
+  if (started) {
     return (
       <App
         promptCategory={selectedCategory}

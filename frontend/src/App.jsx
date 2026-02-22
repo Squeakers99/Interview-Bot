@@ -3,6 +3,7 @@ import "./App.css";
 import VisionTracker from "./components/VisionTracker";
 import ResultsPage from "./resultspage/ResultsPage";
 import AnalyzingPage from "./analyzing/AnalyzingPage";
+import CountdownPage from "./countdown/CountdownPage";
 
 const FALLBACK_PROMPT = {
   id: "fallback-prompt",
@@ -31,6 +32,8 @@ export default function App({
   const [promptLoading, setPromptLoading] = useState(true);
   const [promptError, setPromptError] = useState("");
   const [jobAdMeta, setJobAdMeta] = useState(null);
+  const [countdownDone, setCountdownDone] = useState(false);
+  const [loadingDots, setLoadingDots] = useState("");
   const [interviewRound, setInterviewRound] = useState(0);
   const [trackerPhase, setTrackerPhase] = useState("idle");
 
@@ -104,8 +107,17 @@ export default function App({
 
   useEffect(() => {
     if (view !== "interview") return;
+    setCountdownDone(false);
     loadPrompt();
   }, [view, interviewRound, loadPrompt]);
+
+  useEffect(() => {
+    if (!promptLoading) return undefined;
+    const timer = window.setInterval(() => {
+      setLoadingDots((current) => (current.length >= 3 ? "" : `${current}.`));
+    }, 450);
+    return () => window.clearInterval(timer);
+  }, [promptLoading]);
 
   async function handleAnalysisResult() {
     try {
@@ -144,16 +156,21 @@ export default function App({
 
   if (promptLoading) {
     return (
-      <div className="app-shell">
-        <div className="prompt-loading-card">
-          <h2>Loading interview question...</h2>
-          <p>
+      <div className="app-shell app-shell--loading">
+        <div className="prompt-loading-screen" role="status" aria-live="polite">
+          <div className="prompt-loading-spinner" aria-hidden="true" />
+          <h2 className="prompt-loading-title">Loading prompt{loadingDots}</h2>
+          <p className="prompt-loading-meta">
             Type: <strong>{formatLabel(promptCategory)}</strong> | Difficulty:{" "}
             <strong>{formatLabel(promptDifficulty)}</strong>
           </p>
         </div>
       </div>
     );
+  }
+
+  if (view === "interview" && !countdownDone) {
+    return <CountdownPage start={3} onComplete={() => setCountdownDone(true)} />;
   }
 
   if (view === "interview" && trackerPhase === "finishing") {

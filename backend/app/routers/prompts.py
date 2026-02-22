@@ -223,7 +223,7 @@ async def prompt_from_job_ad(request: JobAdPromptRequest):
     if pasted_text:
         job_ad = {
             "url": "",
-            "domain": "pasted-text",
+            "domain": "Job Ad",
             "title": pasted_title or "Pasted Job Description",
             "text": pasted_text[:12000],
             "excerpt": pasted_text[:600],
