@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import {
   FilesetResolver,
   PoseLandmarker,
@@ -48,7 +48,8 @@ export default function VisionTracker({
   prompt = null,
   onUpdate,
   onAnalysisResult,
-  onEnd, // ✅ NEW: lets parent return to entry page
+  onPhaseChange,
+  onEnd, // âœ… NEW: lets parent return to entry page
 }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -88,6 +89,10 @@ export default function VisionTracker({
   useEffect(() => {
     phaseRef.current = phase;
   }, [phase]);
+
+  useEffect(() => {
+    onPhaseChange?.(phase);
+  }, [phase, onPhaseChange]);
 
   // ------------------ Load Models ------------------
   useEffect(() => {
@@ -270,7 +275,7 @@ export default function VisionTracker({
       stopCamera();
       setPhase("done");
       setTimeLeft(0);
-      onEnd?.(); // ✅ NEW: go back to entry
+      onEnd?.(); // âœ… NEW: go back to entry
     }
   }
 
@@ -290,7 +295,7 @@ export default function VisionTracker({
       stopCamera();
       setPhase("idle");
       setTimeLeft(INTERVIEW_TIMINGS.thinkingSeconds);
-      onEnd?.(); // ✅ NEW: go back to entry
+      onEnd?.(); // âœ… NEW: go back to entry
     }
   }
 
@@ -399,6 +404,8 @@ export default function VisionTracker({
     formData.append("audio", audioBlob, filename);
     formData.append("prompt_id", prompt?.id || "");
     formData.append("prompt_text", prompt?.text || "");
+    formData.append("prompt_type", String(prompt?.type || ""));
+    formData.append("prompt_difficulty", String(prompt?.difficulty || ""));
     formData.append("vision_metrics", JSON.stringify(latestMetricsRef.current || {}));
     formData.append("interview_summary", JSON.stringify(interviewSummary));
     formData.append("interview_timelines", JSON.stringify(interviewTimelines));
@@ -552,3 +559,4 @@ export default function VisionTracker({
     </div>
   );
 }
+

@@ -71,3 +71,9 @@ def get_eye_timeline():
 def get_llm_review():
     payload = load_results_payload()
     return {"ok": True, "llm_review": payload.get("llm_review")}
+
+
+@router.get("/full")
+def get_full_results():
+    payload = load_results_payload()
+    return {"ok": True, "results": payload}

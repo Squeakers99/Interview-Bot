@@ -1,0 +1,506 @@
+[
+  {
+    "id": "gen_e_01",
+    "type": "general",
+    "text": "Tell me about yourself.",
+    "difficulty": "Easy",
+    "competencies": ["communication"],
+    "recommended_structure": "Present → Past → Future",
+    "good_signals": ["clear story", "concise"],
+    "red_flags": ["rambling"]
+  },
+  {
+    "id": "gen_e_02",
+    "type": "general",
+    "text": "Walk me through your resume.",
+    "difficulty": "Easy",
+    "competencies": ["communication"],
+    "recommended_structure": "Chronological summary",
+    "good_signals": ["clear transitions"],
+    "red_flags": ["reading resume directly"]
+  },
+  {
+    "id": "gen_e_03",
+    "type": "general",
+    "text": "Why did you apply for this job?",
+    "difficulty": "Easy",
+    "competencies": ["motivation"],
+    "recommended_structure": "Role → Company → Fit",
+    "good_signals": ["research shown"],
+    "red_flags": ["generic answer"]
+  },
+  {
+    "id": "gen_e_04",
+    "type": "general",
+    "text": "What interests you about this role?",
+    "difficulty": "Easy",
+    "competencies": ["motivation"],
+    "recommended_structure": "Interest → Example",
+    "good_signals": ["specific details"],
+    "red_flags": ["vague"]
+  },
+  {
+    "id": "gen_e_05",
+    "type": "general",
+    "text": "What do you know about our company?",
+    "difficulty": "Easy",
+    "competencies": ["preparation"],
+    "recommended_structure": "Mission → Product → Role",
+    "good_signals": ["researched"],
+    "red_flags": ["no knowledge"]
+  },
+  {
+    "id": "gen_e_06",
+    "type": "general",
+    "text": "What motivates you?",
+    "difficulty": "Easy",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Motivation → Example",
+    "good_signals": ["authentic"],
+    "red_flags": ["money only"]
+  },
+  {
+    "id": "gen_e_07",
+    "type": "general",
+    "text": "What do you enjoy doing outside work?",
+    "difficulty": "Easy",
+    "competencies": ["culture fit"],
+    "recommended_structure": "Activity → skills learned",
+    "good_signals": ["balanced personality"],
+    "red_flags": ["oversharing"]
+  },
+  {
+    "id": "gen_e_08",
+    "type": "general",
+    "text": "How would your friends describe you?",
+    "difficulty": "Easy",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Trait → Example",
+    "good_signals": ["evidence"],
+    "red_flags": ["generic"]
+  },
+  {
+    "id": "gen_e_09",
+    "type": "general",
+    "text": "What are you looking for in a job?",
+    "difficulty": "Easy",
+    "competencies": ["values"],
+    "recommended_structure": "3 priorities",
+    "good_signals": ["realistic"],
+    "red_flags": ["unrealistic demands"]
+  },
+  {
+    "id": "gen_e_10",
+    "type": "general",
+    "text": "Do you have any questions for us?",
+    "difficulty": "Easy",
+    "competencies": ["curiosity"],
+    "recommended_structure": "Role-focused questions",
+    "good_signals": ["thoughtful"],
+    "red_flags": ["no questions"]
+  },
+
+  {
+    "id": "gen_m_01",
+    "type": "general",
+    "text": "What differentiates you from other candidates?",
+    "difficulty": "Medium",
+    "competencies": ["positioning"],
+    "recommended_structure": "Strength → Proof",
+    "good_signals": ["specific examples"],
+    "red_flags": ["generic claims"]
+  },
+  {
+    "id": "gen_m_02",
+    "type": "general",
+    "text": "Where do you see yourself in 5 years?",
+    "difficulty": "Medium",
+    "competencies": ["planning"],
+    "recommended_structure": "Growth path",
+    "good_signals": ["realistic"],
+    "red_flags": ["unclear direction"]
+  },
+  {
+    "id": "gen_m_03",
+    "type": "general",
+    "text": "Describe your ideal work environment.",
+    "difficulty": "Medium",
+    "competencies": ["culture fit"],
+    "recommended_structure": "Traits + why",
+    "good_signals": ["balanced expectations"],
+    "red_flags": ["rigid demands"]
+  },
+  {
+    "id": "gen_m_04",
+    "type": "general",
+    "text": "What are your strengths and weaknesses?",
+    "difficulty": "Medium",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Strength + Weakness + growth",
+    "good_signals": ["honest reflection"],
+    "red_flags": ["fake weakness"]
+  },
+  {
+    "id": "gen_m_05",
+    "type": "general",
+    "text": "Why are you looking for a job?",
+    "difficulty": "Medium",
+    "competencies": ["motivation"],
+    "recommended_structure": "Growth + opportunity",
+    "good_signals": ["positive framing"],
+    "red_flags": ["negative past employer"]
+  },
+  {
+    "id": "gen_m_06",
+    "type": "general",
+    "text": "What does success mean to you?",
+    "difficulty": "Medium",
+    "competencies": ["values"],
+    "recommended_structure": "Definition + example",
+    "good_signals": ["clear answer"],
+    "red_flags": ["vague"]
+  },
+  {
+    "id": "gen_m_07",
+    "type": "general",
+    "text": "How do you handle feedback?",
+    "difficulty": "Medium",
+    "competencies": ["coachability"],
+    "recommended_structure": "Example + lesson",
+    "good_signals": ["growth mindset"],
+    "red_flags": ["defensive"]
+  },
+  {
+    "id": "gen_m_08",
+    "type": "general",
+    "text": "What kind of manager do you work best with?",
+    "difficulty": "Medium",
+    "competencies": ["self-awareness"],
+    "recommended_structure": "Traits + reason",
+    "good_signals": ["flexible"],
+    "red_flags": ["too rigid"]
+  },
+  {
+    "id": "gen_m_09",
+    "type": "general",
+    "text": "What skills are you currently improving?",
+    "difficulty": "Medium",
+    "competencies": ["growth mindset"],
+    "recommended_structure": "Skill + action",
+    "good_signals": ["active learning"],
+    "red_flags": ["no plan"]
+  },
+  {
+    "id": "gen_m_10",
+    "type": "general",
+    "text": "What are your career goals?",
+    "difficulty": "Medium",
+    "competencies": ["planning"],
+    "recommended_structure": "Short-term + long-term",
+    "good_signals": ["aligned goals"],
+    "red_flags": ["unclear direction"]
+  },
+
+  {
+    "id": "gen_h_01",
+    "type": "general",
+    "text": "Why should we hire you?",
+    "difficulty": "Hard",
+    "competencies": ["persuasion"],
+    "recommended_structure": "3-point pitch",
+    "good_signals": ["specific proof"],
+    "red_flags": ["arrogance"]
+  },
+  {
+    "id": "gen_h_02",
+    "type": "general",
+    "text": "What would your first 90 days look like?",
+    "difficulty": "Hard",
+    "competencies": ["planning"],
+    "recommended_structure": "Learn → contribute → improve",
+    "good_signals": ["structured thinking"],
+    "red_flags": ["unrealistic expectations"]
+  },
+  {
+    "id": "gen_h_03",
+    "type": "general",
+    "text": "How do you prioritize when everything feels important?",
+    "difficulty": "Hard",
+    "competencies": ["prioritization"],
+    "recommended_structure": "Framework + example",
+    "good_signals": ["clear logic"],
+    "red_flags": ["random decisions"]
+  },
+  {
+    "id": "gen_h_04",
+    "type": "general",
+    "text": "How do you handle ambiguity?",
+    "difficulty": "Hard",
+    "competencies": ["adaptability"],
+    "recommended_structure": "Clarify → decide → execute",
+    "good_signals": ["proactive approach"],
+    "red_flags": ["freezing"]
+  },
+  {
+    "id": "gen_h_05",
+    "type": "general",
+    "text": "Tell me about a time you had to learn quickly.",
+    "difficulty": "Hard",
+    "competencies": ["learning agility"],
+    "recommended_structure": "Need → learning → result",
+    "good_signals": ["fast adaptation"],
+    "red_flags": ["no method"]
+  },
+  {
+    "id": "gen_h_06",
+    "type": "general",
+    "text": "How do you define leadership?",
+    "difficulty": "Hard",
+    "competencies": ["leadership"],
+    "recommended_structure": "Definition + example",
+    "good_signals": ["service mindset"],
+    "red_flags": ["authority-only thinking"]
+  },
+  {
+    "id": "gen_h_07",
+    "type": "general",
+    "text": "Describe a time you had to make a difficult decision.",
+    "difficulty": "Hard",
+    "competencies": ["judgment"],
+    "recommended_structure": "Options → decision → result",
+    "good_signals": ["clear reasoning"],
+    "red_flags": ["impulsive decision"]
+  },
+  {
+    "id": "gen_h_08",
+    "type": "general",
+    "text": "What would you improve about our company?",
+    "difficulty": "Hard",
+    "competencies": ["critical thinking"],
+    "recommended_structure": "Positive → improvement idea",
+    "good_signals": ["respectful framing"],
+    "red_flags": ["harsh criticism"]
+  },
+  {
+    "id": "gen_h_09",
+    "type": "general",
+    "text": "How do you stay organized?",
+    "difficulty": "Hard",
+    "competencies": ["execution"],
+    "recommended_structure": "System + example",
+    "good_signals": ["clear tools/process"],
+    "red_flags": ["no system"]
+  },
+  {
+    "id": "gen_h_10",
+    "type": "general",
+    "text": "Tell me about a risk you took.",
+    "difficulty": "Hard",
+    "competencies": ["initiative"],
+    "recommended_structure": "Risk → mitigation → outcome",
+    "good_signals": ["calculated risk"],
+    "red_flags": ["reckless behavior"]
+  },
+
+  {
+    "id": "gen_x_01",
+    "type": "general",
+    "text": "How do you balance speed vs quality?",
+    "difficulty": "Expert",
+    "competencies": ["decision-making"],
+    "recommended_structure": "Tradeoff framework + example",
+    "good_signals": ["context awareness"],
+    "red_flags": ["extreme thinking"]
+  },
+  {
+    "id": "gen_x_02",
+    "type": "general",
+    "text": "How do you influence without authority?",
+    "difficulty": "Expert",
+    "competencies": ["influence"],
+    "recommended_structure": "Trust → alignment → outcome",
+    "good_signals": ["collaboration"],
+    "red_flags": ["forceful tactics"]
+  },
+  {
+    "id": "gen_x_03",
+    "type": "general",
+    "text": "Describe a time you challenged the status quo.",
+    "difficulty": "Expert",
+    "competencies": ["innovation"],
+    "recommended_structure": "Problem → change → impact",
+    "good_signals": ["measured improvement"],
+    "red_flags": ["change for its own sake"]
+  },
+  {
+    "id": "gen_x_04",
+    "type": "general",
+    "text": "How do you handle competing priorities from leadership?",
+    "difficulty": "Expert",
+    "competencies": ["stakeholder management"],
+    "recommended_structure": "Align → prioritize → communicate",
+    "good_signals": ["clear communication"],
+    "red_flags": ["avoidance"]
+  },
+  {
+    "id": "gen_x_05",
+    "type": "general",
+    "text": "What tradeoffs do you consider when making decisions?",
+    "difficulty": "Expert",
+    "competencies": ["judgment"],
+    "recommended_structure": "Criteria → tradeoffs → decision",
+    "good_signals": ["structured reasoning"],
+    "red_flags": ["gut-only decisions"]
+  },
+  {
+    "id": "gen_x_06",
+    "type": "general",
+    "text": "How do you mentor others?",
+    "difficulty": "Expert",
+    "competencies": ["leadership"],
+    "recommended_structure": "Approach → example → result",
+    "good_signals": ["growth-focused"],
+    "red_flags": ["directive only"]
+  },
+  {
+    "id": "gen_x_07",
+    "type": "general",
+    "text": "Tell me about a time you handled a major failure.",
+    "difficulty": "Expert",
+    "competencies": ["resilience"],
+    "recommended_structure": "Failure → response → learning",
+    "good_signals": ["ownership"],
+    "red_flags": ["blame others"]
+  },
+  {
+    "id": "gen_x_08",
+    "type": "general",
+    "text": "How do you measure success on a project?",
+    "difficulty": "Expert",
+    "competencies": ["execution"],
+    "recommended_structure": "Metrics → outcomes → reflection",
+    "good_signals": ["clear KPIs"],
+    "red_flags": ["no measurement"]
+  },
+  {
+    "id": "gen_x_09",
+    "type": "general",
+    "text": "How do you build trust quickly?",
+    "difficulty": "Expert",
+    "competencies": ["communication"],
+    "recommended_structure": "Actions → consistency → results",
+    "good_signals": ["reliability"],
+    "red_flags": ["words only"]
+  },
+  {
+    "id": "gen_x_10",
+    "type": "general",
+    "text": "What’s a decision you regret and why?",
+    "difficulty": "Expert",
+    "competencies": ["reflection"],
+    "recommended_structure": "Decision → lesson → change",
+    "good_signals": ["honest reflection"],
+    "red_flags": ["no learning"]
+  },
+
+  {
+    "id": "gen_mas_01",
+    "type": "general",
+    "text": "What legacy do you want your work to leave?",
+    "difficulty": "Master",
+    "competencies": ["vision"],
+    "recommended_structure": "Values → impact → path",
+    "good_signals": ["grounded vision"],
+    "red_flags": ["abstract answers"]
+  },
+  {
+    "id": "gen_mas_02",
+    "type": "general",
+    "text": "How do you define excellence?",
+    "difficulty": "Master",
+    "competencies": ["standards"],
+    "recommended_structure": "Definition → example",
+    "good_signals": ["clear standards"],
+    "red_flags": ["vague"]
+  },
+  {
+    "id": "gen_mas_03",
+    "type": "general",
+    "text": "How do you make decisions when values conflict?",
+    "difficulty": "Master",
+    "competencies": ["ethics"],
+    "recommended_structure": "Framework → example",
+    "good_signals": ["balanced reasoning"],
+    "red_flags": ["rigid thinking"]
+  },
+  {
+    "id": "gen_mas_04",
+    "type": "general",
+    "text": "How do you scale yourself as a leader?",
+    "difficulty": "Master",
+    "competencies": ["leadership"],
+    "recommended_structure": "Delegation → systems → empowerment",
+    "good_signals": ["team growth"],
+    "red_flags": ["micromanagement"]
+  },
+  {
+    "id": "gen_mas_05",
+    "type": "general",
+    "text": "How do you balance ambition and sustainability?",
+    "difficulty": "Master",
+    "competencies": ["strategy"],
+    "recommended_structure": "Tradeoffs → practices",
+    "good_signals": ["long-term thinking"],
+    "red_flags": ["burnout mindset"]
+  },
+  {
+    "id": "gen_mas_06",
+    "type": "general",
+    "text": "What does impact mean to you?",
+    "difficulty": "Master",
+    "competencies": ["vision"],
+    "recommended_structure": "Definition → measurable example",
+    "good_signals": ["clear outcomes"],
+    "red_flags": ["abstract only"]
+  },
+  {
+    "id": "gen_mas_07",
+    "type": "general",
+    "text": "How do you lead during uncertainty?",
+    "difficulty": "Master",
+    "competencies": ["leadership"],
+    "recommended_structure": "Clarity → alignment → action",
+    "good_signals": ["calm direction"],
+    "red_flags": ["panic"]
+  },
+  {
+    "id": "gen_mas_08",
+    "type": "general",
+    "text": "How do you think organizations should evolve?",
+    "difficulty": "Master",
+    "competencies": ["systems thinking"],
+    "recommended_structure": "Trend → strategy → example",
+    "good_signals": ["big-picture thinking"],
+    "red_flags": ["generic answers"]
+  },
+  {
+    "id": "gen_mas_09",
+    "type": "general",
+    "text": "How do you decide what NOT to do?",
+    "difficulty": "Master",
+    "competencies": ["strategy"],
+    "recommended_structure": "Criteria → prioritization",
+    "good_signals": ["focus"],
+    "red_flags": ["overcommitment"]
+  },
+  {
+    "id": "gen_mas_10",
+    "type": "general",
+    "text": "What principles guide your career decisions?",
+    "difficulty": "Master",
+    "competencies": ["values"],
+    "recommended_structure": "Principles → examples",
+    "good_signals": ["consistency"],
+    "red_flags": ["unclear values"]
+  }
+]

@@ -1,0 +1,506 @@
+[
+  {
+    "id": "beh_e_01",
+    "type": "behavioral",
+    "text": "Tell me about a time you worked in a team.",
+    "difficulty": "Easy",
+    "competencies": ["teamwork"],
+    "recommended_structure": "Situation → role → action → result",
+    "good_signals": ["clear role", "collaboration"],
+    "red_flags": ["takes all credit"]
+  },
+  {
+    "id": "beh_e_02",
+    "type": "behavioral",
+    "text": "Tell me about a time you helped a teammate.",
+    "difficulty": "Easy",
+    "competencies": ["collaboration", "empathy"],
+    "recommended_structure": "Situation → help provided → outcome",
+    "good_signals": ["supportive mindset"],
+    "red_flags": ["unclear contribution"]
+  },
+  {
+    "id": "beh_e_03",
+    "type": "behavioral",
+    "text": "Tell me about a time you completed something you were proud of.",
+    "difficulty": "Easy",
+    "competencies": ["ownership"],
+    "recommended_structure": "Goal → action → result",
+    "good_signals": ["clear impact"],
+    "red_flags": ["no outcome"]
+  },
+  {
+    "id": "beh_e_04",
+    "type": "behavioral",
+    "text": "Describe a time you learned something new quickly.",
+    "difficulty": "Easy",
+    "competencies": ["learning agility"],
+    "recommended_structure": "Need → learning → application",
+    "good_signals": ["initiative"],
+    "red_flags": ["no result"]
+  },
+  {
+    "id": "beh_e_05",
+    "type": "behavioral",
+    "text": "Tell me about a time you met a deadline.",
+    "difficulty": "Easy",
+    "competencies": ["execution"],
+    "recommended_structure": "Task → planning → completion",
+    "good_signals": ["organization"],
+    "red_flags": ["luck-based success"]
+  },
+  {
+    "id": "beh_e_06",
+    "type": "behavioral",
+    "text": "Describe a time you solved a small problem.",
+    "difficulty": "Easy",
+    "competencies": ["problem solving"],
+    "recommended_structure": "Problem → action → result",
+    "good_signals": ["clear solution"],
+    "red_flags": ["vague"]
+  },
+  {
+    "id": "beh_e_07",
+    "type": "behavioral",
+    "text": "Tell me about a time you showed responsibility.",
+    "difficulty": "Easy",
+    "competencies": ["accountability"],
+    "recommended_structure": "Situation → responsibility → outcome",
+    "good_signals": ["ownership"],
+    "red_flags": ["blame shifting"]
+  },
+  {
+    "id": "beh_e_08",
+    "type": "behavioral",
+    "text": "Describe a time you supported someone else’s idea.",
+    "difficulty": "Easy",
+    "competencies": ["teamwork"],
+    "recommended_structure": "Idea → support → result",
+    "good_signals": ["collaborative attitude"],
+    "red_flags": ["self-focused"]
+  },
+  {
+    "id": "beh_e_09",
+    "type": "behavioral",
+    "text": "Tell me about a time you stayed organized.",
+    "difficulty": "Easy",
+    "competencies": ["organization"],
+    "recommended_structure": "Task → system → outcome",
+    "good_signals": ["clear method"],
+    "red_flags": ["no structure"]
+  },
+  {
+    "id": "beh_e_10",
+    "type": "behavioral",
+    "text": "Describe a time you communicated something clearly.",
+    "difficulty": "Easy",
+    "competencies": ["communication"],
+    "recommended_structure": "Context → message → result",
+    "good_signals": ["clarity"],
+    "red_flags": ["confusion"]
+  },
+
+  {
+    "id": "beh_m_01",
+    "type": "behavioral",
+    "text": "Tell me about a time you faced a challenge and how you handled it.",
+    "difficulty": "Medium",
+    "competencies": ["problem solving", "resilience"],
+    "recommended_structure": "STAR",
+    "good_signals": ["clear actions", "result"],
+    "red_flags": ["vague"]
+  },
+  {
+    "id": "beh_m_02",
+    "type": "behavioral",
+    "text": "Tell me about a project you’re proud of and what your impact was.",
+    "difficulty": "Medium",
+    "competencies": ["ownership", "impact"],
+    "recommended_structure": "Goal → role → actions → outcome",
+    "good_signals": ["ownership"],
+    "red_flags": ["team did everything"]
+  },
+  {
+    "id": "beh_m_03",
+    "type": "behavioral",
+    "text": "How do you deal with pressure and stressful situations?",
+    "difficulty": "Medium",
+    "competencies": ["stress management"],
+    "recommended_structure": "Method → example",
+    "good_signals": ["calm process"],
+    "red_flags": ["panic"]
+  },
+  {
+    "id": "beh_m_04",
+    "type": "behavioral",
+    "text": "Tell me about a time you had lots of tasks and how you prioritized them.",
+    "difficulty": "Medium",
+    "competencies": ["prioritization"],
+    "recommended_structure": "Criteria → execution",
+    "good_signals": ["clear framework"],
+    "red_flags": ["random prioritization"]
+  },
+  {
+    "id": "beh_m_05",
+    "type": "behavioral",
+    "text": "Describe a time you took initiative.",
+    "difficulty": "Medium",
+    "competencies": ["initiative"],
+    "recommended_structure": "Opportunity → action → result",
+    "good_signals": ["proactive"],
+    "red_flags": ["no impact"]
+  },
+  {
+    "id": "beh_m_06",
+    "type": "behavioral",
+    "text": "Tell me about a time you adapted to change.",
+    "difficulty": "Medium",
+    "competencies": ["adaptability"],
+    "recommended_structure": "Change → adjustment → result",
+    "good_signals": ["flexibility"],
+    "red_flags": ["resistance"]
+  },
+  {
+    "id": "beh_m_07",
+    "type": "behavioral",
+    "text": "Describe a time you improved a process.",
+    "difficulty": "Medium",
+    "competencies": ["continuous improvement"],
+    "recommended_structure": "Before → change → after",
+    "good_signals": ["measurable improvement"],
+    "red_flags": ["no measurable result"]
+  },
+  {
+    "id": "beh_m_08",
+    "type": "behavioral",
+    "text": "Tell me about a time you learned from feedback.",
+    "difficulty": "Medium",
+    "competencies": ["coachability"],
+    "recommended_structure": "Feedback → action → improvement",
+    "good_signals": ["growth shown"],
+    "red_flags": ["defensive"]
+  },
+  {
+    "id": "beh_m_09",
+    "type": "behavioral",
+    "text": "Describe a time you had to communicate bad news.",
+    "difficulty": "Medium",
+    "competencies": ["communication"],
+    "recommended_structure": "Context → delivery → outcome",
+    "good_signals": ["clear and respectful"],
+    "red_flags": ["avoidance"]
+  },
+  {
+    "id": "beh_m_10",
+    "type": "behavioral",
+    "text": "Tell me about a time you had to stay persistent.",
+    "difficulty": "Medium",
+    "competencies": ["resilience"],
+    "recommended_structure": "Obstacle → persistence → result",
+    "good_signals": ["determination"],
+    "red_flags": ["gave up quickly"]
+  },
+
+  {
+    "id": "beh_h_01",
+    "type": "behavioral",
+    "text": "Tell me about a time you failed and what you learned from it.",
+    "difficulty": "Hard",
+    "competencies": ["growth mindset", "accountability"],
+    "recommended_structure": "Failure → lesson → change",
+    "good_signals": ["ownership"],
+    "red_flags": ["blame others"]
+  },
+  {
+    "id": "beh_h_02",
+    "type": "behavioral",
+    "text": "Describe a conflict with a coworker.",
+    "difficulty": "Hard",
+    "competencies": ["conflict resolution"],
+    "recommended_structure": "Conflict → actions → resolution",
+    "good_signals": ["professionalism"],
+    "red_flags": ["aggressive tone"]
+  },
+  {
+    "id": "beh_h_03",
+    "type": "behavioral",
+    "text": "Describe a situation where you had to work with someone difficult.",
+    "difficulty": "Hard",
+    "competencies": ["collaboration", "empathy"],
+    "recommended_structure": "Situation → adjustment → result",
+    "good_signals": ["respectful approach"],
+    "red_flags": ["complaining"]
+  },
+  {
+    "id": "beh_h_04",
+    "type": "behavioral",
+    "text": "Tell me about a time you made a mistake and how you handled it.",
+    "difficulty": "Hard",
+    "competencies": ["accountability"],
+    "recommended_structure": "Mistake → response → prevention",
+    "good_signals": ["quick ownership"],
+    "red_flags": ["hiding mistake"]
+  },
+  {
+    "id": "beh_h_05",
+    "type": "behavioral",
+    "text": "Describe a time you had to make a difficult decision.",
+    "difficulty": "Hard",
+    "competencies": ["judgment"],
+    "recommended_structure": "Options → decision → result",
+    "good_signals": ["clear reasoning"],
+    "red_flags": ["impulsive"]
+  },
+  {
+    "id": "beh_h_06",
+    "type": "behavioral",
+    "text": "Tell me about a time you disagreed with a decision.",
+    "difficulty": "Hard",
+    "competencies": ["communication"],
+    "recommended_structure": "Disagreement → approach → outcome",
+    "good_signals": ["respectful"],
+    "red_flags": ["undermining"]
+  },
+  {
+    "id": "beh_h_07",
+    "type": "behavioral",
+    "text": "Describe a time you worked under tight pressure.",
+    "difficulty": "Hard",
+    "competencies": ["stress management"],
+    "recommended_structure": "Pressure → actions → outcome",
+    "good_signals": ["structured response"],
+    "red_flags": ["panic"]
+  },
+  {
+    "id": "beh_h_08",
+    "type": "behavioral",
+    "text": "Tell me about the hardest problem you have ever tackled.",
+    "difficulty": "Hard",
+    "competencies": ["problem solving"],
+    "recommended_structure": "Problem → approach → result",
+    "good_signals": ["structured thinking"],
+    "red_flags": ["unclear approach"]
+  },
+  {
+    "id": "beh_h_09",
+    "type": "behavioral",
+    "text": "Describe a time you had to influence others.",
+    "difficulty": "Hard",
+    "competencies": ["influence"],
+    "recommended_structure": "Situation → strategy → result",
+    "good_signals": ["buy-in achieved"],
+    "red_flags": ["forceful tactics"]
+  },
+  {
+    "id": "beh_h_10",
+    "type": "behavioral",
+    "text": "Tell me about a time you managed expectations.",
+    "difficulty": "Hard",
+    "competencies": ["stakeholder management"],
+    "recommended_structure": "Expectations → communication → result",
+    "good_signals": ["clear updates"],
+    "red_flags": ["surprises"]
+  },
+
+  {
+    "id": "beh_x_01",
+    "type": "behavioral",
+    "text": "Describe a time you led a team through a conflict or setback.",
+    "difficulty": "Expert",
+    "competencies": ["leadership", "conflict resolution"],
+    "recommended_structure": "Context → leadership actions → outcome",
+    "good_signals": ["alignment"],
+    "red_flags": ["authoritarian style"]
+  },
+  {
+    "id": "beh_x_02",
+    "type": "behavioral",
+    "text": "Tell me about a time you influenced without authority.",
+    "difficulty": "Expert",
+    "competencies": ["influence"],
+    "recommended_structure": "Challenge → strategy → outcome",
+    "good_signals": ["relationship-based"],
+    "red_flags": ["pressure tactics"]
+  },
+  {
+    "id": "beh_x_03",
+    "type": "behavioral",
+    "text": "Describe a time you had to align multiple stakeholders.",
+    "difficulty": "Expert",
+    "competencies": ["stakeholder management"],
+    "recommended_structure": "Stakeholders → alignment → result",
+    "good_signals": ["clear facilitation"],
+    "red_flags": ["avoidance"]
+  },
+  {
+    "id": "beh_x_04",
+    "type": "behavioral",
+    "text": "Tell me about a time you recovered a failing project.",
+    "difficulty": "Expert",
+    "competencies": ["execution", "leadership"],
+    "recommended_structure": "Problem → recovery plan → outcome",
+    "good_signals": ["decisive actions"],
+    "red_flags": ["no measurable recovery"]
+  },
+  {
+    "id": "beh_x_05",
+    "type": "behavioral",
+    "text": "Describe a time you made a high-risk decision.",
+    "difficulty": "Expert",
+    "competencies": ["judgment"],
+    "recommended_structure": "Risk → analysis → result",
+    "good_signals": ["risk mitigation"],
+    "red_flags": ["reckless decision"]
+  },
+  {
+    "id": "beh_x_06",
+    "type": "behavioral",
+    "text": "Tell me about a time you coached someone to improve.",
+    "difficulty": "Expert",
+    "competencies": ["leadership", "mentorship"],
+    "recommended_structure": "Situation → coaching → improvement",
+    "good_signals": ["growth in others"],
+    "red_flags": ["directive only"]
+  },
+  {
+    "id": "beh_x_07",
+    "type": "behavioral",
+    "text": "Describe a time you challenged a process successfully.",
+    "difficulty": "Expert",
+    "competencies": ["innovation"],
+    "recommended_structure": "Problem → change → impact",
+    "good_signals": ["measurable improvement"],
+    "red_flags": ["change for sake of change"]
+  },
+  {
+    "id": "beh_x_08",
+    "type": "behavioral",
+    "text": "Tell me about a time you navigated ambiguity.",
+    "difficulty": "Expert",
+    "competencies": ["adaptability"],
+    "recommended_structure": "Ambiguity → framework → outcome",
+    "good_signals": ["clarifying actions"],
+    "red_flags": ["paralysis"]
+  },
+  {
+    "id": "beh_x_09",
+    "type": "behavioral",
+    "text": "Describe a time you had to make a decision quickly with limited info.",
+    "difficulty": "Expert",
+    "competencies": ["judgment"],
+    "recommended_structure": "Context → decision → outcome",
+    "good_signals": ["structured reasoning"],
+    "red_flags": ["guessing"]
+  },
+  {
+    "id": "beh_x_10",
+    "type": "behavioral",
+    "text": "Tell me about a time you turned failure into success.",
+    "difficulty": "Expert",
+    "competencies": ["resilience"],
+    "recommended_structure": "Failure → adaptation → success",
+    "good_signals": ["clear turnaround"],
+    "red_flags": ["no lesson"]
+  },
+
+  {
+    "id": "beh_mas_01",
+    "type": "behavioral",
+    "text": "Describe a time you transformed a team or system.",
+    "difficulty": "Master",
+    "competencies": ["systems thinking", "leadership"],
+    "recommended_structure": "Before → change → long-term outcome",
+    "good_signals": ["lasting impact"],
+    "red_flags": ["temporary fix"]
+  },
+  {
+    "id": "beh_mas_02",
+    "type": "behavioral",
+    "text": "Tell me about a time you changed organizational direction.",
+    "difficulty": "Master",
+    "competencies": ["strategy", "leadership"],
+    "recommended_structure": "Problem → strategy → adoption",
+    "good_signals": ["buy-in"],
+    "red_flags": ["no adoption"]
+  },
+  {
+    "id": "beh_mas_03",
+    "type": "behavioral",
+    "text": "Describe a time you made an unpopular but correct decision.",
+    "difficulty": "Master",
+    "competencies": ["judgment", "leadership"],
+    "recommended_structure": "Decision → resistance → outcome",
+    "good_signals": ["clear rationale"],
+    "red_flags": ["ego-driven"]
+  },
+  {
+    "id": "beh_mas_04",
+    "type": "behavioral",
+    "text": "Tell me about a time you built long-term trust with a team.",
+    "difficulty": "Master",
+    "competencies": ["leadership"],
+    "recommended_structure": "Actions → consistency → results",
+    "good_signals": ["sustained relationships"],
+    "red_flags": ["short-term only"]
+  },
+  {
+    "id": "beh_mas_05",
+    "type": "behavioral",
+    "text": "Describe a time you balanced conflicting values in a decision.",
+    "difficulty": "Master",
+    "competencies": ["ethics", "judgment"],
+    "recommended_structure": "Conflict → framework → outcome",
+    "good_signals": ["thoughtful reasoning"],
+    "red_flags": ["oversimplified"]
+  },
+  {
+    "id": "beh_mas_06",
+    "type": "behavioral",
+    "text": "Tell me about a time you built something that scaled beyond your role.",
+    "difficulty": "Master",
+    "competencies": ["systems thinking"],
+    "recommended_structure": "Creation → scaling → impact",
+    "good_signals": ["sustainable system"],
+    "red_flags": ["one-off effort"]
+  },
+  {
+    "id": "beh_mas_07",
+    "type": "behavioral",
+    "text": "Describe a time you had to lead through uncertainty.",
+    "difficulty": "Master",
+    "competencies": ["leadership", "resilience"],
+    "recommended_structure": "Uncertainty → clarity actions → result",
+    "good_signals": ["calm direction"],
+    "red_flags": ["panic"]
+  },
+  {
+    "id": "beh_mas_08",
+    "type": "behavioral",
+    "text": "Tell me about a time you influenced senior stakeholders.",
+    "difficulty": "Master",
+    "competencies": ["executive communication"],
+    "recommended_structure": "Context → influence strategy → outcome",
+    "good_signals": ["clear messaging"],
+    "red_flags": ["overly technical"]
+  },
+  {
+    "id": "beh_mas_09",
+    "type": "behavioral",
+    "text": "Describe a time you changed your leadership approach.",
+    "difficulty": "Master",
+    "competencies": ["self-awareness", "leadership"],
+    "recommended_structure": "Old approach → realization → change",
+    "good_signals": ["growth"],
+    "red_flags": ["no reflection"]
+  },
+  {
+    "id": "beh_mas_10",
+    "type": "behavioral",
+    "text": "Tell me about a time you achieved impact beyond expectations.",
+    "difficulty": "Master",
+    "competencies": ["execution", "leadership"],
+    "recommended_structure": "Expectation → actions → exceeded result",
+    "good_signals": ["measurable impact"],
+    "red_flags": ["unclear metrics"]
+  }
+]

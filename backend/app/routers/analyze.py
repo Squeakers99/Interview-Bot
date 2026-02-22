@@ -28,6 +28,9 @@ UPLOAD_DIR = "uploads"
 def _as_list(value):
     return value if isinstance(value, list) else []
 
+def _as_dict(value):
+    return value if isinstance(value, dict) else {}
+
 
 def normalize_feedback_payload(raw_feedback):
     if not isinstance(raw_feedback, dict):
@@ -71,6 +74,8 @@ async def analyze(
     feedback = normalize_feedback_payload(parse_json_field(interview_feedback))
     good_signals = summary.get("good_signals", [])
     red_flags = summary.get("red_flags", [])
+    resolved_prompt_type = prompt_type or summary.get("type", "")
+    resolved_prompt_difficulty = prompt_difficulty or summary.get("difficulty", "")
     audio_size, filename, content_type, audio_bytes = await read_upload_bytes(audio)
     saved_path = save_upload_bytes(audio_bytes, filename)
     timelines_saved_path = save_json_payload(timelines, "results.json")
@@ -93,22 +98,45 @@ async def analyze(
             vision_metrics,
             prompt_id=prompt_id,
             prompt_text=prompt_text,
-            prompt_difficulty=summary.get("difficulty", ""),
-            prompt_type=summary.get("type", ""),
+            prompt_difficulty=resolved_prompt_difficulty,
+            prompt_type=resolved_prompt_type,
             prompt_good_signals=good_signals,
             prompt_red_flags=red_flags,
             )
         
+        analysis_payload = _as_dict(interview_analysis)
+
         combined_results = {
+            "prompt_id": prompt_id,
+            "prompt_text": prompt_text,
+            "prompt_type": resolved_prompt_type,
+            "prompt_difficulty": resolved_prompt_difficulty,
             "interview_timelines": timelines,
             "interview_summary": summary,
             "interview_feedback": feedback,
             "good_signals": good_signals,
             "red_flags": red_flags,
-            "transcription_analysis": interview_analysis.get("transcript"),
-            "vision_summary": interview_analysis.get("vision_summary"),
-            "voice_analysis": interview_analysis.get("voice_analysis"),
-            "llm_review": interview_analysis.get("llm_review"),
+            "transcription_analysis": analysis_payload.get("transcript"),
+            "vision_summary": analysis_payload.get("vision_summary"),
+            "voice_analysis": analysis_payload.get("voice_analysis"),
+            "llm_review": analysis_payload.get("llm_review"),
+            # Persist the full Converter.py parsed output so downstream jobs can use all fields.
+            "interview_analysis": analysis_payload,
+            "converter_parsed": {
+                "question": analysis_payload.get("question"),
+                "type": analysis_payload.get("type") or resolved_prompt_type,
+                "difficulty": analysis_payload.get("difficulty") or resolved_prompt_difficulty,
+                "clarity_score": analysis_payload.get("clarity_score"),
+                "content_score": analysis_payload.get("content_score"),
+                "professionalism_score": analysis_payload.get("professionalism_score"),
+                "body_language_score": analysis_payload.get("body_language_score"),
+                "vocal_delivery_score": analysis_payload.get("vocal_delivery_score"),
+                "total_score": analysis_payload.get("total_score"),
+                "doing_well": analysis_payload.get("doing_well"),
+                "must_improve": analysis_payload.get("must_improve"),
+                "habits_to_keep": analysis_payload.get("habits_to_keep"),
+                "action_plan": analysis_payload.get("action_plan"),
+            },
         }
         
         results_path = os.path.join(UPLOAD_DIR, "results.json")
@@ -128,8 +156,8 @@ async def analyze(
         "ok": True,
         "prompt_id": prompt_id,
         "prompt_text": prompt_text,
-        "prompt_type": prompt_type,
-        "prompt_difficulty": prompt_difficulty,
+        "prompt_type": resolved_prompt_type,
+        "prompt_difficulty": resolved_prompt_difficulty,
         "audio": {
             "filename": filename,
             "content_type": content_type,
