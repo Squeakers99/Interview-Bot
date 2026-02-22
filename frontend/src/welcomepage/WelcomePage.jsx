@@ -12,7 +12,7 @@ const CATEGORY_OPTIONS = [
 ];
 
 const DIFFICULTY_OPTIONS = [
-  { value: "all", label: "All (Random)" },
+  { value: "all", label: "Any Difficulty" },
   { value: "1", label: "Easy" },
   { value: "2", label: "Medium" },
   { value: "3", label: "Hard" },
@@ -66,6 +66,7 @@ export default function WelcomePage() {
   const [countdownDone, setCountdownDone] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
+  const [jobAdUrl, setJobAdUrl] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
   const filtersRef = useRef(null);
 
@@ -105,6 +106,7 @@ export default function WelcomePage() {
       <App
         promptCategory={selectedCategory}
         promptDifficulty={selectedDifficulty}
+        jobAdUrl={jobAdUrl}
         onReturnHome={handleReturnToMainPage}
       />
     );
@@ -129,6 +131,22 @@ export default function WelcomePage() {
       </div>
 
       <div className="welcome-filters" ref={filtersRef}>
+        <label className="welcome-filter-label" htmlFor="job-ad-url">
+          Job Ad URL (optional)
+        </label>
+        <input
+          id="job-ad-url"
+          type="url"
+          className="welcome-filter-select welcome-text-input"
+          placeholder="https://company.com/careers/software-engineer"
+          value={jobAdUrl}
+          onChange={(event) => setJobAdUrl(event.target.value)}
+          autoComplete="off"
+        />
+        <p className="welcome-help-text">
+          Add a public job posting link to generate a role-specific interview question.
+        </p>
+
         <CustomDropdown
           id="question-category"
           label="Question Type"

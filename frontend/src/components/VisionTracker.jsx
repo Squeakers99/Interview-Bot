@@ -12,6 +12,8 @@ import {
   TARGET_FPS,
   SMOOTHING_ALPHA,
   GOOD_SCORE_THRESHOLD,
+  GOOD_SCORE_HYSTERESIS,
+  STABILITY_SWITCH_FRAMES,
   WASM_BASE,
   POSE_MODEL_URL,
   FACE_MODEL_URL,
@@ -40,6 +42,49 @@ function secondsToMMSS(totalSeconds) {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
+function updateStableGoodState(channelState, smoothedScore) {
+  if (!Number.isFinite(smoothedScore)) return false;
+
+  const upper = GOOD_SCORE_THRESHOLD + GOOD_SCORE_HYSTERESIS;
+  const lower = GOOD_SCORE_THRESHOLD - GOOD_SCORE_HYSTERESIS;
+  let desired = channelState.isGood;
+
+  if (channelState.isGood == null) {
+    desired = smoothedScore >= GOOD_SCORE_THRESHOLD;
+  } else if (channelState.isGood) {
+    if (smoothedScore <= lower) desired = false;
+  } else if (smoothedScore >= upper) {
+    desired = true;
+  }
+
+  if (channelState.isGood == null) {
+    channelState.isGood = desired;
+    channelState.candidate = desired;
+    channelState.streak = 0;
+    return channelState.isGood;
+  }
+
+  if (desired === channelState.isGood) {
+    channelState.candidate = desired;
+    channelState.streak = 0;
+    return channelState.isGood;
+  }
+
+  if (channelState.candidate !== desired) {
+    channelState.candidate = desired;
+    channelState.streak = 1;
+    return channelState.isGood;
+  }
+
+  channelState.streak += 1;
+  if (channelState.streak >= STABILITY_SWITCH_FRAMES) {
+    channelState.isGood = desired;
+    channelState.streak = 0;
+  }
+
+  return channelState.isGood;
+}
+
 export default function VisionTracker({
   enabled = true,
   autoStartCamera = true,
@@ -64,6 +109,11 @@ export default function VisionTracker({
   const postureTimelineRef = useRef([]);
   const eyeTimelineRef = useRef([]);
   const timelineStartMsRef = useRef(0);
+  const scoreSmoothingRef = useRef({ posture: null, eye: null });
+  const stabilityRef = useRef({
+    posture: { isGood: null, candidate: null, streak: 0 },
+    eye: { isGood: null, candidate: null, streak: 0 },
+  });
 
   const rafRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
@@ -316,6 +366,11 @@ export default function VisionTracker({
     postureTimelineRef.current = [];
     eyeTimelineRef.current = [];
     timelineStartMsRef.current = 0;
+    scoreSmoothingRef.current = { posture: null, eye: null };
+    stabilityRef.current = {
+      posture: { isGood: null, candidate: null, streak: 0 },
+      eye: { isGood: null, candidate: null, streak: 0 },
+    };
   }
 
   function startLoop() {
@@ -469,13 +524,21 @@ export default function VisionTracker({
     aggRef.current.frames += 1;
 
     if (posture?.score != null) {
-      setPostureScoreUI((prev) => Math.round(ema(prev, posture.score, SMOOTHING_ALPHA)));
-      if (posture.score >= GOOD_SCORE_THRESHOLD) aggRef.current.postureGoodFrames += 1;
+      const smoothedPosture = ema(scoreSmoothingRef.current.posture, posture.score, SMOOTHING_ALPHA);
+      scoreSmoothingRef.current.posture = smoothedPosture;
+      setPostureScoreUI(Math.round(smoothedPosture));
+      if (updateStableGoodState(stabilityRef.current.posture, smoothedPosture)) {
+        aggRef.current.postureGoodFrames += 1;
+      }
     }
 
     if (eye?.score != null) {
-      setEyeScoreUI((prev) => Math.round(ema(prev, eye.score, SMOOTHING_ALPHA)));
-      if (eye.score >= GOOD_SCORE_THRESHOLD) aggRef.current.eyeGoodFrames += 1;
+      const smoothedEye = ema(scoreSmoothingRef.current.eye, eye.score, SMOOTHING_ALPHA);
+      scoreSmoothingRef.current.eye = smoothedEye;
+      setEyeScoreUI(Math.round(smoothedEye));
+      if (updateStableGoodState(stabilityRef.current.eye, smoothedEye)) {
+        aggRef.current.eyeGoodFrames += 1;
+      }
     }
 
     const frames = aggRef.current.frames || 1;
@@ -489,8 +552,8 @@ export default function VisionTracker({
     eyeTimelineRef.current.push({ timestamp, percentage: eyeGoodPct });
 
     onUpdate?.({
-      postureScore: posture?.score ?? null,
-      eyeScore: eye?.score ?? null,
+      postureScore: scoreSmoothingRef.current.posture ?? posture?.score ?? null,
+      eyeScore: scoreSmoothingRef.current.eye ?? eye?.score ?? null,
       postureGoodPct,
       eyeGoodPct,
       postureMetrics: posture?.metrics ?? null,
@@ -498,8 +561,8 @@ export default function VisionTracker({
     });
 
     latestMetricsRef.current = {
-      postureScore: posture?.score ?? null,
-      eyeScore: eye?.score ?? null,
+      postureScore: scoreSmoothingRef.current.posture ?? posture?.score ?? null,
+      eyeScore: scoreSmoothingRef.current.eye ?? eye?.score ?? null,
       postureGoodPct,
       eyeGoodPct,
       postureMetrics: posture?.metrics ?? null,

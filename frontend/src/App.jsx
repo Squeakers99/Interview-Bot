@@ -19,11 +19,17 @@ function formatLabel(value) {
   return safe.charAt(0).toUpperCase() + safe.slice(1);
 }
 
-export default function App({ promptCategory = "all", promptDifficulty = "all", onReturnHome }) {
+export default function App({
+  promptCategory = "all",
+  promptDifficulty = "all",
+  jobAdUrl = "",
+  onReturnHome,
+}) {
   const [view, setView] = useState("interview");
   const [prompt, setPrompt] = useState(null);
   const [promptLoading, setPromptLoading] = useState(true);
   const [promptError, setPromptError] = useState("");
+  const [jobAdMeta, setJobAdMeta] = useState(null);
   const [interviewRound, setInterviewRound] = useState(0);
   const [trackerPhase, setTrackerPhase] = useState("idle");
 
@@ -32,16 +38,41 @@ export default function App({ promptCategory = "all", promptDifficulty = "all", 
   const loadPrompt = useCallback(async () => {
     setPromptLoading(true);
     setPromptError("");
+    setJobAdMeta(null);
 
     try {
-      const params = new URLSearchParams({
-        type: promptCategory || "all",
-        difficulty: promptDifficulty || "all",
-      });
+      const trimmedJobAdUrl = String(jobAdUrl || "").trim();
+      let response;
 
-      const response = await fetch(`${apiBase}/prompt/random?${params.toString()}`);
+      if (trimmedJobAdUrl) {
+        response = await fetch(`${apiBase}/prompt/from-job-ad`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            url: trimmedJobAdUrl,
+            prompt_type: promptCategory || "all",
+            difficulty: promptDifficulty || "all",
+          }),
+        });
+      } else {
+        const params = new URLSearchParams({
+          type: promptCategory || "all",
+          difficulty: promptDifficulty || "all",
+        });
+        response = await fetch(`${apiBase}/prompt/random?${params.toString()}`);
+      }
+
       if (!response.ok) {
-        throw new Error(`Prompt request failed (${response.status})`);
+        let detail = "";
+        try {
+          const errorPayload = await response.json();
+          detail = errorPayload?.detail ? `: ${errorPayload.detail}` : "";
+        } catch {
+          detail = "";
+        }
+        throw new Error(`Prompt request failed (${response.status})${detail}`);
       }
 
       const payload = await response.json();
@@ -50,14 +81,21 @@ export default function App({ promptCategory = "all", promptDifficulty = "all", 
       }
 
       setPrompt(payload.prompt);
+      if (payload?.job_ad) {
+        setJobAdMeta(payload.job_ad);
+      }
     } catch (error) {
       setPrompt(FALLBACK_PROMPT);
-      setPromptError("Could not load a filtered prompt from backend. Showing a fallback question.");
+      setPromptError(
+        String(jobAdUrl || "").trim()
+          ? "Could not generate a prompt from the job ad URL. Showing a fallback question."
+          : "Could not load a filtered prompt from backend. Showing a fallback question."
+      );
       console.error("[debug] prompt fetch failed", error);
     } finally {
       setPromptLoading(false);
     }
-  }, [apiBase, promptCategory, promptDifficulty]);
+  }, [apiBase, jobAdUrl, promptCategory, promptDifficulty]);
 
   useEffect(() => {
     if (view !== "interview") return;
@@ -126,9 +164,15 @@ export default function App({ promptCategory = "all", promptDifficulty = "all", 
             <span className="prompt-chip">
               Difficulty: {formatLabel(prompt?.difficulty || promptDifficulty)}
             </span>
+            {jobAdMeta?.domain ? (
+              <span className="prompt-chip">Source: {jobAdMeta.domain}</span>
+            ) : null}
           </div>
           <h2 className="prompt-banner__title">Interview Question</h2>
           <p className="prompt-banner__text">{prompt?.text || FALLBACK_PROMPT.text}</p>
+          {jobAdMeta?.title ? (
+            <p className="prompt-banner__jobad">Generated from: {jobAdMeta.title}</p>
+          ) : null}
           {promptError ? <p className="prompt-banner__warning">{promptError}</p> : null}
         </div>
 

@@ -7,6 +7,8 @@ export const SMOOTHING_ALPHA = 0.15;
 
 // What score counts as “good” for % tracking
 export const GOOD_SCORE_THRESHOLD = 75;
+export const GOOD_SCORE_HYSTERESIS = 5;
+export const STABILITY_SWITCH_FRAMES = 3;
 
 // -----------------------------
 // Model loading

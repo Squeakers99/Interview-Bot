@@ -80,6 +80,17 @@
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
 }
 
+.welcome-text-input::placeholder {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.welcome-help-text {
+  margin: -2px 0 4px;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.35;
+}
+
 .welcome-filter-select--custom {
   display: flex;
   align-items: center;
@@ -156,6 +167,13 @@
 .start-button:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 640px) {
+  .welcome-card,
+  .welcome-filters {
+    width: min(92vw, 92vw);
+  }
 }
 
 @keyframes gradientAnimation {
