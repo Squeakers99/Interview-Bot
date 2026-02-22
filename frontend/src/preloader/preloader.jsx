@@ -1,15 +1,6 @@
-import { useEffect, useState } from "react";
+import Logo from "../assets/Logo.png";
 
 export default function preloader() {
-  const [dots, setDots] = useState(".");
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setDots((prev) => (prev.length >= 3 ? "." : `${prev}.`));
-    }, 300);
-    return () => clearInterval(id);
-  }, []);
-
   return (
     <div
       style={{
@@ -33,11 +24,25 @@ export default function preloader() {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+          }
+          @keyframes preloaderPulse {
+            0% { transform: scale(0.92); }
+            50% { transform: scale(1.06); }
+            100% { transform: scale(0.92); }
           }`}
       </style>
 
-      <h1 style={{ marginBottom: 12, fontSize: "2rem" }}>Loading Interview Bot{dots}</h1>
-      <p style={{ fontSize: "1.05rem", opacity: 0.95 }}>Preparing your welcome experience...</p>
+      <img
+        src={Logo}
+        alt="Interview Bot logo"
+        style={{
+          width: "min(220px, 42vw)",
+          height: "auto",
+          marginBottom: 14,
+          animation: "preloaderPulse 0.9s ease-in-out infinite",
+          filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.28))",
+        }}
+      />
     </div>
   );
 }

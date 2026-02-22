@@ -95,13 +95,12 @@ Requirements:
     "red_flags": ["...", "..."]
   }}
 - `good_signals` and `red_flags` should each contain 2-5 concise strings.
+- Note the difficulty scale is easy < medium < hard < expert < master. Master difficulty is peak difficulty, and should be treated as such.
+- Always return a question, even if the job ad is sparse. Do not say "I can't generate a question". Use your best judgment to create a relevant question.
 
 User-selected filters:
 - prompt_type: {normalized_type}
 - difficulty: {normalized_difficulty}
-
-Job Ad URL:
-{job_url}
 
 Job Ad Title:
 {job_title}
@@ -188,7 +187,6 @@ Job Ad Text (truncated):
             "text": question_text,
             "good_signals": _coerce_string_list(payload.get("good_signals"), []),
             "red_flags": _coerce_string_list(payload.get("red_flags"), []),
-            "job_ad_url": job_url,
             "job_ad_title": job_title,
         },
         flush=True,
