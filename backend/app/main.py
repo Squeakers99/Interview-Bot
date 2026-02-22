@@ -1,7 +1,17 @@
+import asyncio
+import sys
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import health, prompts, analyze, results_fetch
+
+if sys.platform.startswith("win"):
+    try:
+        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+    except Exception:
+        # If the runtime does not expose this policy, continue with default.
+        pass
 
 app = FastAPI(title="Interview Coach API")
 

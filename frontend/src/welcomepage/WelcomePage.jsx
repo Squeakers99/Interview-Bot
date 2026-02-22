@@ -66,7 +66,8 @@ export default function WelcomePage() {
   const [countdownDone, setCountdownDone] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
-  const [jobAdUrl, setJobAdUrl] = useState("");
+  const [jobAdTitle, setJobAdTitle] = useState("");
+  const [jobAdText, setJobAdText] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
   const filtersRef = useRef(null);
 
@@ -106,7 +107,8 @@ export default function WelcomePage() {
       <App
         promptCategory={selectedCategory}
         promptDifficulty={selectedDifficulty}
-        jobAdUrl={jobAdUrl}
+        jobAdTitle={jobAdTitle}
+        jobAdText={jobAdText}
         onReturnHome={handleReturnToMainPage}
       />
     );
@@ -124,54 +126,72 @@ export default function WelcomePage() {
         <div className="welcome-points">
           <p className="welcome-point">30 seconds to think, 90 seconds to respond.</p>
           <p className="welcome-point">We track posture and eye contact during your answer.</p>
+          <p className="welcome-point">Input your job ad, select a question type and difficulty, and we will generate a prompt specific to you.</p>
           <p className="welcome-point">
-            Click <b>End Interview</b> when you finish speaking.
+            Click <b>End Interview</b> when you finish speaking and we will process your response.
           </p>
         </div>
       </div>
 
-      <div className="welcome-filters" ref={filtersRef}>
-        <label className="welcome-filter-label" htmlFor="job-ad-url">
-          Job Ad URL (optional)
-        </label>
-        <input
-          id="job-ad-url"
-          type="url"
-          className="welcome-filter-select welcome-text-input"
-          placeholder="https://company.com/careers/software-engineer"
-          value={jobAdUrl}
-          onChange={(event) => setJobAdUrl(event.target.value)}
-          autoComplete="off"
-        />
-        <p className="welcome-help-text">
-          Add a public job posting link to generate a role-specific interview question.
-        </p>
+      <div className="welcome-panels" ref={filtersRef}>
+        <div className="welcome-filters welcome-filters--jobad">
+          <h3 className="welcome-panel-title">Job Ad Input (optional)</h3>
 
-        <CustomDropdown
-          id="question-category"
-          label="Question Type"
-          value={selectedCategory}
-          options={CATEGORY_OPTIONS}
-          isOpen={openDropdown === "category"}
-          onToggle={() => setOpenDropdown((current) => (current === "category" ? null : "category"))}
-          onSelect={(value) => {
-            setSelectedCategory(value);
-            setOpenDropdown(null);
-          }}
-        />
+          <label className="welcome-filter-label" htmlFor="job-ad-title">
+            Job Ad Title
+          </label>
+          <input
+            id="job-ad-title"
+            type="text"
+            className="welcome-filter-select welcome-text-input"
+            placeholder="Senior Software Engineer"
+            value={jobAdTitle}
+            onChange={(event) => setJobAdTitle(event.target.value)}
+            autoComplete="off"
+          />
 
-        <CustomDropdown
-          id="question-difficulty"
-          label="Difficulty"
-          value={selectedDifficulty}
-          options={DIFFICULTY_OPTIONS}
-          isOpen={openDropdown === "difficulty"}
-          onToggle={() => setOpenDropdown((current) => (current === "difficulty" ? null : "difficulty"))}
-          onSelect={(value) => {
-            setSelectedDifficulty(value);
-            setOpenDropdown(null);
-          }}
-        />
+          <label className="welcome-filter-label" htmlFor="job-ad-text">
+            Paste Job Ad
+          </label>
+          <textarea
+            id="job-ad-text"
+            className="welcome-filter-select welcome-text-input welcome-textarea"
+            placeholder="Paste the job description here..."
+            value={jobAdText}
+            onChange={(event) => setJobAdText(event.target.value)}
+            rows={5}
+          />
+        </div>
+
+        <div className="welcome-filters welcome-filters--options">
+          <h3 className="welcome-panel-title">Interview Options</h3>
+
+          <CustomDropdown
+            id="question-category"
+            label="Question Type"
+            value={selectedCategory}
+            options={CATEGORY_OPTIONS}
+            isOpen={openDropdown === "category"}
+            onToggle={() => setOpenDropdown((current) => (current === "category" ? null : "category"))}
+            onSelect={(value) => {
+              setSelectedCategory(value);
+              setOpenDropdown(null);
+            }}
+          />
+
+          <CustomDropdown
+            id="question-difficulty"
+            label="Difficulty"
+            value={selectedDifficulty}
+            options={DIFFICULTY_OPTIONS}
+            isOpen={openDropdown === "difficulty"}
+            onToggle={() => setOpenDropdown((current) => (current === "difficulty" ? null : "difficulty"))}
+            onSelect={(value) => {
+              setSelectedDifficulty(value);
+              setOpenDropdown(null);
+            }}
+          />
+        </div>
       </div>
 
       <button className="start-button" onClick={() => setStarted(true)}>

@@ -22,7 +22,8 @@ function formatLabel(value) {
 export default function App({
   promptCategory = "all",
   promptDifficulty = "all",
-  jobAdUrl = "",
+  jobAdTitle = "",
+  jobAdText = "",
   onReturnHome,
 }) {
   const [view, setView] = useState("interview");
@@ -41,17 +42,19 @@ export default function App({
     setJobAdMeta(null);
 
     try {
-      const trimmedJobAdUrl = String(jobAdUrl || "").trim();
+      const trimmedJobAdTitle = String(jobAdTitle || "").trim();
+      const trimmedJobAdText = String(jobAdText || "").trim();
       let response;
 
-      if (trimmedJobAdUrl) {
+      if (trimmedJobAdText) {
         response = await fetch(`${apiBase}/prompt/from-job-ad`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            url: trimmedJobAdUrl,
+            job_ad_title: trimmedJobAdTitle,
+            job_ad_text: trimmedJobAdText,
             prompt_type: promptCategory || "all",
             difficulty: promptDifficulty || "all",
           }),
@@ -85,17 +88,19 @@ export default function App({
         setJobAdMeta(payload.job_ad);
       }
     } catch (error) {
+      const backendMessage =
+        error instanceof Error && error.message ? ` (${error.message})` : "";
       setPrompt(FALLBACK_PROMPT);
       setPromptError(
-        String(jobAdUrl || "").trim()
-          ? "Could not generate a prompt from the job ad URL. Showing a fallback question."
-          : "Could not load a filtered prompt from backend. Showing a fallback question."
+        String(jobAdText || "").trim()
+          ? `Could not generate a prompt from the job ad input. Showing a fallback question.${backendMessage}`
+          : `Could not load a filtered prompt from backend. Showing a fallback question.${backendMessage}`
       );
       console.error("[debug] prompt fetch failed", error);
     } finally {
       setPromptLoading(false);
     }
-  }, [apiBase, jobAdUrl, promptCategory, promptDifficulty]);
+  }, [apiBase, jobAdText, jobAdTitle, promptCategory, promptDifficulty]);
 
   useEffect(() => {
     if (view !== "interview") return;
