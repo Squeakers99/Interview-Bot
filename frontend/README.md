@@ -1,18 +1,112 @@
-# React + Vite
+# Frontend (UNL)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This frontend is a React + Vite application for the **Unemployment No Longer** interview coach. It handles the full client-side flow:
 
-Currently, two official plugins are available:
+- Welcome/setup screen (job ad input + filters)
+- Prompt loading
+- Countdown and interview timing phases
+- Real-time posture + eye tracking with MediaPipe
+- Audio capture and upload
+- Results visualization and summary display
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Features
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **Interview setup UI**
+  - Optional job ad title + pasted description.
+  - Question type and difficulty selection.
+- **Prompt generation path**
+  - Fetch random prompt, or generate from job ad via backend.
+- **Timed interview phases**
+  - Thinking phase: 30 seconds.
+  - Response phase: 90 seconds.
+- **Vision tracking overlay**
+  - Pose + face landmarks (MediaPipe Tasks).
+  - Smoothed posture/eye scoring over time.
+- **Results page**
+  - Session summary cards.
+  - Timeline charts.
+  - Structured feedback sections.
 
-Note: This will impact Vite dev & build performances.
+---
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React 19
+- Vite
+- MediaPipe Tasks Vision (`@mediapipe/tasks-vision`)
+- Recharts
+- Plain CSS
+
+---
+
+## Environment Variables
+
+Create a `.env` file in `frontend/` if needed:
+
+```bash
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+If omitted, the app defaults to `http://127.0.0.1:8000`.
+
+---
+
+## Getting Started
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+App runs on: `http://127.0.0.1:5173`
+
+### Other scripts
+
+```bash
+npm run build
+npm run preview
+npm run lint
+```
+
+---
+
+## High-Level Flow
+
+1. `main.jsx` lazy-loads `WelcomePage`.
+2. `WelcomePage` captures job ad + interview preferences.
+3. `App.jsx` requests prompt data from backend.
+4. `CountdownPage` starts the interview loop.
+5. `VisionTracker`:
+   - runs MediaPipe detection,
+   - computes posture/eye scores,
+   - records microphone audio,
+   - uploads interview payload to backend.
+6. `AnalyzingPage` displays processing state.
+7. `ResultsPage` renders analysis data and timelines.
+
+---
+
+## Backend API expectations
+
+The frontend expects the backend to expose endpoints such as:
+
+- `GET /prompt/random`
+- `POST /prompt/from-job-ad`
+- `POST /analyze`
+- `GET /results/posture_timeline`
+- `GET /results/eye_timeline`
+- `GET /results/full`
+- `GET /results/interview/pdf`
+
+---
+
+## Notes for developers
+
+- Camera and microphone permissions are required.
+- MediaPipe model URLs and scoring constants are configured in:
+  - `src/config/scoringConfig.jsx`
+- Results normalization and chart formatting live under:
+  - `src/resultspage/`
