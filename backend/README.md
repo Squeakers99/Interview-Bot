@@ -46,13 +46,15 @@ backend/
 
 ## Environment variables
 
-Create `backend/.env` with your API key:
+Create `backend/.env` with your OpenAI API key:
 
 ```bash
-GROQ_API_KEY=your_key_here
+OPENAI_API_KEY=your_key_here
 ```
 
-`Converter.py` loads this key and uses the Groq OpenAI-compatible API endpoint.
+You can also use `OPEN_AI_API_KEY`. The backend uses OpenAI for Whisper transcription and for chat (interview analysis and job-ad prompt generation). Optional: `OPENAI_MODEL` (default `gpt-4o-mini`) for the chat model.
+
+For **voice tone analysis** (pitch, speaking rate), ffmpeg must be available. If it’s installed but not on PATH (e.g. on Windows), set `FFMPEG_PATH` (and optionally `FFPROBE_PATH`) in `.env` to the full path to the executable(s), e.g. `FFMPEG_PATH=C:\ffmpeg\bin\ffmpeg.exe`.
 
 ---
 

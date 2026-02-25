@@ -12,21 +12,20 @@ from app.services.prompt_store import normalize_difficulty, normalize_prompt_typ
 load_dotenv()
 logger = logging.getLogger("uvicorn.error")
 
-GROQ_BASE_URL = os.getenv("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 
-def _groq_client() -> OpenAI:
-    api_key = os.getenv("GROQ_API_KEY")
+def _openai_client() -> OpenAI:
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_API_KEY")
     if not api_key:
-        raise ValueError("Missing GROQ_API_KEY for Groq prompt generation.")
-    return OpenAI(api_key=api_key, base_url=GROQ_BASE_URL)
+        raise ValueError("Missing OPENAI_API_KEY or OPEN_AI_API_KEY for prompt generation.")
+    return OpenAI(api_key=api_key)
 
 
 def _extract_json_object(raw_text: str) -> dict[str, Any]:
     text = (raw_text or "").strip()
     if not text:
-        raise ValueError("Empty Groq response while generating job-ad prompt.")
+        raise ValueError("Empty OpenAI response while generating job-ad prompt.")
 
     try:
         parsed = json.loads(text)
@@ -59,7 +58,7 @@ def _coerce_string_list(value: Any, fallback: list[str]) -> list[str]:
     return cleaned[:5] or fallback
 
 
-def generate_prompt_from_job_ad_with_groq(
+def generate_prompt_from_job_ad_with_openai(
     *,
     job_url: str,
     job_title: str,
@@ -109,15 +108,15 @@ Job Ad Text (truncated):
 {job_text[:10000]}
 """.strip()
 
-    client = _groq_client()
+    client = _openai_client()
     model_candidates: list[str] = []
-    if GROQ_MODEL.strip():
-        model_candidates.append(GROQ_MODEL.strip())
-    for env_name in ("GROQ_MODEL_FALLBACKS",):
+    if OPENAI_MODEL.strip():
+        model_candidates.append(OPENAI_MODEL.strip())
+    for env_name in ("OPENAI_MODEL_FALLBACKS",):
         for candidate in [part.strip() for part in os.getenv(env_name, "").split(",") if part.strip()]:
             if candidate not in model_candidates:
                 model_candidates.append(candidate)
-    for candidate in ("llama-3.3-70b-versatile", "llama-3.1-70b-versatile", "mixtral-8x7b-32768"):
+    for candidate in ("gpt-4o-mini", "gpt-4o", "gpt-4-turbo"):
         if candidate not in model_candidates:
             model_candidates.append(candidate)
 
@@ -140,7 +139,7 @@ Job Ad Text (truncated):
             break
         except Exception as exc:
             last_error = exc
-            logger.warning("Groq request failed for model '%s': %s", model_name, exc)
+            logger.warning("OpenAI request failed for model '%s': %s", model_name, exc)
             try:
                 response = client.chat.completions.create(
                     model=model_name,
@@ -155,10 +154,10 @@ Job Ad Text (truncated):
                 break
             except Exception as exc2:
                 last_error = exc2
-                logger.warning("Groq retry without response_format failed for model '%s': %s", model_name, exc2)
+                logger.warning("OpenAI retry without response_format failed for model '%s': %s", model_name, exc2)
 
     if not chosen_model:
-        raise ValueError(f"All Groq model attempts failed. Last error: {last_error}")
+        raise ValueError(f"All OpenAI model attempts failed. Last error: {last_error}")
 
     payload = _extract_json_object(content or "")
 
@@ -176,10 +175,10 @@ Job Ad Text (truncated):
 
     question_text = str(payload.get("text", "")).strip()
     if not question_text:
-        raise ValueError("Groq response did not include prompt text.")
+        raise ValueError("OpenAI response did not include prompt text.")
     
     print(
-        "Generated prompt from Groq:",
+        "Generated prompt from OpenAI:",
         {
             "model": chosen_model,
             "type": result_type,
@@ -193,7 +192,7 @@ Job Ad Text (truncated):
     )
     
     return {
-        "id": f"jobad_groq_{abs(hash((job_url, job_title, question_text))) % 10_000_000}",
+        "id": f"jobad_openai_{abs(hash((job_url, job_title, question_text))) % 10_000_000}",
         "type": result_type,
         "difficulty": result_difficulty,
         "text": question_text,
@@ -211,8 +210,8 @@ Job Ad Text (truncated):
                 "No clear rationale or prioritization",
             ],
         ),
-        "source": "groq_job_ad",
+        "source": "openai_job_ad",
         "job_ad_url": job_url,
         "job_ad_title": job_title,
-        "groq_model": chosen_model,
+        "openai_model": chosen_model,
     }

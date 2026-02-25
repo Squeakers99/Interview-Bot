@@ -13,7 +13,7 @@ from app.services.prompt_store import (
     normalize_difficulty,
     normalize_prompt_type,
 )
-from app.services.job_ad_prompt_service import generate_prompt_from_job_ad_with_groq
+from app.services.job_ad_prompt_service import generate_prompt_from_job_ad_with_openai
 
 router = APIRouter()
 logger = logging.getLogger("uvicorn.error")
@@ -234,7 +234,7 @@ async def prompt_from_job_ad(request: JobAdPromptRequest):
             raise HTTPException(status_code=400, detail="Provide a job ad URL or paste job ad text.")
         job_ad = await _fetch_job_ad(job_url)
     try:
-        prompt = generate_prompt_from_job_ad_with_groq(
+        prompt = generate_prompt_from_job_ad_with_openai(
             job_url=job_ad["url"],
             job_title=job_ad["title"],
             job_text=job_ad["text"],
@@ -244,7 +244,7 @@ async def prompt_from_job_ad(request: JobAdPromptRequest):
     except ValueError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"Groq prompt generation failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail=f"OpenAI prompt generation failed: {exc}") from exc
 
     return {
         "filters": {

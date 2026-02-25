@@ -1,17 +1,81 @@
 import io
-import os
 import json
 import logging
+import os
+import subprocess
+import shutil
 
 import librosa
 import numpy as np
-from pydub import AudioSegment
 from openai import OpenAI
 from dotenv import load_dotenv
 
 logger = logging.getLogger("uvicorn.error")
 
-load_dotenv()  # Load your Groq or OpenAI API key from .env
+load_dotenv()  # Load your OpenAI API key from .env
+
+
+def _resolve_ffmpeg() -> str | None:
+    """
+    Resolve path to an ffmpeg executable.
+    Priority:
+    - FFMPEG_PATH env var (full path)
+    - PATH lookup
+    - `imageio_ffmpeg` bundled binary (pip install imageio-ffmpeg)
+    """
+    ffmpeg_env = os.getenv("FFMPEG_PATH", "").strip()
+    if ffmpeg_env and os.path.isfile(ffmpeg_env):
+        return ffmpeg_env
+
+    converter_path = shutil.which("ffmpeg") or shutil.which("avconv")
+    if converter_path:
+        return converter_path
+
+    try:
+        import imageio_ffmpeg  # type: ignore
+
+        candidate = imageio_ffmpeg.get_ffmpeg_exe()
+        if candidate and os.path.isfile(candidate):
+            return candidate
+    except Exception:
+        return None
+
+    return None
+
+
+def _webm_to_wav_bytes_via_ffmpeg(ffmpeg_path: str, webm_bytes: bytes) -> bytes:
+    """
+    Convert WebM/Opus bytes to WAV bytes using ffmpeg via stdin/stdout pipes.
+    Avoids pydub/ffprobe and does not touch the filesystem.
+    """
+    if not webm_bytes:
+        raise ValueError("Empty audio upload (0 bytes).")
+
+    proc = subprocess.run(
+        [
+            ffmpeg_path,
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-i",
+            "pipe:0",
+            "-ac",
+            "1",
+            "-ar",
+            "16000",
+            "-f",
+            "wav",
+            "pipe:1",
+        ],
+        input=webm_bytes,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if proc.returncode != 0 or not proc.stdout:
+        stderr = (proc.stderr or b"").decode("utf-8", errors="replace")[:800]
+        raise RuntimeError(f"ffmpeg conversion failed (code={proc.returncode}). {stderr}")
+    return proc.stdout
 
 
 def analyze_voice_tone_from_bytes(webm_bytes: bytes) -> dict:
@@ -19,15 +83,18 @@ def analyze_voice_tone_from_bytes(webm_bytes: bytes) -> dict:
     Analyze voice tone directly from in-memory WebM audio bytes.
     No filesystem I/O is performed.
     """
-    try:
-        # Decode the incoming WebM bytes.
-        audio = AudioSegment.from_file(io.BytesIO(webm_bytes), format="webm")
-        audio = audio.set_channels(1).set_frame_rate(16000)  # mono, 16kHz is ideal for voice
+    ffmpeg_path = _resolve_ffmpeg()
+    if not ffmpeg_path:
+        msg = (
+            "ffmpeg not found. Either add ffmpeg to PATH, set FFMPEG_PATH to the full path "
+            "to ffmpeg.exe, or install `imageio-ffmpeg` so the backend can use a bundled ffmpeg."
+        )
+        logger.warning(msg)
+        return {"error": "ffmpeg_not_available", "detail": msg}
 
-        # Export to an in-memory WAV buffer for librosa.
-        wav_buffer = io.BytesIO()
-        audio.export(wav_buffer, format="wav")
-        wav_buffer.seek(0)
+    try:
+        wav_bytes = _webm_to_wav_bytes_via_ffmpeg(ffmpeg_path, webm_bytes)
+        wav_buffer = io.BytesIO(wav_bytes)
 
         # Now load the clean wav from memory
         y, sr = librosa.load(wav_buffer, sr=16000)
@@ -110,11 +177,11 @@ def analyze_voice_tone_from_bytes(webm_bytes: bytes) -> dict:
 print("DEBUG: Analysis started...", flush=True)
 
 
-# 2. Setup AI Models (LLM via Groq-compatible OpenAI client)
-llm_client = OpenAI(
-    api_key=os.getenv("GROQ_API_KEY"),
-    base_url="https://api.groq.com/openai/v1",
-)
+# 2. Setup OpenAI client (Whisper + chat use OpenAI API directly)
+_openai_api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_API_KEY")
+llm_client = OpenAI(api_key=_openai_api_key) if _openai_api_key else None
+OPENAI_WHISPER_MODEL = "whisper-1"
+OPENAI_CHAT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 async def analyze_interview(
     audio_bytes: bytes, 
@@ -126,15 +193,20 @@ async def analyze_interview(
     prompt_good_signals: str = "",
     prompt_red_flags: str = "",
 ):
+    if not llm_client:
+        return {
+            "error": "analysis_unavailable",
+            "detail": "Missing OPENAI_API_KEY or OPEN_AI_API_KEY.",
+        }
     try:
-        # A. Transcribe audio directly from in-memory bytes
+        # A. Transcribe audio via OpenAI Whisper API (no Groq)
         audio_file = io.BytesIO(audio_bytes)
         # Some OpenAI-compatible clients expect a name attribute on the file-like object.
         audio_file.name = "interview.webm"  # type: ignore[attr-defined]
 
         stt_result = llm_client.audio.transcriptions.create(
             file=audio_file,
-            model="whisper-large-v3",
+            model=OPENAI_WHISPER_MODEL,
             prompt=(
                 "Transcribe this interview audio clearly and accurately. "
                 "Focus on capturing the candidate's words verbatim, including "
@@ -249,7 +321,7 @@ async def analyze_interview(
         """
         
         llm_response = llm_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model=OPENAI_CHAT_MODEL,
             messages=[{"role": "user", "content": prompt}]
         )
         review = llm_response.choices[0].message.content
