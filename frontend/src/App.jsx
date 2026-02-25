@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import VisionTracker from "./components/VisionTracker";
 import ResultsPage from "./resultspage/ResultsPage";
@@ -44,6 +44,7 @@ export default function App({
   const [loadingDots, setLoadingDots] = useState("");
   const [interviewRound, setInterviewRound] = useState(0);
   const [trackerPhase, setTrackerPhase] = useState("idle");
+  const lastPromptLoadKeyRef = useRef("");
 
   const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 
@@ -115,9 +116,20 @@ export default function App({
 
   useEffect(() => {
     if (view !== "interview") return;
+    const loadKey = JSON.stringify({
+      interviewRound,
+      promptCategory,
+      promptDifficulty,
+      jobAdTitle,
+      hasJobAdText: Boolean(String(jobAdText || "").trim()),
+    });
+    if (lastPromptLoadKeyRef.current === loadKey) {
+      return;
+    }
+    lastPromptLoadKeyRef.current = loadKey;
     setCountdownDone(false);
     loadPrompt();
-  }, [view, interviewRound, loadPrompt]);
+  }, [view, interviewRound, promptCategory, promptDifficulty, jobAdTitle, jobAdText, loadPrompt]);
 
   useEffect(() => {
     if (!promptLoading) return undefined;

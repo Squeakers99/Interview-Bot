@@ -1,28 +1,36 @@
+import io
 import os
 import json
-import uuid
 import logging
+
 import librosa
 import numpy as np
 from pydub import AudioSegment
-from fastapi import FastAPI
 from openai import OpenAI
 from dotenv import load_dotenv
 
 logger = logging.getLogger("uvicorn.error")
 
-load_dotenv() # Load your Groq or OpenAI API key from .env
+load_dotenv()  # Load your Groq or OpenAI API key from .env
 
-def analyze_voice_tone(file_path: str) -> dict:
-    wav_path = file_path.replace(".webm", ".wav")
+
+def analyze_voice_tone_from_bytes(webm_bytes: bytes) -> dict:
+    """
+    Analyze voice tone directly from in-memory WebM audio bytes.
+    No filesystem I/O is performed.
+    """
     try:
-        # Convert .webm to .wav first for much better librosa accuracy
-        audio = AudioSegment.from_file(file_path, format="webm")
+        # Decode the incoming WebM bytes.
+        audio = AudioSegment.from_file(io.BytesIO(webm_bytes), format="webm")
         audio = audio.set_channels(1).set_frame_rate(16000)  # mono, 16kHz is ideal for voice
-        audio.export(wav_path, format="wav")
 
-        # Now load the clean wav
-        y, sr = librosa.load(wav_path, sr=16000)
+        # Export to an in-memory WAV buffer for librosa.
+        wav_buffer = io.BytesIO()
+        audio.export(wav_buffer, format="wav")
+        wav_buffer.seek(0)
+
+        # Now load the clean wav from memory
+        y, sr = librosa.load(wav_buffer, sr=16000)
 
         # Remove silence before analysis — silence skews pitch readings
         intervals = librosa.effects.split(y, top_db=30)
@@ -98,22 +106,15 @@ def analyze_voice_tone(file_path: str) -> dict:
     except Exception as e:
         logger.error(f"Error analyzing voice tone: {e}")
         return {"error": str(e)}
-    finally:
-        if os.path.exists(wav_path):
-            os.remove(wav_path)  
 
 print("DEBUG: Analysis started...", flush=True)
 
 
-# 2. Setup AI Models
-# LLM (API via Groq)
+# 2. Setup AI Models (LLM via Groq-compatible OpenAI client)
 llm_client = OpenAI(
     api_key=os.getenv("GROQ_API_KEY"),
-    base_url="https://api.groq.com/openai/v1"
+    base_url="https://api.groq.com/openai/v1",
 )
-
-UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 async def analyze_interview(
     audio_bytes: bytes, 
@@ -125,24 +126,25 @@ async def analyze_interview(
     prompt_good_signals: str = "",
     prompt_red_flags: str = "",
 ):
-    # Unique filename prevents user overlap
-    temp_filename = f"{uuid.uuid4()}.webm"
-    file_path = os.path.join(UPLOAD_DIR, temp_filename)
-
     try:
-        # A. Save audio bytes
-        with open(file_path, "wb") as f:
-            f.write(audio_bytes)
+        # A. Transcribe audio directly from in-memory bytes
+        audio_file = io.BytesIO(audio_bytes)
+        # Some OpenAI-compatible clients expect a name attribute on the file-like object.
+        audio_file.name = "interview.webm"  # type: ignore[attr-defined]
 
-        with open(file_path, "rb") as audio_file:
-            stt_result = llm_client.audio.transcriptions.create(
-                file=audio_file,
-                model="whisper-large-v3",
-                prompt="Transcribe this interview audio clearly and accurately. Focus on capturing the candidate's words verbatim, including filler words and hesitations, as these are important for analysis."
-            )
+        stt_result = llm_client.audio.transcriptions.create(
+            file=audio_file,
+            model="whisper-large-v3",
+            prompt=(
+                "Transcribe this interview audio clearly and accurately. "
+                "Focus on capturing the candidate's words verbatim, including "
+                "filler words and hesitations, as these are important for analysis."
+            ),
+        )
         transcript = stt_result.text
 
-        voice_analysis = analyze_voice_tone(file_path)
+        # B. Voice analysis from in-memory bytes
+        voice_analysis = analyze_voice_tone_from_bytes(audio_bytes)
         print("\n===== VOICE TONE ANALYSIS =====", flush=True)
         print(f"Avg Pitch: {voice_analysis.get('avg_pitch_hz')} Hz — {voice_analysis.get('pitch_feedback')}", flush=True)
         print(f"Tone: {voice_analysis.get('tone_feedback')}", flush=True)
@@ -295,9 +297,7 @@ async def analyze_interview(
 
     except Exception as e:
         logger.error(f"Error during analysis: {e}")
-        return {"error": str(e)}, 500
-    finally:
-        # E. Cleanup: Always delete even if code fails
-        if os.path.exists(file_path):
-            os.remove(file_path)
-    
+        return {
+            "error": "analysis_unavailable",
+            "detail": str(e),
+        }

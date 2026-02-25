@@ -1,34 +1,28 @@
-import json
-from pathlib import Path
 from typing import Any, Dict
 
 from fastapi import APIRouter
 
+from app.services.results_store import load_latest_results, load_latest_timelines
+
 router = APIRouter(prefix="/results", tags=["results"])
 
+
 def load_results_payload() -> Dict[str, Any]:
-    results_path = Path(__file__).resolve().parents[2] / "uploads" / "results.json"
-    if not results_path.exists():
-        return {}
-    try:
-        payload = json.loads(results_path.read_text(encoding="utf-8"))
-        return payload if isinstance(payload, dict) else {}
-    except Exception:
-        return {}
+    """
+    Backwards-compatible helper that now reads from in-memory storage
+    instead of the filesystem.
+    """
+    return load_latest_results()
+
 
 def load_interview_timelines() -> Dict[str, Any]:
-    payload = load_results_payload()
-    if not payload:
+    """
+    Helper that returns the most recent interview timelines from in-memory storage.
+    """
+    timelines = load_latest_timelines()
+    if not timelines:
         return {"posture_timeline": [], "eye_timeline": []}
-
-    # New shape in results.json:
-    # { "interview_timelines": { "posture_timeline": [...], "eye_timeline": [...] }, ... }
-    nested = payload.get("interview_timelines")
-    if isinstance(nested, dict):
-        return nested
-
-    # Backward compatibility for older files where timelines were top-level.
-    return payload
+    return timelines
 
 
 def to_pairs(timeline: Any):

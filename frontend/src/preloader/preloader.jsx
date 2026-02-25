@@ -36,7 +36,7 @@ export default function preloader() {
         src={Logo}
         alt="Interview Bot logo"
         style={{
-          width: "min(220px, 42vw)",
+          width: "min(440px, 84vw)",
           height: "auto",
           marginBottom: 14,
           animation: "preloaderPulse 0.9s ease-in-out infinite",

@@ -1,6 +1,7 @@
 import json
-from pathlib import Path
 from typing import Any, Dict, Tuple
+
+from app.services.results_store import store_latest_audio, store_latest_timelines
 
 def parse_vision_metrics(raw: str) -> Dict[str, Any]:
     if not raw:
@@ -29,27 +30,26 @@ async def read_upload_bytes(upload_file) -> Tuple[int, str, str, bytes]:
 
 def save_upload_bytes(raw_bytes: bytes, original_filename: str) -> str:
     """
-    Persists uploaded audio bytes to backend/uploads and returns absolute path.
-    File name is always Interview-Audio.<ext>.
+    Store uploaded audio bytes in backend memory and return a logical handle.
     """
-    backend_root = Path(__file__).resolve().parents[2]
-    upload_dir = backend_root / "uploads"
-    upload_dir.mkdir(parents=True, exist_ok=True)
-
-    suffix = Path(original_filename or "").suffix.lower() or ".webm"
-    output_path = upload_dir / f"Interview-Audio{suffix}"
-    output_path.write_bytes(raw_bytes)
-    return str(output_path)
+    metadata: Dict[str, Any] = {
+        "filename": original_filename or "",
+        "byte_count": len(raw_bytes),
+        "raw_bytes": raw_bytes,
+    }
+    store_latest_audio(metadata)
+    # Return a logical (non-filesystem) identifier to keep the API shape.
+    return "in_memory:Interview-Audio"
 
 
 def save_json_payload(payload: Dict[str, Any], output_name: str) -> str:
     """
-    Persists a JSON payload to backend/uploads and returns absolute path.
+    Store an arbitrary JSON payload in backend memory and return a logical handle.
     """
-    backend_root = Path(__file__).resolve().parents[2]
-    upload_dir = backend_root / "uploads"
-    upload_dir.mkdir(parents=True, exist_ok=True)
+    # For now we treat "results.json" as the canonical source for interview timelines.
+    # Avoid overwriting timeline state for other logical JSON outputs.
+    if output_name == "results.json":
+        # Store timelines separately so they can be fetched without the full results object.
+        store_latest_timelines(payload)
 
-    output_path = upload_dir / output_name
-    output_path.write_text(json.dumps(payload, ensure_ascii=True, indent=2), encoding="utf-8")
-    return str(output_path)
+    return f"in_memory:{output_name}"
