@@ -1,6 +1,7 @@
 import "./WelcomePage.css";
 import { useEffect, useRef, useState } from "react";
 import App from "../App";
+import BackendStatusWidget from "../components/BackendStatusWidget";
 
 const CATEGORY_OPTIONS = [
   { value: "all", label: "Any Type" },
@@ -69,6 +70,7 @@ export default function WelcomePage() {
   const [jobAdText, setJobAdText] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
   const filtersRef = useRef(null);
+  const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 
   function handleReturnToMainPage() {
     setSelectedCategory("all");
@@ -114,88 +116,91 @@ export default function WelcomePage() {
   }
 
   return (
-    <div className="welcome-container">
-      <div className="welcome-card">
-        <h1 className="welcome-title">Practice Interview with Unemployment No Longer</h1>
+    <>
+      <BackendStatusWidget apiBase={apiBase} />
+      <div className="welcome-container">
+        <div className="welcome-card">
+          <h1 className="welcome-title">Practice Interview with Unemployment No Longer</h1>
 
-        <p className="welcome-subtitle">
-          Answer one interview question and receive feedback on delivery and presentation.
-        </p>
-
-        <div className="welcome-points">
-          <p className="welcome-point">30 seconds to think, 90 seconds to respond.</p>
-          <p className="welcome-point">We track posture and eye contact during your answer.</p>
-          <p className="welcome-point">Input your job ad, select a question type and difficulty, and we will generate a prompt specific to you.</p>
-          <p className="welcome-point">
-            Click <b>End Interview</b> when you finish speaking and we will process your response.
+          <p className="welcome-subtitle">
+            Answer one interview question and receive feedback on delivery and presentation.
           </p>
+
+          <div className="welcome-points">
+            <p className="welcome-point">30 seconds to think, 90 seconds to respond.</p>
+            <p className="welcome-point">We track posture and eye contact during your answer.</p>
+            <p className="welcome-point">Input your job ad, select a question type and difficulty, and we will generate a prompt specific to you.</p>
+            <p className="welcome-point">
+              Click <b>End Interview</b> when you finish speaking and we will process your response.
+            </p>
+          </div>
         </div>
+
+        <div className="welcome-panels" ref={filtersRef}>
+          <div className="welcome-filters welcome-filters--jobad">
+            <h3 className="welcome-panel-title">Job Ad Input (optional)</h3>
+
+            <label className="welcome-filter-label" htmlFor="job-ad-title">
+              Job Ad Title
+            </label>
+            <input
+              id="job-ad-title"
+              type="text"
+              className="welcome-filter-select welcome-text-input"
+              placeholder="Senior Software Engineer"
+              value={jobAdTitle}
+              onChange={(event) => setJobAdTitle(event.target.value)}
+              autoComplete="off"
+            />
+
+            <label className="welcome-filter-label" htmlFor="job-ad-text">
+              Paste Job Ad
+            </label>
+            <textarea
+              id="job-ad-text"
+              className="welcome-filter-select welcome-text-input welcome-textarea"
+              placeholder="Paste the job description here..."
+              value={jobAdText}
+              onChange={(event) => setJobAdText(event.target.value)}
+              rows={5}
+            />
+          </div>
+
+          <div className="welcome-filters welcome-filters--options">
+            <h3 className="welcome-panel-title">Interview Options</h3>
+
+            <CustomDropdown
+              id="question-category"
+              label="Question Type"
+              value={selectedCategory}
+              options={CATEGORY_OPTIONS}
+              isOpen={openDropdown === "category"}
+              onToggle={() => setOpenDropdown((current) => (current === "category" ? null : "category"))}
+              onSelect={(value) => {
+                setSelectedCategory(value);
+                setOpenDropdown(null);
+              }}
+            />
+
+            <CustomDropdown
+              id="question-difficulty"
+              label="Difficulty"
+              value={selectedDifficulty}
+              options={DIFFICULTY_OPTIONS}
+              isOpen={openDropdown === "difficulty"}
+              onToggle={() => setOpenDropdown((current) => (current === "difficulty" ? null : "difficulty"))}
+              onSelect={(value) => {
+                setSelectedDifficulty(value);
+                setOpenDropdown(null);
+              }}
+            />
+          </div>
+        </div>
+
+        <button className="start-button" onClick={() => setStarted(true)}>
+          Start Interview
+        </button>
       </div>
-
-      <div className="welcome-panels" ref={filtersRef}>
-        <div className="welcome-filters welcome-filters--jobad">
-          <h3 className="welcome-panel-title">Job Ad Input (optional)</h3>
-
-          <label className="welcome-filter-label" htmlFor="job-ad-title">
-            Job Ad Title
-          </label>
-          <input
-            id="job-ad-title"
-            type="text"
-            className="welcome-filter-select welcome-text-input"
-            placeholder="Senior Software Engineer"
-            value={jobAdTitle}
-            onChange={(event) => setJobAdTitle(event.target.value)}
-            autoComplete="off"
-          />
-
-          <label className="welcome-filter-label" htmlFor="job-ad-text">
-            Paste Job Ad
-          </label>
-          <textarea
-            id="job-ad-text"
-            className="welcome-filter-select welcome-text-input welcome-textarea"
-            placeholder="Paste the job description here..."
-            value={jobAdText}
-            onChange={(event) => setJobAdText(event.target.value)}
-            rows={5}
-          />
-        </div>
-
-        <div className="welcome-filters welcome-filters--options">
-          <h3 className="welcome-panel-title">Interview Options</h3>
-
-          <CustomDropdown
-            id="question-category"
-            label="Question Type"
-            value={selectedCategory}
-            options={CATEGORY_OPTIONS}
-            isOpen={openDropdown === "category"}
-            onToggle={() => setOpenDropdown((current) => (current === "category" ? null : "category"))}
-            onSelect={(value) => {
-              setSelectedCategory(value);
-              setOpenDropdown(null);
-            }}
-          />
-
-          <CustomDropdown
-            id="question-difficulty"
-            label="Difficulty"
-            value={selectedDifficulty}
-            options={DIFFICULTY_OPTIONS}
-            isOpen={openDropdown === "difficulty"}
-            onToggle={() => setOpenDropdown((current) => (current === "difficulty" ? null : "difficulty"))}
-            onSelect={(value) => {
-              setSelectedDifficulty(value);
-              setOpenDropdown(null);
-            }}
-          />
-        </div>
-      </div>
-
-      <button className="start-button" onClick={() => setStarted(true)}>
-        Start Interview
-      </button>
-    </div>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import VisionTracker from "./components/VisionTracker";
+import BackendStatusWidget from "./components/BackendStatusWidget";
 import ResultsPage from "./resultspage/ResultsPage";
 import AnalyzingPage from "./analyzing/AnalyzingPage";
 import CountdownPage from "./countdown/CountdownPage";
@@ -47,6 +48,7 @@ export default function App({
   const lastPromptLoadKeyRef = useRef("");
 
   const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+  const backendStatusWidget = <BackendStatusWidget apiBase={apiBase} />;
 
   const loadPrompt = useCallback(async () => {
     setPromptLoading(true);
@@ -168,67 +170,86 @@ export default function App({
 
   if (view === "results") {
     return (
-      <div className="app-shell">
-        <ResultsPage onRestart={handleRestart} />
-      </div>
+      <>
+        {backendStatusWidget}
+        <div className="app-shell">
+          <ResultsPage onRestart={handleRestart} />
+        </div>
+      </>
     );
   }
 
   if (promptLoading) {
     return (
-      <div className="app-shell app-shell--loading">
-        <div className="prompt-loading-screen" role="status" aria-live="polite">
-          <div className="prompt-loading-spinner" aria-hidden="true" />
-          <h2 className="prompt-loading-title">Loading prompt{loadingDots}</h2>
-          <p className="prompt-loading-meta">
-            Type: <strong>{formatLabel(promptCategory)}</strong> | Difficulty:{" "}
-            <strong>{formatLabel(promptDifficulty)}</strong>
-          </p>
+      <>
+        {backendStatusWidget}
+        <div className="app-shell app-shell--loading">
+          <div className="prompt-loading-screen" role="status" aria-live="polite">
+            <div className="prompt-loading-spinner" aria-hidden="true" />
+            <h2 className="prompt-loading-title">Loading prompt{loadingDots}</h2>
+            <p className="prompt-loading-meta">
+              Type: <strong>{formatLabel(promptCategory)}</strong> | Difficulty:{" "}
+              <strong>{formatLabel(promptDifficulty)}</strong>
+            </p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (view === "interview" && !countdownDone) {
-    return <CountdownPage start={3} onComplete={() => setCountdownDone(true)} />;
+    return (
+      <>
+        {backendStatusWidget}
+        <CountdownPage start={3} onComplete={() => setCountdownDone(true)} />
+      </>
+    );
   }
 
   if (view === "interview" && trackerPhase === "finishing") {
-    return <AnalyzingPage />;
+    return (
+      <>
+        {backendStatusWidget}
+        <AnalyzingPage />
+      </>
+    );
   }
 
   return (
-    <div className="app-shell">
-      <div className="interview-layout">
-        <div className="prompt-banner">
-          <div className="prompt-banner__meta-row">
-            <span className="prompt-chip">Type: {formatLabel(prompt?.type || promptCategory)}</span>
-            <span className="prompt-chip">
-              Difficulty: {formatLabel(prompt?.difficulty || promptDifficulty)}
-            </span>
-            {jobAdMeta?.domain ? (
-              <span className="prompt-chip">Source: {jobAdMeta.domain}</span>
+    <>
+      {backendStatusWidget}
+      <div className="app-shell">
+        <div className="interview-layout">
+          <div className="prompt-banner">
+            <div className="prompt-banner__meta-row">
+              <span className="prompt-chip">Type: {formatLabel(prompt?.type || promptCategory)}</span>
+              <span className="prompt-chip">
+                Difficulty: {formatLabel(prompt?.difficulty || promptDifficulty)}
+              </span>
+              {jobAdMeta?.domain ? (
+                <span className="prompt-chip">Source: {jobAdMeta.domain}</span>
+              ) : null}
+            </div>
+            <h2 className="prompt-banner__title">Interview Question</h2>
+            <p className="prompt-banner__text">{prompt?.text || FALLBACK_PROMPT.text}</p>
+            {jobAdMeta?.title ? (
+              <p className="prompt-banner__jobad">Generated from: {jobAdMeta.title}</p>
             ) : null}
+            {promptError ? <p className="prompt-banner__warning">{promptError}</p> : null}
           </div>
-          <h2 className="prompt-banner__title">Interview Question</h2>
-          <p className="prompt-banner__text">{prompt?.text || FALLBACK_PROMPT.text}</p>
-          {jobAdMeta?.title ? (
-            <p className="prompt-banner__jobad">Generated from: {jobAdMeta.title}</p>
-          ) : null}
-          {promptError ? <p className="prompt-banner__warning">{promptError}</p> : null}
-        </div>
 
-        <VisionTracker
-          key={`${prompt?.id || "prompt"}-${interviewRound}`}
-          enabled={true}
-          autoStartCamera={true}
-          drawLandmarks={false}
-          onAnalysisResult={handleAnalysisResult}
-          onPhaseChange={setTrackerPhase}
-          onEnd={() => setView("results")}
-          prompt={prompt || FALLBACK_PROMPT}
-        />
+          <VisionTracker
+            key={`${prompt?.id || "prompt"}-${interviewRound}`}
+            enabled={true}
+            autoStartCamera={true}
+            drawLandmarks={false}
+            onAnalysisResult={handleAnalysisResult}
+            onPhaseChange={setTrackerPhase}
+            onEnd={() => setView("results")}
+            prompt={prompt || FALLBACK_PROMPT}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
