@@ -30,12 +30,18 @@ function toTitle(value) {
 function splitFeedbackBlock(value) {
   if (!value) return [];
   const normalized = String(value).replace(/\\n/g, "\n");
+  const stripMarkdownEmphasis = (line) =>
+    line
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/__(.*?)__/g, "$1")
+      .replace(/[`*_]+/g, "");
   return normalized
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => line.replace(/^[:\-\*]\s*/, ""))
     .map((line) => line.replace(/^:\s*/, ""))
+    .map(stripMarkdownEmphasis)
     .filter(
       (line) =>
         !/^\(.*\)\s*:?$/.test(line) &&
